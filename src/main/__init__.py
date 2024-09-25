@@ -2,16 +2,14 @@ from flask import Flask
 from src.config import config_instance
 
 from src.utils import template_folder, static_folder, upload_folder
-from src.controllers.projects import ProjectController
-
-projects = ProjectController()
 
 
 def bootstrap():
-    from src.database.projects import ProjectsORM
-    ProjectsORM.create_if_not_table()
-    from src.database.users import UsersORM
-    UsersORM.create_if_not_table()
+    # from src.database.projects import ProjectsORM
+    # ProjectsORM.create_if_not_table()
+    # from src.database.users import UsersORM
+    # UsersORM.create_if_not_table()
+    pass
 
 
 def create_app(config=config_instance()):
