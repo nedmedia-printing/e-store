@@ -8,10 +8,12 @@ class Profile(BaseModel):
             such us - deposit multiplier
     """
     uid: str
-
     profile_name: str | None
+    first_name: str | None
+    surname: str | None
+    cell: str | None
+    email: str | None
     notes: str | None
-    currency: str = Field(default="$")
 
     # class Config:
     #     extra = Extra.ignore
@@ -27,7 +29,6 @@ class ProfileUpdate(BaseModel):
 
     profile_name: str | None
     notes: str | None
-    currency: str | None
 
     class Config:
         extra = Extra.ignore
