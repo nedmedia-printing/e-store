@@ -12,7 +12,7 @@ Base = declarative_base()
 #
 #     transaction_id = Column(String(ID_LEN), primary_key=True)
 #     receipt_number = Column(Integer, Sequence('invoice_number_seq'), autoincrement=True)
-#     subscription_id = Column(String(ID_LEN), ForeignKey('subscriptions.subscription_id'))
+#     order_id = Column(String(ID_LEN), ForeignKey('subscriptions.order_id'))
 #     package_id = Column(String(ID_LEN), ForeignKey('sms_packages.package_id'))
 #     amount_paid = Column(Integer)
 #     date_paid = Column(Date)
@@ -34,7 +34,7 @@ Base = declarative_base()
 #     def to_dict(self):
 #         return {
 #             'transaction_id': self.transaction_id,
-#             'subscription_id': self.subscription_id,
+#             'order_id': self.order_id,
 #             'package_id': self.package_id,
 #             'receipt_number': self.receipt_number,
 #             'amount_paid': self.amount_paid,

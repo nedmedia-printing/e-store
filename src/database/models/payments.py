@@ -15,7 +15,7 @@ class Payment(BaseModel):
     Represents a payment transaction.
    """
     transaction_id: str = Field(default_factory=create_id)
-    subscription_id: str | None
+    order_id: str | None
     package_id: str | None
     invoice_number: int | None
     amount_paid: PositiveInt

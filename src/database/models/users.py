@@ -28,8 +28,6 @@ class User(BaseModel):
     - contact_number (str): The contact number of the user.
     """
     uid: str
-    branch_id: str | None
-    company_id: str | None
     username: str | None
     password_hash: str
     email: str
