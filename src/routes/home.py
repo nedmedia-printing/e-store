@@ -33,7 +33,14 @@ async def add_product():
     context = dict()
     return render_template('admin/add_product.html', **context)
 
+
 @home_route.get('/admin/products')
 async def get_products():
     context = dict()
     return render_template('admin/products.html', **context)
+
+
+@home_route.get('/admin/customers')
+async def get_customers():
+    context = dict()
+    return render_template('admin/customers.html', **context)
