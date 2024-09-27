@@ -8,7 +8,6 @@ class SMSInboxORM(Base):
     __tablename__ = "sms_inbox"
 
     message_id: str = Column(String(ID_LEN), primary_key=True, index=True)
-    to_branch: str = Column(String(ID_LEN), index=True)
     parent_reference: str = Column(String(ID_LEN), nullable=True)
     from_cell: str = Column(String(17))
     is_response: bool = Column(Boolean)
@@ -33,8 +32,6 @@ class SMSInboxORM(Base):
         """
         return {
             "from_cell": self.from_cell,
-
-            "to_branch": self.to_branch,
             "message_id": self.message_id,
             "is_response": self.is_response,
             "parent_reference": self.parent_reference,
@@ -52,7 +49,6 @@ class SMSComposeORM(Base):
     message: str = Column(Text)
     from_cell: str = Column(String(17))
     to_cell: str = Column(String(17))
-    to_branch: str = Column(String(ID_LEN))
     recipient_type: str = Column(String(36))
     date_time_composed: str = Column(String(36))
     date_time_sent: str = Column(String(36))
@@ -79,7 +75,7 @@ class SMSComposeORM(Base):
             "reference": self.reference,
             "from_cell": self.from_cell,
             "to_cell": self.to_cell,
-            "to_branch": self.to_branch,
+
             "recipient_type": self.recipient_type,
             "date_time_composed": self.date_time_composed,
             "date_time_sent": self.date_time_sent,
@@ -91,7 +87,7 @@ class SMSComposeORM(Base):
 class EmailComposeORM(Base):
     __tablename__ = "email_compose"
     message_id = Column(String(ID_LEN), primary_key=True, index=True)
-    to_branch = Column(String(NAME_LEN), index=True)
+
     reference = Column(String(ID_LEN))
     from_email = Column(String(255))
     to_email = Column(String(255))
@@ -122,7 +118,6 @@ class EmailComposeORM(Base):
             'to_email': self.to_email,
             'subject': self.subject,
             'message': self.message,
-            'to_branch': self.to_branch,
             'recipient_type': self.recipient_type,
             'is_sent': self.is_sent,
             'date_time_sent': self.date_time_sent,

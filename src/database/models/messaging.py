@@ -28,7 +28,7 @@ class SMSCompose(BaseModel):
     message: str
     from_cell: str | None
     to_cell: str | None
-    to_branch: str
+    
     recipient_type: str
     date_time_composed: str = Field(default_factory=date_time)
     date_time_sent: str | None
@@ -39,7 +39,7 @@ class SMSCompose(BaseModel):
 class SMSInbox(BaseModel):
 
     message_id: str = Field(default_factory=create_id)
-    to_branch: str
+    
     parent_reference: str | None
     from_cell: str | None
     is_response: bool = Field(default=True)
@@ -59,7 +59,7 @@ class EmailCompose(BaseModel):
     to_email: str | None
     subject: str
     message: str
-    to_branch: str
+    
     recipient_type: str
     is_sent: bool = Field(default=False)
     date_time_sent: str | None

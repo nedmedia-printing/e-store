@@ -58,7 +58,6 @@ class TicketMessage(BaseModel):
 
 class Ticket(BaseModel):
     ticket_id: str
-
     user_id: str
 
     assigned_to: str | None
