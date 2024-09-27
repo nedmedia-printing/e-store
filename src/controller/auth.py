@@ -38,53 +38,6 @@ class UserController(Controllers):
     async def manage_profiles(self, new_profile: Profile):
         self.profiles[new_profile.uid] = new_profile
 
-    @error_handler
-    async def add_paypal(self, user: User, paypal_email: str) -> PayPal | None:
-        """
-
-        :param user:
-        :param paypal_email:
-        :return:
-        """
-        paypal_email = paypal_email.strip().lower()
-        if not paypal_email:
-            return None
-
-        with self.get_session() as session:
-            paypal_account = session.query(PayPalORM).filter(PayPalORM.paypal_email == paypal_email).first()
-            if isinstance(paypal_account, PayPalORM):
-                if paypal_account.uid == user.uid:
-                    paypal_account.paypal_email = paypal_email
-                    paypal_account.uid = user.uid
-                    session.merge(paypal_account)
-
-                    return PayPal(**paypal_account.to_dict())
-                else:
-                    return None
-
-            paypal_account: PayPalORM = session.query(PayPalORM).filter(PayPalORM.uid == user.uid).first()
-            if isinstance(paypal_account, PayPalORM):
-                paypal_account.paypal_email = paypal_email
-                paypal_account_ = PayPal(**paypal_account.to_dict())
-                session.merge(paypal_account_)
-
-                return paypal_account_
-
-            paypal_orm = PayPalORM(paypal_email=paypal_email, uid=user.uid)
-            paypal_account_ = PayPal(**paypal_orm.to_dict())
-            session.add(paypal_orm)
-            return paypal_account_
-
-    @error_handler
-    async def get_paypal_account(self, uid: str) -> PayPal | None:
-        with self.get_session() as session:
-            paypal_account: PayPalORM = session.query(PayPalORM).filter(PayPalORM.uid == uid).first()
-
-            if isinstance(paypal_account, PayPalORM):
-                return PayPal(**paypal_account.to_dict())
-
-            return None
-
     async def is_token_valid(self, token: str) -> bool:
         """
         **is_token_valid**
@@ -108,8 +61,6 @@ class UserController(Controllers):
         """
         if not uid:
             return None
-        # if uid in self.users:
-        #     return self.users[uid].dict()
 
         with self.get_session() as session:
             user_data: UserORM = session.query(UserORM).filter(UserORM.uid == uid).first()

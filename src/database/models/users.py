@@ -1,4 +1,4 @@
-import uuid
+
 from enum import Enum
 
 from pydantic import BaseModel, Field, Extra
@@ -37,8 +37,6 @@ class User(BaseModel):
     account_verified: bool = Field(default=False)
 
     is_system_admin: bool = Field(default=False)
-    is_company_admin: bool = Field(default=False)
-    is_employee: bool = Field(default=False)
     is_client: bool = Field(default=False)
 
     class Config:
@@ -86,8 +84,6 @@ class CreateUser(BaseModel):
     account_verified: bool = Field(default=False)
 
     is_system_admin: bool = Field(default=False)
-    is_company_admin: bool = Field(default=False)
-    is_employee: bool = Field(default=False)
     is_client: bool = Field(default=False)
 
     @property
@@ -108,8 +104,6 @@ class PasswordResetUser(BaseModel):
     account_verified: bool = Field(default=False)
 
     is_system_admin: bool = Field(default=False)
-    is_company_admin: bool = Field(default=False)
-    is_employee: bool = Field(default=False)
     is_client: bool = Field(default=False)
 
     @property
@@ -129,8 +123,6 @@ class UserUpdate(BaseModel):
     account_verified: bool = Field(default=False)
 
     is_system_admin: bool = Field(default=False)
-    is_company_admin: bool = Field(default=False)
-    is_employee: bool = Field(default=False)
     is_client: bool = Field(default=False)
 
     class Config:

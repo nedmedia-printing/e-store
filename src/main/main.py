@@ -2,10 +2,10 @@ from flask import Flask
 from src.config import config_instance
 
 from src.utils import template_folder, static_folder, upload_folder
+from src.controller.encryptor import Encryptor
 
 
-
-
+encryptor = Encryptor()
 
 # /def bootstrap():
 #     # from src.database.projects import ProjectsORM
@@ -25,4 +25,5 @@ def create_app(config=config_instance()):
         from src.routes.home import home_route
         app.register_blueprint(home_route)
         # bootstrap()
+        encryptor.init_app(app=app)
     return app

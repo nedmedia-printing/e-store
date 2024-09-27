@@ -4,17 +4,13 @@ from datetime import datetime
 
 import requests
 from flask import Flask
-from twilio.rest import Client
 
 from src.config import Settings
 from src.controller import Controllers, error_handler
 from src.database.models.messaging import SMSInbox, EmailCompose, SMSCompose, SMSSettings
 from src.database.sql.messaging import SMSInboxORM, SMSComposeORM, EmailComposeORM, SMSSettingsORM
 from src.emailer import EmailModel, SendMail
-from src.main import system_cache
 from src.utils import create_id
-
-cached_ttl = system_cache.cached_ttl
 
 
 def date_time() -> str:
@@ -73,7 +69,7 @@ class EmailService(Controllers):
             else:
                 self.logger.error(f"Email not sent : {str(email)}")
 
-            await system_cache.clear_mem_cache()
+
         except requests.exceptions.ConnectTimeout:
             self.logger.error("Resend Connection TimeOut")
             await asyncio.sleep(delay=self.cool_down_on_error)
@@ -81,7 +77,7 @@ class EmailService(Controllers):
 
     @error_handler
     async def store_sent_email_to_database(self, email_: EmailCompose):
-        await system_cache.clear_mem_cache()
+
         with self.get_session() as session:
             sent_email_orm = EmailComposeORM(**email_.dict())
             session.add(sent_email_orm)
@@ -90,7 +86,6 @@ class EmailService(Controllers):
         # Code to receive email from email service API
         self.logger.info(f"Received email from {sender} with subject: {subject} and body: {body}")
 
-    @cached_ttl()
     @error_handler
     async def get_sent_messages(self, branch_id: str) -> list[EmailCompose]:
         """
@@ -103,7 +98,6 @@ class EmailService(Controllers):
             return [EmailCompose(**email.to_dict()) for email in email_messages_orm
                     if isinstance(email, EmailComposeORM)]
 
-    @cached_ttl(ttl=360)
     @error_handler
     async def get_sent_email_paged(self, branch_id: str, page: int, count: int) -> list[EmailCompose]:
         """
@@ -124,7 +118,6 @@ class EmailService(Controllers):
             return [EmailCompose(**email.to_dict()) for email in email_messages_orm
                     if isinstance(email, EmailComposeORM)]
 
-    @cached_ttl()
     @error_handler
     async def get_sent_email(self, message_id: str) -> EmailCompose | None:
         """
@@ -155,7 +148,7 @@ class SMSService(Controllers):
     def init_app(self, app: Flask, settings: Settings):
 
         super().init_app(app=app)
-        self.sms_service_api = Client(settings.TWILIO.TWILIO_SID, settings.TWILIO.TWILIO_TOKEN)
+        # self.sms_service_api = Client(settings.TWILIO.TWILIO_SID, settings.TWILIO.TWILIO_TOKEN)
         self.twilio_number = settings.TWILIO.TWILIO_NUMBER
 
     async def check_incoming_sms_api(self) -> list[SMSInbox]:
@@ -250,24 +243,21 @@ class SMSService(Controllers):
     async def store_sms_to_database_inbox(self, sms_message: SMSInbox) -> SMSInbox:
         with self.get_session() as session:
             session.add(SMSInboxORM(**sms_message.dict()))
-            await system_cache.clear_mem_cache()
+
             return sms_message
 
-    @cached_ttl()
     @error_handler
     async def get_inbox_messages_from_database(self, branch_id: str) -> list[SMSInbox]:
         with self.get_session() as session:
             inbox_list = session.query(SMSInboxORM).filter_by(to_branch=branch_id).all()
             return [SMSInbox(**inbox.to_dict()) for inbox in inbox_list if isinstance(inbox, SMSInboxORM)]
 
-    @cached_ttl()
     @error_handler
     async def get_sent_box_messages_from_database(self, branch_id: str) -> list[SMSCompose]:
         with self.get_session() as session:
             compose_orm_list = session.query(SMSComposeORM).filter_by(to_branch=branch_id).all()
             return [SMSCompose(**sms.to_dict()) for sms in compose_orm_list if isinstance(sms, SMSComposeORM)]
 
-    @cached_ttl()
     @error_handler
     async def get_sent_box_messages_paged(self, branch_id: str, page: int, count: int) -> list[SMSCompose]:
         with self.get_session() as session:
@@ -283,7 +273,6 @@ class SMSService(Controllers):
     async def mark_message_as_responded(self, reference: str) -> SMSCompose | None:
         with self.get_session() as session:
             message_orm = session.query(SMSComposeORM).filter_by(reference=reference).first()
-            await system_cache.clear_mem_cache()
 
             if isinstance(message_orm, SMSComposeORM):
                 sms_compose = SMSCompose(**message_orm.to_dict())
@@ -305,7 +294,7 @@ class SMSService(Controllers):
         """
         with self.get_session() as session:
             sms_settings_orm = session.query(SMSSettingsORM).filter_by(company_id=settings.company_id).first()
-            await system_cache.clear_mem_cache()
+
             if isinstance(sms_settings_orm, SMSSettingsORM):
                 # Update the existing record
                 sms_settings_orm.enable_sms_notifications = settings.enable_sms_notifications
@@ -322,7 +311,6 @@ class SMSService(Controllers):
 
             return settings
 
-    @cached_ttl()
     @error_handler
     async def get_sms_settings(self, company_id: str) -> SMSSettings | None:
         """
@@ -346,7 +334,7 @@ class WhatsAppService(Controllers):
     # noinspection PyMethodOverriding
     def init_app(self, app: Flask, settings: Settings):
         super().init_app(app=app)
-        self.whatsapp_api = Client(settings.TWILIO.TWILIO_SID, settings.TWILIO.TWILIO_TOKEN)
+        # self.whatsapp_api = Client(settings.TWILIO.TWILIO_SID, settings.TWILIO.TWILIO_TOKEN)
         self.twilio_number = settings.TWILIO.TWILIO_NUMBER
 
     async def send_whatsapp_message(self, recipient: str, message: str):
