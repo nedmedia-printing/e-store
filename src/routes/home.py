@@ -14,7 +14,6 @@ async def get_home():
     #
     # image_filename: str = random.choice(image_filenames)
     context = dict()
-
     return render_template('index.html', **context)
 
 
@@ -25,6 +24,11 @@ async def login():
 
 @home_route.get('/admin')
 async def admin():
-    project_list: list[dict[str, str]] = await projects.get_projects()
-    context: dict[str, list[dict[str, str]]] = dict(projects_list=project_list)
+    context = dict()
     return render_template('admin/admin.html', **context)
+
+
+@home_route.get('/admin/product/add')
+async def add_product():
+    context = dict()
+    return render_template('admin/add_product.html', **context)

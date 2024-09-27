@@ -2,7 +2,6 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 from datetime import datetime
-
 from src.utils import create_id
 
 
