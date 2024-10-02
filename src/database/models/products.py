@@ -1,35 +1,107 @@
 from datetime import date, datetime
-from pydantic import BaseModel
+from enum import Enum
+
+from pydantic import BaseModel, Field
+from src.utils import create_id, south_african_standard_time
 
 
-def create_date_paid() -> date:
-    return datetime.now().date()
+def south_african_standard_time() -> date:
+    return datetime.now()
+
+
+class InventoryActionTypes(Enum):
+    ADJUST_ADD: str = "ADJUST ADD"
+    ADJUST_MINUS: str = "ADJUST MINUS"
+    PURCHASE_SUPPLIER: str = "PURCHASE SUPPLIER"
+    REFUND: str = "REFUND"
+    BREAKAGE: str = "BREAKAGE"
+    SALE: str = "SALE"
+    FREE: str = "FREE"
+
+    @classmethod
+    def action_list(cls):
+        return [action.value for action in cls]
+
+    @classmethod
+    def adding_actions(cls):
+        return [InventoryActionTypes.ADJUST_ADD.value,
+                InventoryActionTypes.PURCHASE_SUPPLIER.value, InventoryActionTypes.REFUND.value]
+
+    @classmethod
+    def subtracting_actions(cls):
+        return [InventoryActionTypes.SALE.value, InventoryActionTypes.BREAKAGE.value,
+                InventoryActionTypes.ADJUST_MINUS.value, InventoryActionTypes.FREE.value]
+
+
+class Inventory(BaseModel):
+    entry_id: str = Field(default_factory=create_id)
+    product_id: str
+    category_id: str
+    entry: int
+    action_type: str
+    time_of_entry: datetime = Field(default_factory=south_african_standard_time)
 
 
 class Products(BaseModel):
-    product_id: str
+    product_id: str = Field(default_factory=create_id)
+    category_id: str
+    supplier_id: str | None = Field(default=None)
     barcode: str
     name: str
     description: str
     sell_price: int
     buy_price: int
-    category_id: str
-    image_name: str
-    supplier_id: str
+    image_name: str | None = Field(default=None)
+    time_of_entry: datetime = Field(default_factory=south_african_standard_time)
+    inventory_entries: list[Inventory]
+
+    def get_total_inventory_count(self) -> int:
+        total_count = 0
+        for entry in self.inventory_entries:
+            if entry.action_type in InventoryActionTypes.adding_actions():
+                total_count += entry.entry
+            elif entry.action_type in InventoryActionTypes.subtracting_actions():
+                total_count -= entry.entry
+        return total_count
+
+    def get_total_sales(self, start_date: datetime, end_date: datetime) -> int:
+        total_sales = 0
+        for entry in self.inventory_entries:
+            # Filter by action type 'SALE' and check if the entry is within the date range
+            if entry.action_type == InventoryActionTypes.SALE.value and start_date <= entry.time_of_entry <= end_date:
+                total_sales += entry.entry
+        return total_sales
+
+    def get_total_purchases(self, start_date: datetime, end_date: datetime) -> int:
+        total_purchases = 0
+        for entry in self.inventory_entries:
+            # Filter by action type 'PURCHASE_SUPPLIER' and check if the entry is within the date range
+            if entry.action_type == InventoryActionTypes.PURCHASE_SUPPLIER.value and start_date <= entry.time_of_entry <= end_date:
+                total_purchases += entry.entry
+        return total_purchases
 
 
 class Category(BaseModel):
-    category_id: str
+    category_id: str = Field(default_factory=create_id)
     name: str
     description: str
     image_name: str
-    is_visible: bool
+    is_visible: bool = Field(default=True)
+    products: list[Products]
+    inventory_entries: list[Inventory]
 
+    def get_total_sales(self, start_date: datetime, end_date: datetime) -> int:
+        total_sales = 0
+        # Iterate over all products in the category and sum their total sales
+        for product in self.products:
+            total_sales += product.get_total_sales(start_date, end_date)
+        return total_sales
 
-class Inventory(BaseModel):
-    product_id: str
-    category_id: str
-    current_inventory: int
-    time_of_entry: datetime
+    def get_total_purchases(self, start_date: datetime, end_date: datetime) -> int:
+        total_purchases = 0
+        # Iterate over all products in the category and sum their total purchases
+        for product in self.products:
+            total_purchases += product.get_total_purchases(start_date, end_date)
+        return total_purchases
 
 

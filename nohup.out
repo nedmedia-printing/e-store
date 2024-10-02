@@ -1,0 +1,38 @@
+Traceback (most recent call last):
+  File "/home/mothetho/app/nedmedia/e-store/app.py", line 1, in <module>
+    from src.config import config_instance
+  File "/home/mothetho/app/nedmedia/e-store/src/config/__init__.py", line 3, in <module>
+    from pydantic import BaseSettings, Field
+  File "/home/mothetho/.virtualenvs/e-store/lib/python3.10/site-packages/pydantic/__init__.py", line 402, in __getattr__
+    return _getattr_migration(attr_name)
+  File "/home/mothetho/.virtualenvs/e-store/lib/python3.10/site-packages/pydantic/_migration.py", line 296, in wrapper
+    raise PydanticImportError(
+pydantic.errors.PydanticImportError: `BaseSettings` has been moved to the `pydantic-settings` package. See https://docs.pydantic.dev/2.9/migration/#basesettings-has-moved-to-pydantic-settings for more details.
+
+For further information visit https://errors.pydantic.dev/2.9/u/import-error
+Traceback (most recent call last):
+  File "/home/mothetho/app/nedmedia/e-store/app.py", line 1, in <module>
+    from src.config import config_instance
+  File "/home/mothetho/app/nedmedia/e-store/src/config/__init__.py", line 2, in <module>
+    from pydantic_settings import BaseSettings, SettingsConfigDict
+  File "/home/mothetho/.virtualenvs/e-store/lib/python3.10/site-packages/pydantic_settings/__init__.py", line 1, in <module>
+    from .main import BaseSettings, SettingsConfigDict
+  File "/home/mothetho/.virtualenvs/e-store/lib/python3.10/site-packages/pydantic_settings/main.py", line 5, in <module>
+    from pydantic import ConfigDict
+  File "<frozen importlib._bootstrap>", line 1075, in _handle_fromlist
+  File "/home/mothetho/.virtualenvs/e-store/lib/python3.10/site-packages/pydantic/__init__.py", line 411, in __getattr__
+    module = import_module(module_name, package=package)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "/home/mothetho/.virtualenvs/e-store/lib/python3.10/site-packages/pydantic/config.py", line 10, in <module>
+    from .aliases import AliasGenerator
+  File "/home/mothetho/.virtualenvs/e-store/lib/python3.10/site-packages/pydantic/aliases.py", line 8, in <module>
+    from pydantic_core import PydanticUndefined
+  File "/home/mothetho/.virtualenvs/e-store/lib/python3.10/site-packages/pydantic_core/__init__.py", line 30, in <module>
+    from .core_schema import CoreConfig, CoreSchema, CoreSchemaType, ErrorType
+  File "/home/mothetho/.virtualenvs/e-store/lib/python3.10/site-packages/pydantic_core/core_schema.py", line 12, in <module>
+    from decimal import Decimal
+  File "/usr/lib/python3.10/decimal.py", line 3, in <module>
+    from _decimal import *
+  File "<frozen importlib._bootstrap>", line 1022, in _find_and_load
+KeyboardInterrupt

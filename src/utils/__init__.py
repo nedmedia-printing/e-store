@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 from os import path
 from werkzeug.utils import secure_filename
+from zoneinfo import ZoneInfo
 
 ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png'}
 
@@ -24,15 +25,15 @@ class PaymentMethod(Enum):
     BANK_TRANSFER = "bank_transfer"
 
 
+def south_african_standard_time() -> str:
+    # Get the current time in UTC and convert it to South African Standard Time (SAST)
+    sast_time = datetime.now(ZoneInfo("Africa/Johannesburg"))
+    return sast_time.isoformat()
+
+
 def is_valid_ulid(value: str):
     ulid_regex = re.compile(r'^[0-9A-HJKMNP-TV-Z]{9,26}$')
     return ulid_regex.match(value)
-
-
-#
-# def is_valid_ulid(value: str) -> bool:
-#     ulid_regex = re.compile(r'^[0-9A-HJKMNP-TV-Z]{26}$')  # Fixed regex for ULID (26 characters)
-#     return bool(ulid_regex.match(value))
 
 def is_valid_ulid_strict(value):
     ulid_regex = re.compile(r'^[0-9A-HJKMNP-TV-Z]{26}$')

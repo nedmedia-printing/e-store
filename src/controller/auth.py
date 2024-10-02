@@ -11,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from src.controller import error_handler, UnauthorizedError, Controllers
 from src.database.models.profile import Profile
 from src.database.models.users import User, CreateUser, PayPal
-from src.database.sql.user import UserORM, PayPalORM
+from src.database.sql.user import UserORM
 from src.emailer import EmailModel
 # from src.main import send_mail
 

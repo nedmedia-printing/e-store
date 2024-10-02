@@ -1,10 +1,6 @@
 
 from enum import Enum
-
 from pydantic import BaseModel, Field, Extra
-
-from src.main import encryptor
-
 
 class UserType(str, Enum):
     ADMIN = 'admin'
@@ -55,6 +51,7 @@ class User(BaseModel):
         :param password:
         :return:
         """
+        from src.main import encryptor
         return encryptor.compare_hashes(hash=self.password_hash, password=password)
 
     def __eq__(self, other):
@@ -86,6 +83,7 @@ class CreateUser(BaseModel):
 
     @property
     def password_hash(self):
+        from src.main import encryptor
         return encryptor.create_hash(password=self.password)
 
     def to_dict(self) -> dict[str, str | bool]:
@@ -106,6 +104,7 @@ class PasswordResetUser(BaseModel):
 
     @property
     def password_hash(self):
+        from src.main import encryptor
         return encryptor.create_hash(password=self.password)
 
     def to_dict(self) -> dict[str, str | bool]:

@@ -23,21 +23,9 @@ async def login():
 
 
 @home_route.get('/admin')
-async def admin():
+async def get_admin():
     context = dict()
     return render_template('admin/admin.html', **context)
-
-
-@home_route.get('/admin/product/add')
-async def add_product():
-    context = dict()
-    return render_template('admin/add_product.html', **context)
-
-
-@home_route.get('/admin/products')
-async def get_products():
-    context = dict()
-    return render_template('admin/products.html', **context)
 
 
 @home_route.get('/admin/customers')

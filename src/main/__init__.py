@@ -2,14 +2,28 @@ from flask import Flask
 from src.config import config_instance
 
 from src.utils import template_folder, static_folder, upload_folder
+from src.controller.encryptor import Encryptor
+from src.controller.inventory_controller import InventoryController
+from src.controller.auth import UserController
+
+encryptor = Encryptor()
+inventory_controller = InventoryController()
+user_controller = UserController()
 
 
-def bootstrap():
-    # from src.database.projects import ProjectsORM
-    # ProjectsORM.create_if_not_table()
-    # from src.database.users import UsersORM
-    # UsersORM.create_if_not_table()
-    pass
+def _add_blue_prints(app: Flask):
+    """
+        this function adds blueprints
+    :param app:
+    :return:
+    """
+    from src.routes.home import home_route
+    from src.routes.inventory import inventory_route
+    from src.routes.auth import auth_route
+
+    app.register_blueprint(home_route)
+    app.register_blueprint(inventory_route)
+    app.register_blueprint(auth_route)
 
 
 def create_app(config=config_instance()):
@@ -20,7 +34,10 @@ def create_app(config=config_instance()):
     app.config.from_object(config)
 
     with app.app_context():
-        from src.routes.home import home_route
-        app.register_blueprint(home_route)
-        bootstrap()
+        _add_blue_prints(app=app)
+
+        # bootstrap()
+        encryptor.init_app(app=app)
+        inventory_controller.init_app(app=app)
+
     return app
