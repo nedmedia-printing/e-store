@@ -34,10 +34,12 @@ class User(BaseModel):
     is_client: bool = Field(default=False)
 
     def __str__(self):
-        return f"User(uid={self.uid}, branch_id={self.branch_id}, company_id={self.company_id}, username={self.username}, email={self.email})"
+        return f"User(uid={self.uid}, username={self.username}, email={self.email})"
 
     def __repr__(self):
-        return f"User(uid='{self.uid}', branch_id='{self.branch_id}', company_id='{self.company_id}', username='{self.username}', email='{self.email}', account_verified={self.account_verified}, is_system_admin={self.is_system_admin}, is_company_admin={self.is_company_admin}, is_employee={self.is_employee}, is_client={self.is_client})"
+        return f"User(uid='{self.uid}', username='{self.username}', email='{self.email}', " \
+               f"account_verified={self.account_verified}, is_system_admin={self.is_system_admin}, " \
+               f"is_client={self.is_client})"
 
     def __bool__(self) -> bool:
         return bool(self.uid) and bool(self.username) and bool(self.password_hash)
@@ -61,11 +63,6 @@ class User(BaseModel):
         if not isinstance(other, User):
             return False
         return self.uid == other.uid
-
-    @property
-    def can_access_employee_record(self):
-        """will allow employee or admin to access employee file only if it's an employee and account is verified"""
-        return (self.is_employee or self.is_company_admin) and self.account_verified
 
 
 class CreateUser(BaseModel):

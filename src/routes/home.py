@@ -16,10 +16,9 @@ async def get_home():
     context = dict()
     return render_template('index.html', **context)
 
-
 @home_route.get('/admin/login')
 async def login():
-    return render_template('auth.html')
+    return render_template('admin/signin.html')
 
 
 @home_route.get('/admin')

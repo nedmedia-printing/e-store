@@ -1,8 +1,8 @@
 import glob
-import os, re
+import re
+from os import path, makedirs
 from datetime import datetime, timedelta
 from enum import Enum
-from os import path
 from werkzeug.utils import secure_filename
 from zoneinfo import ZoneInfo
 
@@ -11,7 +11,6 @@ ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png'}
 
 def allowed_file(filename: str) -> bool:
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 from dateutil.relativedelta import relativedelta
 from ulid import ULID
@@ -80,8 +79,8 @@ def claims_upload_folder(company_id: str, claim_number: str) -> str:
     folder_path = claims_folder_path(company_id=company_id, claim_number=claim_number)
 
     # Ensure the directory exists
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
+    if not path.exists(folder_path):
+        makedirs(folder_path)
 
     return folder_path
 
@@ -97,26 +96,26 @@ def save_files_to_folder(folder_path: str, file_list: list):
     for file in file_list:
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file_path = os.path.join(folder_path, filename)
+            file_path = path.join(folder_path, filename)
             file.save(file_path)
             saved_files.append(filename)
     return saved_files
 
 
 def basename_filter(path: str) -> str:
-    filename = os.path.basename(path)
+    filename = path.basename(path)
     print(f"File Name : {filename}")
     return filename
 
 
 def load_claims_files_in_folder(folder_path: str):
     # Define the patterns for pictures and PDFs
-    picture_files = glob.glob(os.path.join(folder_path, "*.png")) + \
-                    glob.glob(os.path.join(folder_path, "*.jpg")) + \
-                    glob.glob(os.path.join(folder_path, "*.jpeg")) + \
-                    glob.glob(os.path.join(folder_path, "*.gif"))
+    picture_files = glob.glob(path.join(folder_path, "*.png")) + \
+                    glob.glob(path.join(folder_path, "*.jpg")) + \
+                    glob.glob(path.join(folder_path, "*.jpeg")) + \
+                    glob.glob(path.join(folder_path, "*.gif"))
 
-    pdf_files = glob.glob(os.path.join(folder_path, "*.pdf"))
+    pdf_files = glob.glob(path.join(folder_path, "*.pdf"))
 
     # Combine all files into a single list
     all_files = picture_files + pdf_files

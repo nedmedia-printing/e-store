@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template
-from flask import Blueprint, render_template
 
 from src.authentication import admin_login
 from src.database.models.users import User

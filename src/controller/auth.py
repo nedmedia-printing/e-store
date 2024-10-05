@@ -13,7 +13,7 @@ from src.database.models.profile import Profile
 from src.database.models.users import User, CreateUser, PayPal
 from src.database.sql.user import UserORM
 from src.emailer import EmailModel
-# from src.main import send_mail
+from src.main import send_mail
 
 
 class UserController(Controllers):

@@ -22,13 +22,13 @@ async def create_response(redirect_url, message=None, category=None) -> Response
     return response
 
 
-@auth_route.get('/login')
+@auth_route.get('/admin/login')
 async def get_auth():
     context = {}
     return render_template('admin/signin.html', **context)
 
 
-@auth_route.post('/login')
+@auth_route.post('/admin/login')
 async def do_login():
     try:
         # Phasing out username when login
@@ -41,7 +41,7 @@ async def do_login():
     login_user: User | None = await user_controller.login(email=auth_user.email, password=auth_user.password)
     print(f"logged in user: {login_user}")
     if login_user and login_user.email == auth_user.email:
-        response = await create_response(url_for('company.get_admin'))
+        response = await create_response(url_for('home.get_admin'))
 
         # Setting Loging Cookie
         delay = REMEMBER_ME_DELAY if auth_user.remember == "on" else 30
@@ -57,7 +57,7 @@ async def do_login():
                                      'Login failed. please try again', 'danger')
 
 
-@auth_route.get('/dashboard/logout')
+@auth_route.get('/admin/logout')
 async def do_logout():
     """
 
@@ -70,29 +70,29 @@ async def do_logout():
     return response
 
 
-@auth_route.get('/password-reset')
+@auth_route.get('/admin/password-reset')
 async def get_password_reset():
     context = {}
     return render_template('admin/password_reset.html', **context)
 
 
-@auth_route.post('/password-reset')
+@auth_route.post('/admin/password-reset')
 async def do_password_reset():
     context = {}
     # Check if User Email is available
     # Send Message to User with a link to reset password
     # Flash the message that email was sent with proper details never indicate failure
     flash(message="Message with a link to reset your password has been sent", category='success')
-    return redirect(url_for('home.get_admin'))
+    return redirect(url_for('home.get_home'))
 
 
-@auth_route.get('/register')
+@auth_route.get('/admin/register')
 async def get_register():
     context = {}
     return render_template('admin/signup.html', **context)
 
 
-@auth_route.post('/register')
+@auth_route.post('/admin/register')
 async def do_register():
     """
         **do_register**
@@ -103,7 +103,7 @@ async def do_register():
     try:
         email = request.form.get('email')
         password = request.form.get('password')
-        terms = request.form.get('terms')
+        terms = request.form.get('terms', "General User Agreement!")
         email = email.strip().lower()
         register_user: RegisterUser = RegisterUser(email=email, username=email, password=password, terms=terms)
     except ValidationError as e:
@@ -130,7 +130,7 @@ async def do_register():
     return await create_response(url_for('home.get_home'))
 
 
-@auth_route.post('/dashboard/resend-email/<string:uid>')
+@auth_route.post('/admin/resend-email/<string:uid>')
 @admin_login
 async def resend_verification_email(user: User, uid: str):
     """
@@ -143,14 +143,13 @@ async def resend_verification_email(user: User, uid: str):
         return redirect(url_for('home.get_home'))
 
     _ = await user_controller.resend_verification_email(user=employee_user)
-    mes = f"""A verification email has been sent please inform the employee to 
-    verify his/her email address : {employee_user.email}"""
+    mes = f"""A verification email has been sent please open your email to verify: {employee_user.email}"""
 
     flash(message=mes, category="success")
     return redirect(url_for('home.get_admin'))
 
 
-@auth_route.post('/dashboard/manual-employee-account-verification/<string:uid>')
+@auth_route.post('/admin/manual-employee-account-verification/<string:uid>')
 @admin_login
 async def manual_verification_admin(user: User, uid: str):
     """
@@ -170,7 +169,7 @@ async def manual_verification_admin(user: User, uid: str):
     return redirect(url_for('home.get_admin'))
 
 
-@auth_route.post('/dashboard/manual-employee-account-deactivation/<string:uid>')
+@auth_route.post('/admin/manual-employee-account-deactivation/<string:uid>')
 @admin_login
 async def deactivate_employee_account_admin(user: User, uid: str):
     """
@@ -190,7 +189,7 @@ async def deactivate_employee_account_admin(user: User, uid: str):
     return redirect(url_for('home.get_admin'))
 
 
-@auth_route.get('/dashboard/verify-email')
+@auth_route.get('/admin/verify-email')
 async def verify_email():
     """
         **verify_email**

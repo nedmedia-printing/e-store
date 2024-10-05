@@ -1,13 +1,20 @@
 from flask import Flask
 from src.config import config_instance
 
-from src.utils import template_folder, static_folder, upload_folder
+from src.emailer import SendMail
+from src.cache.caching import Caching
 from src.controller.encryptor import Encryptor
+
+system_cache = Caching()
+send_mail = SendMail()
+encryptor = Encryptor()
+
+from src.utils import template_folder, static_folder, upload_folder
+
 from src.controller.inventory_controller import InventoryController
 from src.controller.auth import UserController
 from src.main.bootstrap import bootstrap
 
-encryptor = Encryptor()
 inventory_controller = InventoryController()
 user_controller = UserController()
 
