@@ -24,7 +24,8 @@ async def get_categories(user: User):
     :param user:
     :return:
     """
-    context = dict(user=user)
+    categories = await inventory_controller.get_product_categories()
+    context = dict(user=user, categories=categories)
     return render_template('admin/inventory/categories.html', **context)
 
 
