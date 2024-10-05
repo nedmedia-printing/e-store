@@ -5,6 +5,7 @@ from src.database.models.products import Products, Category
 from src.database.models.users import User
 from src.logger import init_logger
 from src.main import inventory_controller
+from src.utils import products_upload_folder, save_files_to_folder
 
 inventory_route = Blueprint('inventory', __name__)
 inventory_logger = init_logger('inventory_route')
@@ -38,12 +39,18 @@ async def add_category(user: User):
     :return:
     """
     try:
-        category = Category(**request.form)
+        category = Category(**request.form, inventory_entries=[], products=[])
+        display_image = request.files.getlist('display_image')
     except ValidationError as e:
         inventory_logger.error(str(e))
         return redirect(url_for('inventory.get_categories'))
 
     new_category: Category = await inventory_controller.add_category(category=category)
+    if display_image:
+        category_image_upload_folder_path = products_upload_folder(category_id=category.category_id, product_id=None)
+
+        save_files_to_folder(folder_path=category_image_upload_folder_path, file_list=display_image)
+
     if not isinstance(category, Category):
         flash(message="Unable to create new category please try again later", category="danger")
 

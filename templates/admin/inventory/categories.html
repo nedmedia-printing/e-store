@@ -6,18 +6,32 @@
         <h2 class="main-title">Categories</h2>
           <div>
           </div>
-            <div class="table-wrapper">
+            <div class="users-table table-wrapper">
                     <table class="users-table table">
-                        <tr class="title">
-                                <th>Category Name</th>
-                                <th>Description</th>
-                                <th>Products</th>
-                                <th>Tags</th>
-                        </tr>
+                        <thead>
+                            <tr class="users-table-info">
+                                    <th>Category Name</th>
+                                    <th>Description</th>
+                                    <th>Products</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for category in categories %}
+                                  <tr>
+                                    <td>{{  category.name | title }}</td>
+                                    <td>{{  category.description }}</td>
+                                    <td>{{ category.product_count }}</td>
+                                    <td></td>
+                                  </tr>
+                            {% endfor %}
+                        </tbody>
                     </table>
             </div>
       </div>
     <div class="container">
+        <div class="white-block">
+            Use the form below to add new categories
+        </div>
         <form class="form" action="{{ url_for('inventory.add_category') }}" method="POST">
           <label class="form-label-wrapper">
             <p class="form-label">Category Name</p>

@@ -89,18 +89,20 @@ def template_folder() -> str:
     return path.join(path.dirname(path.abspath(__file__)), '../../templates')
 
 
-def product_folder_path(category_id: str, product_id: str) -> str:
+def product_folder_path(category_id: str, product_id: str| None = None) -> str:
     """
 
     :param category_id:
     :param product_id:
     :return:
     """
+    if product_id is None:
+        return f"{documents_folder()}/company_files/{category_id}/uploads"
 
     return f"{documents_folder()}/company_files/{category_id}/uploads/{product_id}"
 
 
-def products_upload_folder(category_id: str, product_id: str) -> str:
+def products_upload_folder(category_id: str, product_id: str | None = None) -> str:
     folder_path = product_folder_path(category_id=category_id, product_id=product_id)
 
     # Ensure the directory exists

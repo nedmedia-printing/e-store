@@ -80,10 +80,13 @@ class Category(BaseModel):
     category_id: str = Field(default_factory=create_id)
     name: str
     description: str
-    image_name: str
     is_visible: bool = Field(default=True)
     products: list[Products]
     inventory_entries: list[Inventory]
+
+    @property
+    def product_count(self) -> int:
+        return len(self.products)
 
     def get_total_sales(self, start_date: datetime, end_date: datetime) -> int:
         total_sales = 0

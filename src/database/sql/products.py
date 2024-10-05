@@ -55,7 +55,6 @@ class CategoryORM(Base):
     category_id: str = Column(String(ID_LEN), primary_key=True)
     name: str = Column(String(NAME_LEN))
     description: str = Column(String(NAME_LEN))
-    image_name: str = Column(String(255))
     is_visible: bool = Column(Boolean)
     products = relationship('ProductsORM')
     inventory_entries = relationship('InventoryORM', uselist=True)
@@ -75,7 +74,6 @@ class CategoryORM(Base):
             "category_id": self.category_id,
             "name": self.name,
             "description": self.description,
-            "image_name": self.image_name,
             "is_visible": self.is_visible,
             "products": [product.to_dict() for product in self.products],
             "inventory_entries": [entry.to_dict() for entry in self.inventory_entries]

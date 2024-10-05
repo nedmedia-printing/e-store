@@ -34,12 +34,8 @@
                             <select class="form-input" name="category" id="category">
 
                                 {% for category in categories %}
-                                    <option value="{{ category }}">{{ category| title }}</option>
+                                    <option value="{{ category.category_id }}">{{ category.name| title }}</option>
                                 {% endfor %}
-                                <option value="x_banners">X Banners</option>
-                                <option value="correx_boards">Correx Boards</option>
-                                <option value="roll_up_banners">Roll Up Banners</option>
-                                <option value="business_cards">Business Cards</option>
                             </select>
                             {% else %}
                                 <span class="white-block"> Please Define Product Categories</span>
