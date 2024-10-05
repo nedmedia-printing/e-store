@@ -9,14 +9,14 @@ inventory_route = Blueprint('inventory', __name__)
 
 @inventory_route.get('/admin/inventory')
 @admin_login
-def get_inventory(user: User):
+async def get_inventory(user: User):
     pass
 
 
 @inventory_route.get('/admin/products')
 @admin_login
 async def get_products(user: User):
-    context = dict()
+    context = dict(user=user)
     return render_template('admin/products.html', **context)
 
 
@@ -30,5 +30,6 @@ async def add_product(user: User):
 
 @inventory_route.post('/admin/products/create-product')
 @admin_login
-def create_product(user: User):
+async def create_product(user: User):
     pass
+get_products
