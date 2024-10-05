@@ -35,8 +35,6 @@ async def add_product(user: User):
 @admin_login
 async def get_product(user: User, product_id: str):
     """
-
-    :param category_id:
     :param user:
     :param product_id:
     :return:
