@@ -17,5 +17,22 @@
                     </table>
             </div>
       </div>
+    <div class="container">
+        <form class="form" action="{{ url_for('inventory.add_category') }}" method="POST">
+          <label class="form-label-wrapper">
+            <p class="form-label">Category Name</p>
+            <input class="form-input" type="text" name="name" id="name" required>
+          </label>
+          <label class="form-label-wrapper">
+            <p class="form-label">Description</p>
+            <input class="form-input" type="text" name="description" id="description" required>
+          </label>
+          <label class="form-label-wrapper">
+            <p class="form-label">Display Image</p>
+            <input class="form-input" type="file" name="display_image" id="display_image" required>
+          </label>
+            <button class="form-btn primary-default-btn transparent-btn">Add Category</button>
+        </form>
+    </div>
     </main>
 {% endblock %}

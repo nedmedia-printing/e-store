@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from pydantic import ValidationError
 from src.authentication import admin_login
-from src.database.models.products import Products
+from src.database.models.products import Products, Category
 from src.database.models.users import User
 from src.logger import init_logger
 from src.main import inventory_controller
@@ -27,6 +27,27 @@ async def get_categories(user: User):
     categories = await inventory_controller.get_product_categories()
     context = dict(user=user, categories=categories)
     return render_template('admin/inventory/categories.html', **context)
+
+
+@inventory_route.post('/admin/category/add')
+@admin_login
+async def add_category(user: User):
+    """
+
+    :param user:
+    :return:
+    """
+    try:
+        category = Category(**request.form)
+    except ValidationError as e:
+        inventory_logger.error(str(e))
+        return redirect(url_for('inventory.get_categories'))
+
+    new_category: Category = await inventory_controller.add_category(category=category)
+    if not isinstance(category, Category):
+        flash(message="Unable to create new category please try again later", category="danger")
+
+    return redirect(url_for('inventory.get_categories'))
 
 
 @inventory_route.get('/admin/products')
