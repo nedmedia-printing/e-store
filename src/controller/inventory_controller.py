@@ -32,6 +32,17 @@ class InventoryController(Controllers):
 
             session.add(ProductsORM(**product.dict()))
 
+    async def get_product(self, product_id: str) -> Products | None:
+        """
+
+        :param product_id:
+        :return:
+        """
+        with self.get_session() as session:
+            product_orm = session.query(ProductsORM).filter_by(product_id=product_id).first()
+            if isinstance(product_orm, ProductsORM):
+                return Products(**product_orm.to_dict())
+
     async def create_inventory_entry(self, inventory: Inventory) -> Inventory:
         with self.get_session() as session:
             session.add(InventoryORM(**inventory.dict()))
