@@ -135,19 +135,14 @@ def basename_filter(path: str) -> str:
     return filename
 
 
-def load_claims_files_in_folder(folder_path: str):
+def load_files_in_folder(folder_path: str):
     # Define the patterns for pictures and PDFs
     picture_files = glob.glob(path.join(folder_path, "*.png")) + \
                     glob.glob(path.join(folder_path, "*.jpg")) + \
                     glob.glob(path.join(folder_path, "*.jpeg")) + \
                     glob.glob(path.join(folder_path, "*.gif"))
 
-    pdf_files = glob.glob(path.join(folder_path, "*.pdf"))
-
-    # Combine all files into a single list
-    all_files = picture_files + pdf_files
-
-    return all_files
+    return picture_files
 
 
 def format_with_grouping(number):

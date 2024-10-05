@@ -2,7 +2,9 @@ from datetime import date, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
-from src.utils import create_id, south_african_standard_time, generate_isn13
+from src.utils import create_id, south_african_standard_time, generate_isn13, load_files_in_folder, \
+    products_upload_folder
+
 
 class InventoryActionTypes(Enum):
     ADJUST_ADD: str = "ADJUST ADD"
@@ -81,6 +83,7 @@ class Category(BaseModel):
     name: str
     description: str
     is_visible: bool = Field(default=True)
+    display_images: list[str] | None = Field(default=[])
     products: list[Products]
     inventory_entries: list[Inventory]
 
@@ -102,4 +105,10 @@ class Category(BaseModel):
             total_purchases += product.get_total_purchases(start_date, end_date)
         return total_purchases
 
-
+    def update_category_images(self):
+        """
+            lookup category images from the upload folder
+        :return:
+        """
+        folder_path = products_upload_folder(category_id=self.category_id, product_id=None)
+        self.display_images = load_files_in_folder(folder_path=folder_path)

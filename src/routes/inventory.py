@@ -25,8 +25,13 @@ async def get_categories(user: User):
     :param user:
     :return:
     """
-    categories = await inventory_controller.get_product_categories()
-    context = dict(user=user, categories=categories)
+    categories: list[Category] = await inventory_controller.get_product_categories()
+    updated_category_list = []
+    for category in categories:
+        category.update_category_images()
+        updated_category_list.append(category)
+
+    context = dict(user=user, categories=updated_category_list)
     return render_template('admin/inventory/categories.html', **context)
 
 

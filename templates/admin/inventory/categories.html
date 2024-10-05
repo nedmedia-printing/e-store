@@ -10,6 +10,7 @@
                     <table class="users-table table">
                         <thead>
                             <tr class="users-table-info">
+                                <th>Display Image</th>
                                     <th>Category Name</th>
                                     <th>Description</th>
                                     <th>Products</th>
@@ -18,6 +19,19 @@
                         <tbody>
                             {% for category in categories %}
                                   <tr>
+                                    <td>
+                                      <label class="users-table__checkbox">
+                                        <div class="categories-table-img">
+                                          <picture>
+                                              {% if category.display_images %}
+                                                <img src="{{ category.display_images[-1] }}" alt="category">
+                                              {% else %}
+                                                <img src="/static/images/logo_slim.jpg" alt="category">
+                                              {% endif %}
+                                          </picture>
+                                        </div>
+                                      </label>
+                                    </td>
                                     <td>{{  category.name | title }}</td>
                                     <td>{{  category.description }}</td>
                                     <td>{{ category.product_count }}</td>
