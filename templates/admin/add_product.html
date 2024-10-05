@@ -3,48 +3,64 @@
 {% block content %}
     <main class="main" id="skip-target">
       <div class="container">
-        <h2 class="main-title">Add a Product</h2>
-          <div>
-
+            <h2 class="main-title">Add a Product</h2>
+          <div class="white-block">
+            <span>Add Products or Services to your store in order to start selling them</span>
           </div>
           <form class="form" method="POST" action="{{ url_for('inventory.create_product') }}">
             <div class="row">
                 <div class="col-lg-9 col-md-9">
-                        <div class="col-lg-12">
-                            <div class="form-label">Product Title</div>
-                            <input class="form-input">
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="form-label">Product Description</div>
-                            <textarea  rows="8" cols="50"> </textarea>
-                        </div>
+                        <label class="form-label-wrapper">
+                            <p class="form-label">Product Title</p>
+                            <input type="text" class="form-input"  name="product_title" id="product_title"> </input>
+                        </label>
+                        <label class="form-label-wrapper">
+                            <p class="form-label">Product Description</p>
+                            <textarea class="form-input"  rows="8" cols="50" name="product_description" id="product_description"> </textarea>
+                        </label>
 
-                        <div class="col-lg-12">
-                            <div class="form-label">Display Image</div>
-                            <input type="file">
-                        </div>
+                        <label class="form-label-wrapper">
+                            <p class="form-label">Display Image</p>
+                            <input type="file" class="form-input" name="display_image" id="display_image">
+                        </label>
                 </div>
                 <div class="col-lg-3">
                     <h2 class="main-title">Organize</h2>
 
                         <div class="col-lg-12">
-                            <div class="form-label">Category</div>
-                            <select class="form-input">
-                                <option>Banners</option>
-                                <option>Business Cards</option>
+                        <label class="form-label-wrapper">
+                            <p class="form-label">Category</p>
+                            <select class="form-input" name="category" id="category">
+                                <option value="x_banners">X Banners</option>
+                                <option value="correx_boards">Correx Boards</option>
+                                <option value="roll_up_banners">Roll Up Banners</option>
+                                <option value="business_cards">Business Cards</option>
                             </select>
+                        </label>
+
+
                         </div>
                 </div>
                 <div class="col-lg-12">
                     <h2 class="main-title">Inventory</h2>
+                    <span class="white-block">Note do not add commas in your price just understand that - 1 rands = 100
+                        in other words specify your prices in cents only example : R 255.34 will become 25534</span>
 
-                        <div class="form-label">Sell Price</div>
-                        <input class="form-input">
+                        <label class="form-label-wrapper">
+                            <p class="form-label">Sell Price</p>
+                            <input type="number" class="form-input" name="sell_price" id="sell_price">
+                        </label>
 
-                        <div class="form-label">Buy Price</div>
-                        <input class="form-input">
+                        <label class="form-label-wrapper">
+                            <p class="form-label">Buy Price</p>
+                            <input type="number" class="form-input" name="buy_price" id="buy_price">
+                        </label>
                 </div>
-                <input type="submit" value="Publish Product" class="button primary" />
+
+                <button class="form-btn primary-default-btn transparent-btn">
+                    Publish Product
+                </button>
+
             </div>
           </form>
       </div>
