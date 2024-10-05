@@ -1,10 +1,11 @@
 from datetime import datetime
 
-from sqlalchemy import Column, String, DateTime, Boolean, Integer, ForeignKey
+from sqlalchemy import Column, String, DateTime, Boolean, Integer, ForeignKey, inspect
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 from src.database.constants import ID_LEN, NAME_LEN
+from src.database.sql import engine
 
 Base = declarative_base()
 
@@ -22,6 +23,16 @@ class ProductsORM(Base):
     image_name: str = Column(String(NAME_LEN))
     time_of_entry: datetime = Column(DateTime)
     inventory_entries = relationship('InventoryORM', uselist=True)
+
+    @classmethod
+    def create_if_not_table(cls):
+        if not inspect(engine).has_table(cls.__tablename__):
+            cls.__table__.create(bind=engine)
+
+    @classmethod
+    def delete_table(cls):
+        if inspect(engine).has_table(cls.__tablename__):
+            cls.__table__.drop(bind=engine)
 
     def to_dict(self):
         return {
@@ -49,6 +60,16 @@ class CategoryORM(Base):
     products = relationship('ProductsORM')
     inventory_entries = relationship('InventoryORM', uselist=True)
 
+    @classmethod
+    def create_if_not_table(cls):
+        if not inspect(engine).has_table(cls.__tablename__):
+            cls.__table__.create(bind=engine)
+
+    @classmethod
+    def delete_table(cls):
+        if inspect(engine).has_table(cls.__tablename__):
+            cls.__table__.drop(bind=engine)
+
     def to_dict(self):
         return {
             "category_id": self.category_id,
@@ -69,6 +90,16 @@ class InventoryORM(Base):
     entry: int = Column(Integer)
     action_type: str = Column(String(NAME_LEN))
     time_of_entry: datetime = Column(DateTime)
+
+    @classmethod
+    def create_if_not_table(cls):
+        if not inspect(engine).has_table(cls.__tablename__):
+            cls.__table__.create(bind=engine)
+
+    @classmethod
+    def delete_table(cls):
+        if inspect(engine).has_table(cls.__tablename__):
+            cls.__table__.drop(bind=engine)
 
     def to_dict(self):
         return {

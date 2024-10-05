@@ -5,6 +5,7 @@ from src.utils import template_folder, static_folder, upload_folder
 from src.controller.encryptor import Encryptor
 from src.controller.inventory_controller import InventoryController
 from src.controller.auth import UserController
+from src.main.bootstrap import bootstrap
 
 encryptor = Encryptor()
 inventory_controller = InventoryController()
@@ -36,7 +37,7 @@ def create_app(config=config_instance()):
     with app.app_context():
         _add_blue_prints(app=app)
 
-        # bootstrap()
+        bootstrap()
         encryptor.init_app(app=app)
         inventory_controller.init_app(app=app)
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, ForeignKey, inspect, Integer
+from sqlalchemy import Column, String, Boolean, inspect
 
 from src.database.constants import ID_LEN, NAME_LEN
 from src.database.sql import Base, engine
