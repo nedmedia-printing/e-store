@@ -15,6 +15,7 @@ ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png'}
 def allowed_file(filename: str) -> bool:
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 def generate_isn13():
     # Generate the first 12 digits randomly
     first_12_digits = [random.randint(0, 9) for _ in range(12)]
@@ -88,19 +89,19 @@ def template_folder() -> str:
     return path.join(path.dirname(path.abspath(__file__)), '../../templates')
 
 
-def claims_folder_path(company_id: str, claim_number: str) -> str:
+def product_folder_path(category_id: str, product_id: str) -> str:
     """
 
-    :param company_id:
-    :param claim_number:
+    :param category_id:
+    :param product_id:
     :return:
     """
 
-    return f"{documents_folder()}/company_files/{company_id}/uploads/{claim_number}"
+    return f"{documents_folder()}/company_files/{category_id}/uploads/{product_id}"
 
 
-def claims_upload_folder(company_id: str, claim_number: str) -> str:
-    folder_path = claims_folder_path(company_id=company_id, claim_number=claim_number)
+def products_upload_folder(category_id: str, product_id: str) -> str:
+    folder_path = product_folder_path(category_id=category_id, product_id=product_id)
 
     # Ensure the directory exists
     if not path.exists(folder_path):
