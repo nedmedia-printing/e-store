@@ -16,6 +16,18 @@ async def get_inventory(user: User):
     pass
 
 
+@inventory_route.get('/admin/categories')
+@admin_login
+async def get_categories(user: User):
+    """
+
+    :param user:
+    :return:
+    """
+    context = dict(user=user)
+    return render_template('admin/inventory/categories.html', **context)
+
+
 @inventory_route.get('/admin/products')
 @admin_login
 async def get_products(user: User):
@@ -39,8 +51,8 @@ async def get_product(user: User, product_id: str):
     :param product_id:
     :return:
     """
-    product: Products = await inventory_controller.get_product(product_id=product_id)
     context = dict(user=user)
+    product: Products = await inventory_controller.get_product(product_id=product_id)
     if not isinstance(product, Products):
         flash(message="Product Not Found", category="danger")
     context.update(product=product)
@@ -52,7 +64,6 @@ async def get_product(user: User, product_id: str):
 async def create_product(user: User):
     try:
         product = Products(**request.form)
-
     except ValidationError as e:
         inventory_logger.error(str(e))
         flash(message="please enter all required fields", category='danger')

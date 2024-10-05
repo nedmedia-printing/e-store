@@ -5,6 +5,9 @@ from datetime import datetime, timedelta
 from enum import Enum
 from werkzeug.utils import secure_filename
 from zoneinfo import ZoneInfo
+import random
+from dateutil.relativedelta import relativedelta
+from ulid import ULID
 
 ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png'}
 
@@ -12,8 +15,28 @@ ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png'}
 def allowed_file(filename: str) -> bool:
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-from dateutil.relativedelta import relativedelta
-from ulid import ULID
+def generate_isn13():
+    # Generate the first 12 digits randomly
+    first_12_digits = [random.randint(0, 9) for _ in range(12)]
+
+    # Calculate the checksum for the 13th digit
+    def calculate_checksum(digits):
+        total = 0
+        for idx, digit in enumerate(digits):
+            if idx % 2 == 0:
+                total += digit
+            else:
+                total += digit * 3
+        checksum = (10 - (total % 10)) % 10
+        return checksum
+
+    checksum = calculate_checksum(first_12_digits)
+
+    # Append the checksum to get the full ISN-13 barcode
+    full_isn13 = first_12_digits + [checksum]
+
+    # Convert list of numbers to a string
+    return ''.join(map(str, full_isn13))
 
 
 # TODO create a class to contain this enum types for the entire project
@@ -33,6 +56,7 @@ def south_african_standard_time() -> str:
 def is_valid_ulid(value: str):
     ulid_regex = re.compile(r'^[0-9A-HJKMNP-TV-Z]{9,26}$')
     return ulid_regex.match(value)
+
 
 def is_valid_ulid_strict(value):
     ulid_regex = re.compile(r'^[0-9A-HJKMNP-TV-Z]{26}$')

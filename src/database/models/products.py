@@ -2,12 +2,7 @@ from datetime import date, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
-from src.utils import create_id, south_african_standard_time
-
-
-def south_african_standard_time() -> date:
-    return datetime.now()
-
+from src.utils import create_id, south_african_standard_time, generate_isn13
 
 class InventoryActionTypes(Enum):
     ADJUST_ADD: str = "ADJUST ADD"
@@ -46,7 +41,7 @@ class Products(BaseModel):
     product_id: str = Field(default_factory=create_id)
     category_id: str
     supplier_id: str | None = Field(default=None)
-    barcode: str
+    barcode: str = Field(default_factory=generate_isn13)
     name: str
     description: str
     sell_price: int
