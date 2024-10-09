@@ -39,6 +39,7 @@ async def get_categories(user: User):
 @admin_login
 async def add_category(user: User):
     """
+        will only add a new category
 
     :param user:
     :return:
