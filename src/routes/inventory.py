@@ -61,9 +61,7 @@ async def add_category(user: User):
         inventory_logger.info(f"will upload Category Display Image: {category_image_upload_folder_path}")
         save_files_to_folder(folder_path=category_image_upload_folder_path, file_list=display_image)
 
-    if not isinstance(category, Category):
-        flash(message="Unable to create new category please try again later", category="danger")
-
+    flash(message="Successfully created new category", category="success")
     return redirect(url_for('inventory.get_categories'))
 
 
@@ -115,9 +113,17 @@ async def create_product(user: User):
 
     new_product: Products = await inventory_controller.add_product(product=product)
     inventory_logger.info(f"Created New Product: {new_product}")
-    if isinstance(new_product, Products):
-        return redirect(url_for('inventory.get_product', product_id=new_product.product_id))
-    else:
+    if not isinstance(new_product, Products):
         flash(message="Unable to create Product please try again later or check your product details",
               category="danger")
-        return redirect(url_for('inventory.get_products'))
+
+        return redirect(url_for('inventory.get_product', product_id=new_product.product_id))
+
+    if display_image:
+        product_image_upload_folder_path = products_upload_folder(category_id=new_product.category_id, product_id=new_product.product_id)
+        inventory_logger.info("will upload new product image to {product_image_upload_folder_path}")
+        save_files_to_folder(folder_path=product_image_upload_folder_path, file_list=display_image)
+
+    flash(message="Successfully created new product", category="success")
+
+    return redirect(url_for('inventory.get_product', product_id=new_product.product_id))
