@@ -48,10 +48,10 @@ class PaymentMethod(Enum):
     BANK_TRANSFER = "bank_transfer"
 
 
-def south_african_standard_time() -> str:
+def south_african_standard_time() -> datetime:
     # Get the current time in UTC and convert it to South African Standard Time (SAST)
-    sast_time = datetime.now(ZoneInfo("Africa/Johannesburg"))
-    return sast_time.isoformat()
+    return datetime.now(ZoneInfo("Africa/Johannesburg"))
+
 
 
 def is_valid_ulid(value: str):
@@ -103,8 +103,8 @@ def product_folder_path(category_id: str, product_id: str| None = None) -> str:
 
 
 def products_upload_folder(category_id: str, product_id: str | None = None) -> str:
-    folder_path = product_folder_path(category_id=category_id, product_id=product_id)
 
+    folder_path = product_folder_path(category_id=category_id, product_id=product_id)
     # Ensure the directory exists
     if not path.exists(folder_path):
         makedirs(folder_path)

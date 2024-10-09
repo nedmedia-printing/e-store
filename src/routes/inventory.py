@@ -53,7 +53,6 @@ async def add_category(user: User):
     new_category: Category = await inventory_controller.add_category(category=category)
     if display_image:
         category_image_upload_folder_path = products_upload_folder(category_id=category.category_id, product_id=None)
-
         save_files_to_folder(folder_path=category_image_upload_folder_path, file_list=display_image)
 
     if not isinstance(category, Category):
@@ -65,7 +64,9 @@ async def add_category(user: User):
 @inventory_route.get('/admin/products')
 @admin_login
 async def get_products(user: User):
-    context = dict(user=user)
+    products_list: list[Products] = await inventory_controller.get_products()
+    inventory_logger.info(f"Inventory : {products_list}")
+    context = dict(user=user, products_list=products_list)
     return render_template('admin/inventory/products.html', **context)
 
 
@@ -103,6 +104,11 @@ async def create_product(user: User):
         flash(message="please enter all required fields", category='danger')
         return redirect(url_for('inventory.add_product'))
 
-    new_product: Products = inventory_controller.add_product(product=product)
+    new_product: Products = await inventory_controller.add_product(product=product)
     inventory_logger.info(f"Created New Product: {new_product}")
-    return redirect(url_for('inventory.get_product', porduct_id=new_product.product_id))
+    if isinstance(new_product, Products):
+        return redirect(url_for('inventory.get_product', product_id=new_product.product_id))
+    else:
+        flash(message="Unable to create Product please try again later or check your product details", category="danger")
+        return redirect(url_for('inventory.get_products'))
+

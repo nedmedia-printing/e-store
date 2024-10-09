@@ -8,13 +8,41 @@
           </div>
             <div class="table-wrapper">
                     <table class="users-table table">
+                        <thead>
                         <tr class="title">
+                                <th>Display Image</th>
                                 <th>Product Name</th>
                                 <th>Buy Price</th>
                                 <th>Sell Price</th>
-                                <th>Category</th>
-                                <th>Tags</th>
+                                <th>Inventory</th>
+
                         </tr>
+                        </thead>
+                        <tbody>
+                        {% for product in products_list %}
+                                  <tr>
+                                    <td>
+                                      <label class="users-table__checkbox">
+                                        <div class="categories-table-img">
+                                        <a href="{{ url_for('inventory.get_product', product_id=product.product_id) }}">
+                                            <picture>
+                                                    {% if product.display_image %}
+                                                        <img src="{{ product.display_images[-1] }}" alt="category">
+                                                    {% else %}
+                                                        <img src="/static/images/logo_slim.jpg" alt="{{ product.name }}">
+                                                    {% endif %}
+                                            </picture>
+                                        </a>
+                                        </div>
+                                      </label>
+                                    </td>
+                                      <td><a href="{{ url_for('inventory.get_product', product_id=product.product_id) }}">{{ product.name| title }} </a></td>
+                                    <td>{{ product.buy_price }}</td>
+                                    <td>{{ product.sell_price }}</td>
+                                    <td>{{ product.inventory_count }} </td>
+                                  </tr>
+                        {% endfor %}
+                        </tbody>
                     </table>
             </div>
       </div>

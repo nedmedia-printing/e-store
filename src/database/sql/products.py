@@ -14,13 +14,12 @@ class ProductsORM(Base):
     __tablename__ = "products"
     product_id: str = Column(String(ID_LEN), primary_key=True)
     category_id: str = Column(String(ID_LEN), ForeignKey('category.category_id'))
-    supplier_id: str = Column(String(ID_LEN))
+    supplier_id: str = Column(String(ID_LEN), nullable=True)
     barcode: str = Column(String(NAME_LEN))
     name: str = Column(String(NAME_LEN))
     description: str = Column(String(NAME_LEN))
     sell_price: int = Column(Integer)
     buy_price: int = Column(Integer)
-    image_name: str = Column(String(NAME_LEN))
     time_of_entry: datetime = Column(DateTime)
     inventory_entries = relationship('InventoryORM', uselist=True)
 
@@ -44,7 +43,6 @@ class ProductsORM(Base):
             "description": self.description,
             "sell_price": self.sell_price,
             "buy_price": self.buy_price,
-            "image_name": self.image_name,
             "time_of_entry": self.time_of_entry.isoformat() if self.time_of_entry else None,
             "inventory_entries": [entry.to_dict() for entry in self.inventory_entries]
         }

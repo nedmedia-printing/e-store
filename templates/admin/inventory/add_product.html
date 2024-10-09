@@ -12,11 +12,11 @@
                 <div class="col-lg-9 col-md-9">
                         <label class="form-label-wrapper">
                             <p class="form-label">Product Title</p>
-                            <input type="text" class="form-input"  name="product_title" id="product_title"> </input>
+                            <input type="text" class="form-input"  name="name" id="product_title"> </input>
                         </label>
                         <label class="form-label-wrapper">
                             <p class="form-label">Product Description</p>
-                            <textarea class="form-input"  rows="8" cols="50" name="product_description" id="product_description"> </textarea>
+                            <textarea class="form-input"  rows="8" cols="50" name="description" id="product_description"> </textarea>
                         </label>
 
                         <label class="form-label-wrapper">
@@ -31,12 +31,16 @@
                         <label class="form-label-wrapper">
                             <p class="form-label">Category</p>
                             {% if categories %}
-                            <select class="form-input" name="category" id="category">
+                            <select class="form-input" name="category_id" id="category">
 
                                 {% for category in categories %}
                                     <option value="{{ category.category_id }}">{{ category.name| title }}</option>
                                 {% endfor %}
                             </select>
+                                <a href="{{ url_for("inventory.get_categories") }}" class="form-btn primary-default-btn transparent-btn">
+                                    Manage Categories
+                                </a>
+
                             {% else %}
                                 <span class="white-block"> Please Define Product Categories</span>
                                 <button class="form-btn primary-default-btn transparent-btn">

@@ -1,4 +1,4 @@
-from src.controller import Controllers
+from src.controller import Controllers, error_handler
 from src.database.models.products import Category, Products, Inventory
 from src.database.sql.products import CategoryORM, ProductsORM, InventoryORM
 
@@ -24,13 +24,17 @@ class InventoryController(Controllers):
             categories_list_orm = session.query(CategoryORM).all()
             return [Category(**cat.to_dict()) for cat in categories_list_orm]
 
-    async def add_product(self, product: Products):
+    @error_handler
+    async def add_product(self, product: Products) -> Products:
         with self.get_session() as session:
-            is_product_available = session.query(ProductsORM).filter_by(name=product.name).first()
+            is_product_available = session.query(ProductsORM).filter_by(name=product.name.casefold()).first()
+            self.logger.info(f"Adding Product: {product}")
             if is_product_available:
                 return None
-
-            session.add(ProductsORM(**product.dict()))
+            prepared_dict = product.dict(exclude={'display_images', 'image_name'})
+            self.logger.info(f"Prepared Dict: {prepared_dict}")
+            session.add(ProductsORM(**prepared_dict))
+            return product
 
     async def get_product(self, product_id: str) -> Products | None:
         """
@@ -48,5 +52,12 @@ class InventoryController(Controllers):
             session.add(InventoryORM(**inventory.dict()))
             return inventory
 
-    async def get_products(self):
-        pass
+    async def get_products(self) -> list[Products]:
+        """
+
+        :return:
+        """
+        with self.get_session() as session:
+            products_orm_list: list[ProductsORM] = session.query(ProductsORM).all()
+            return [Products(**product.to_dict()) for product in products_orm_list if isinstance(product, ProductsORM)]
+

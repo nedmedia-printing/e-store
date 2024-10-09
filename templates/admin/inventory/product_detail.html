@@ -1,10 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
 
-</body>
-</html>
+
+
+{% extends "admin/layout/page.html" %}
+{% block content %}
+    <main class="main" id="skip-target">
+      <div class="container-xxl flex-grow-1 container-p-y">
+
+
+       <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-6 gap-3">
+          <div class="d-flex flex-column justify-content-center">
+            <div class="d-flex align-items-left mb-1">
+              <h2 class="main-title">Product Details</h2>
+            </div>
+            <div class="d-flex align-items-center mb-1">
+              <h2 class="main-title">{{ product.name | title }}</h2>
+              <span class="badge badge-success me-2 ms-2 rounded-pill">Published</span>
+
+            </div>
+            <p class="mt-1 mb-3">Aug 17, <span id="orderYear"></span>, 5:48 (ET)</p>
+          </div>
+          <div class="d-flex align-content-center flex-wrap gap-2">
+            <button class="btn btn-outline-warning delete-order">Edit Product</button>
+          </div>
+       </div>
+      </div>
+        <div class="img-fluid">
+        <picture >
+          {% if product.display_images %}
+            <img src="{{ product.display_images[-1] }}" alt="{{ product.name }}">
+          {% else %}
+            <img src="/static/images/logo_slim.jpg" alt="{{ product.name }}">
+          {% endif %}
+        </picture>
+        </div>
+
+    <div class="card mb-6 white-block">
+      <div class="card-header">
+        <h5 class="title">Description</h5>
+      </div>
+      <div class="card-body">
+          {{ product.description }}
+      </div>
+    </div>
+
+    <div class="card mb-6 white-block">
+      <div class="card-header">
+        <h5 class="title">Pricing</h5>
+      </div>
+      <div class="card-body">
+          <ul class="list-group white-block">
+              <li class="list-group-item">Sell Price : {{ product.sell_price }}</li>
+              <li class="list-group-item">Buy Price : {{ product.buy_price }}</li>
+          </ul>
+      </div>
+    </div>
+    <div class="card mb-6 white-block">
+      <div class="card-header">
+        <h5 class="title">Inventory</h5>
+      </div>
+      <div class="card-body">
+          <ul class="list-group-timeline white-block">
+              <li class="list-group-item">
+                  <span class="title">Current Inventory :</span>
+                      <span class="pull-right">{{ product.inventory_count }}</span>
+                  </span>
+              </li>
+          </ul>
+           <button class="btn btn-primary btn-outline-info">Manage Inventory</button>
+      </div>
+    </div>
+
+    </main>
+{% endblock %}

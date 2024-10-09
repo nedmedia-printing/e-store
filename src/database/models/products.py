@@ -49,10 +49,12 @@ class Products(BaseModel):
     sell_price: int
     buy_price: int
     image_name: str | None = Field(default=None)
+    display_images: list[str] | None = Field(default=[])
     time_of_entry: datetime = Field(default_factory=south_african_standard_time)
-    inventory_entries: list[Inventory]
+    inventory_entries: list[Inventory] | None = Field(default=[])
 
-    def get_total_inventory_count(self) -> int:
+    @property
+    def inventory_count(self) -> int:
         total_count = 0
         for entry in self.inventory_entries:
             if entry.action_type in InventoryActionTypes.adding_actions():
@@ -76,6 +78,14 @@ class Products(BaseModel):
             if entry.action_type == InventoryActionTypes.PURCHASE_SUPPLIER.value and start_date <= entry.time_of_entry <= end_date:
                 total_purchases += entry.entry
         return total_purchases
+
+    def update_category_images(self):
+        """
+            lookup category images from the upload folder
+        :return:
+        """
+        folder_path = products_upload_folder(category_id=self.category_id, product_id=self.product_id)
+        self.display_images = load_files_in_folder(folder_path=folder_path)
 
 
 class Category(BaseModel):
