@@ -51,8 +51,14 @@ async def add_category(user: User):
         return redirect(url_for('inventory.get_categories'))
 
     new_category: Category = await inventory_controller.add_category(category=category)
+    if not isinstance(new_category, Category):
+        flash(message="Unable to create new category please check your category details and try again", category='danger')
+        return redirect(url_for('inventory.get_categories'))
+
     if display_image:
+        inventory_logger.info(f"Display Images Found: {display_image}")
         category_image_upload_folder_path = products_upload_folder(category_id=category.category_id, product_id=None)
+        inventory_logger.info(f"will upload Category Display Image: {category_image_upload_folder_path}")
         save_files_to_folder(folder_path=category_image_upload_folder_path, file_list=display_image)
 
     if not isinstance(category, Category):

@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from src.utils import create_id, south_african_standard_time, generate_isn13, load_files_in_folder, \
     products_upload_folder
 
@@ -53,6 +53,10 @@ class Products(BaseModel):
     time_of_entry: datetime = Field(default_factory=south_african_standard_time)
     inventory_entries: list[Inventory] | None = Field(default=[])
 
+    @field_validator('name', mode='before')
+    def strip_and_lowercase(cls, v: str) -> str:
+        return v.strip().lower() if isinstance(v, str) else v
+
     @property
     def inventory_count(self) -> int:
         total_count = 0
@@ -96,6 +100,10 @@ class Category(BaseModel):
     display_images: list[str] | None = Field(default=[])
     products: list[Products]
     inventory_entries: list[Inventory]
+
+    @field_validator('name', mode='before')
+    def strip_and_lowercase(cls, v: str) -> str:
+        return v.strip().lower() if isinstance(v, str) else v
 
     @property
     def product_count(self) -> int:

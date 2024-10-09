@@ -7,14 +7,16 @@ class InventoryController(Controllers):
     def __init__(self):
         super().__init__()
 
+    @error_handler
     async def add_category(self, category: Category) -> Category | None:
         with self.get_session() as session:
-            is_category_available = session.query(CategoryORM).filter_by(name=category.name).first()
+            is_category_available = session.query(CategoryORM).filter_by(name=category.name.casefold()).first()
             if is_category_available:
                 return None
             session.add(CategoryORM(**category.dict()))
         return category
 
+    @error_handler
     async def get_product_categories(self):
         """
 
@@ -25,7 +27,7 @@ class InventoryController(Controllers):
             return [Category(**cat.to_dict()) for cat in categories_list_orm]
 
     @error_handler
-    async def add_product(self, product: Products) -> Products:
+    async def add_product(self, product: Products) -> Products | None:
         with self.get_session() as session:
             is_product_available = session.query(ProductsORM).filter_by(name=product.name.casefold()).first()
             self.logger.info(f"Adding Product: {product}")
@@ -36,6 +38,7 @@ class InventoryController(Controllers):
             session.add(ProductsORM(**prepared_dict))
             return product
 
+    @error_handler
     async def get_product(self, product_id: str) -> Products | None:
         """
 
@@ -47,11 +50,13 @@ class InventoryController(Controllers):
             if isinstance(product_orm, ProductsORM):
                 return Products(**product_orm.to_dict())
 
+    @error_handler
     async def create_inventory_entry(self, inventory: Inventory) -> Inventory:
         with self.get_session() as session:
             session.add(InventoryORM(**inventory.dict()))
             return inventory
 
+    @error_handler
     async def get_products(self) -> list[Products]:
         """
 
