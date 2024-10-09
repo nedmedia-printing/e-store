@@ -59,6 +59,7 @@ class InventoryController(Controllers):
     @error_handler
     async def get_products(self) -> list[Products]:
         """
+        **get_products**
 
         :return:
         """

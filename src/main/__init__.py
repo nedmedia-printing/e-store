@@ -10,7 +10,6 @@ send_mail = SendMail()
 encryptor = Encryptor()
 
 from src.utils import template_folder, static_folder, upload_folder
-
 from src.controller.inventory_controller import InventoryController
 from src.controller.auth import UserController
 from src.main.bootstrap import bootstrap
