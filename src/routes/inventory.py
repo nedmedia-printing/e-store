@@ -65,6 +65,20 @@ async def add_category(user: User):
     return redirect(url_for('inventory.get_categories'))
 
 
+@inventory_route.get('/admin/category-detail/<string:category_id>')
+@admin_login
+async def category_detail(user: User, category_id: str):
+    """
+
+    :param user:
+    :param category_id:
+    :return:
+    """
+    products_list = await inventory_controller.get_category_products(category_id=category_id)
+    context = dict(user=user, products_list=products_list)
+    return render_template('admin/inventory/category_detail.html', **context)
+
+
 @inventory_route.get('/admin/products')
 @admin_login
 async def get_products(user: User):
@@ -104,7 +118,7 @@ async def create_product(user: User):
     try:
         product = Products(**request.form)
         display_image = request.files.getlist('display_image')
-        inventory_logger.info(f"Display Image : {display_image}")
+        inventory_logger.info(f"Display Image: {display_image}")
 
     except ValidationError as e:
         inventory_logger.error(str(e))
@@ -120,7 +134,8 @@ async def create_product(user: User):
         return redirect(url_for('inventory.get_product', product_id=new_product.product_id))
 
     if display_image:
-        product_image_upload_folder_path = products_upload_folder(category_id=new_product.category_id, product_id=new_product.product_id)
+        product_image_upload_folder_path = products_upload_folder(category_id=new_product.category_id,
+                                                                  product_id=new_product.product_id)
         inventory_logger.info("will upload new product image to {product_image_upload_folder_path}")
         save_files_to_folder(folder_path=product_image_upload_folder_path, file_list=display_image)
 

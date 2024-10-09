@@ -23,11 +23,13 @@
                                       <label class="users-table__checkbox">
                                         <div class="categories-table-img">
                                           <picture>
-                                              {% if category.display_image_url %}
-                                                <img src="{{ category.display_image_url }}" alt="{{ category.name }}">
-                                              {% else %}
-                                                <img src="/static/images/logo_slim.jpg" alt="{{ category.name }}">
-                                              {% endif %}
+                                              <a href="{{ url_for('inventory.category_detail', category_id=category.category_id) }}">
+                                                  {% if category.display_image_url %}
+                                                    <img src="{{ category.display_image_url }}" alt="{{ category.name }}">
+                                                  {% else %}
+                                                    <img src="/static/images/logo_slim.jpg" alt="{{ category.name }}">
+                                                  {% endif %}
+                                              </a>
                                           </picture>
                                         </div>
                                       </label>
