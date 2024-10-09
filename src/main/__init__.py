@@ -28,10 +28,12 @@ def _add_blue_prints(app: Flask):
     from src.routes.home import home_route
     from src.routes.inventory import inventory_route
     from src.routes.auth import auth_route
+    from src.routes.documents import images_route
 
     app.register_blueprint(home_route)
     app.register_blueprint(inventory_route)
     app.register_blueprint(auth_route)
+    app.register_blueprint(images_route)
 
 
 def create_app(config=config_instance()):

@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from enum import Enum
 
+from flask import url_for
 from pydantic import BaseModel, Field, field_validator
 from src.utils import create_id, south_african_standard_time, generate_isn13, load_files_in_folder, \
     products_upload_folder
@@ -83,13 +84,14 @@ class Products(BaseModel):
                 total_purchases += entry.entry
         return total_purchases
 
-    def update_category_images(self):
+    @property
+    def display_image_url(self):
         """
             lookup category images from the upload folder
         :return:
         """
-        folder_path = products_upload_folder(category_id=self.category_id, product_id=self.product_id)
-        self.display_images = load_files_in_folder(folder_path=folder_path)
+        # folder_path = products_upload_folder(category_id=self.category_id, product_id=self.product_id)
+        return url_for('image.display_images', category_id=self.category_id, product_id=self.product_id)
 
 
 class Category(BaseModel):
@@ -123,10 +125,11 @@ class Category(BaseModel):
             total_purchases += product.get_total_purchases(start_date, end_date)
         return total_purchases
 
-    def update_category_images(self):
+    @property
+    def display_image_url(self):
         """
             lookup category images from the upload folder
         :return:
         """
-        folder_path = products_upload_folder(category_id=self.category_id, product_id=None)
-        self.display_images = load_files_in_folder(folder_path=folder_path)
+        # folder_path = products_upload_folder(category_id=self.category_id, product_id=self.product_id)
+        return url_for('image.display_images', category_id=self.category_id, product_id=None)

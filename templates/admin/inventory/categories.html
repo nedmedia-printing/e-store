@@ -23,10 +23,10 @@
                                       <label class="users-table__checkbox">
                                         <div class="categories-table-img">
                                           <picture>
-                                              {% if category.display_images %}
-                                                <img src="{{ category.display_images[-1] }}" alt="category">
+                                              {% if category.display_image_url %}
+                                                <img src="{{ category.display_image_url }}" alt="{{ category.name }}">
                                               {% else %}
-                                                <img src="/static/images/logo_slim.jpg" alt="category">
+                                                <img src="/static/images/logo_slim.jpg" alt="{{ category.name }}">
                                               {% endif %}
                                           </picture>
                                         </div>
@@ -46,7 +46,7 @@
         <div class="white-block">
             Use the form below to add new categories
         </div>
-        <form class="form" action="{{ url_for('inventory.add_category') }}" method="POST">
+        <form class="form" action="{{ url_for('inventory.add_category') }}" method="POST" enctype="multipart/form-data">
           <label class="form-label-wrapper">
             <p class="form-label">Category Name</p>
             <input class="form-input" type="text" name="name" id="name" required>

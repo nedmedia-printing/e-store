@@ -13,7 +13,7 @@ class InventoryController(Controllers):
             is_category_available = session.query(CategoryORM).filter_by(name=category.name.casefold()).first()
             if is_category_available:
                 return None
-            session.add(CategoryORM(**category.dict()))
+            session.add(CategoryORM(**category.dict(exclude={'display_images'})))
         return category
 
     @error_handler

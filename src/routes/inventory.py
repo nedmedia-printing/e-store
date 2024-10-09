@@ -26,12 +26,10 @@ async def get_categories(user: User):
     :return:
     """
     categories: list[Category] = await inventory_controller.get_product_categories()
-    updated_category_list = []
     for category in categories:
-        category.update_category_images()
-        updated_category_list.append(category)
+        inventory_logger.info(f"image URL {category.display_image_url}")
 
-    context = dict(user=user, categories=updated_category_list)
+    context = dict(user=user, categories=categories)
     return render_template('admin/inventory/categories.html', **context)
 
 
@@ -53,7 +51,8 @@ async def add_category(user: User):
 
     new_category: Category = await inventory_controller.add_category(category=category)
     if not isinstance(new_category, Category):
-        flash(message="Unable to create new category please check your category details and try again", category='danger')
+        flash(message="Unable to create new category please check your category details and try again",
+              category='danger')
         return redirect(url_for('inventory.get_categories'))
 
     if display_image:
@@ -72,7 +71,7 @@ async def add_category(user: User):
 @admin_login
 async def get_products(user: User):
     products_list: list[Products] = await inventory_controller.get_products()
-    inventory_logger.info(f"Inventory : {products_list}")
+    inventory_logger.info(f"Inventory: {products_list}")
     context = dict(user=user, products_list=products_list)
     return render_template('admin/inventory/products.html', **context)
 
@@ -106,6 +105,9 @@ async def get_product(user: User, product_id: str):
 async def create_product(user: User):
     try:
         product = Products(**request.form)
+        display_image = request.files.getlist('display_image')
+        inventory_logger.info(f"Display Image : {display_image}")
+
     except ValidationError as e:
         inventory_logger.error(str(e))
         flash(message="please enter all required fields", category='danger')
@@ -116,6 +118,6 @@ async def create_product(user: User):
     if isinstance(new_product, Products):
         return redirect(url_for('inventory.get_product', product_id=new_product.product_id))
     else:
-        flash(message="Unable to create Product please try again later or check your product details", category="danger")
+        flash(message="Unable to create Product please try again later or check your product details",
+              category="danger")
         return redirect(url_for('inventory.get_products'))
-
