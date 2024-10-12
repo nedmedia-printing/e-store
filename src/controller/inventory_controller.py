@@ -96,3 +96,15 @@ class InventoryController(Controllers):
         with self.get_session() as session:
             products_orm_list: list[ProductsORM] = session.query(ProductsORM).filter_by(category_id=category_id).all()
             return [Products(**product.to_dict()) for product in products_orm_list if isinstance(product, ProductsORM)]
+
+    @error_handler
+    async def get_product_inventory(self, product_id: str) -> list[Inventory]:
+        """
+
+        :param product_id:
+        :return:
+        """
+        with self.get_session() as session:
+            inventory_orm_list = session.query(InventoryORM).filter_by(product_id=product_id).all()
+            return [Inventory(**inventory_orm.to_dict()) for inventory_orm in inventory_orm_list]
+

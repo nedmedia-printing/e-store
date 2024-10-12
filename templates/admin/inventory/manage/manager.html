@@ -1,0 +1,70 @@
+{% extends "admin/layout/page.html" %}
+
+{% block content %}
+<main class="main" id="skip-target">
+  <div class="container">
+    <h3 class="main-title">Inventory Manager</h3>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-6 gap-3">
+      <div class="white-block">
+          <p><strong>Name:</strong> {{ product.name }}</p>
+          <p><strong>Description:</strong> {{ product.description }}</p>
+          <p><strong>Sell Price:</strong> {{ product.sell_price }}</p>
+          <p><strong>Buy Price:</strong> {{ product.buy_price }}</p>
+          <p><strong>Current Inventory:</strong> {{ product.inventory_count }}</p>
+      </div>
+    </div>
+
+    <div class="table table-wrapper">
+      <h4 class="main-title">Inventory Actions</h4>
+      <table class="table table-striped users-table">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Qty</th>
+            <th>Time</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in inventory_entries %}
+          <tr>
+            <td>{{ entry.action_type }}</td>
+            <td>{{ entry.entry }}</td>
+            <td>{{ entry.time_of_entry }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('inventory.update_inventory', entry_id=entry.entry_id) }}">
+                <button type="submit" class="btn btn-primary">Edit</button>
+              </form>
+              <form method="POST" action="{{ url_for('inventory.delete_inventory', entry_id=entry.entry_id) }}">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="inventory-add">
+      <h4 class="main-title">Create Entry</h4>
+      <form method="POST" action="{{ url_for('inventory.update_action', product_id=product.product_id) }}">
+        <div class="form-group">
+          <label for="action_type" class="label form-label">Action Type
+          <select class="form-control" id="action_type" name="action_type">
+            {% for action in InventoryActionTypes.action_list() %}
+            <option value="{{ action }}">{{ action }}</option>
+            {% endfor %}
+          </select>
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="entry" class="label form-label">Entry
+            <input type="number" class="form-control" id="entry" name="entry" required>
+          </label>
+        </div>
+        <button type="submit" class="btn btn-success">Add Entry</button>
+      </form>
+    </div>
+  </div>
+</main>
+{% endblock %}

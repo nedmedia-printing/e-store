@@ -120,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var _iterator4 = _createForOfIteratorHelper(userDdList),
                 _step4;
-
             try {
               for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
                 var userDd = _step4.value;

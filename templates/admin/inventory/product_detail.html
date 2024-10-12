@@ -64,10 +64,10 @@
                           <span class="pull-right">{{ product.inventory_count }}</span>
                   </li>
               </ul>
-               <button class="btn btn-primary btn-outline-info">Manage Inventory</button>
+                <a href="{{ url_for('inventory.obtain_inventory', product_id=product.product_id) }}" class="btn btn-primary btn-outline-info">
+                   Manage Inventory</a>
           </div>
         </div>
-
     </main>
-
 {% endblock %}
+

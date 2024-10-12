@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from pydantic import ValidationError
 from src.authentication import admin_login
-from src.database.models.products import Products, Category
+from src.database.models.products import Products, Category, Inventory, InventoryActionTypes
 from src.database.models.users import User
 from src.logger import init_logger
 from src.main import inventory_controller
@@ -181,3 +181,69 @@ async def create_product(user: User):
     flash(message="Successfully created new product", category="success")
 
     return redirect(url_for('inventory.get_product', product_id=new_product.product_id))
+
+
+@inventory_route.get('/admin/inventory/manager')
+@admin_login
+async def manage_inventory(user: User):
+    """
+
+        :param user:
+        :return:
+    """
+    return render_template("admin/inventory/manage/manager.html")
+
+
+@inventory_route.get('/admin/inventory-obtain/<string:product_id>')
+@admin_login
+async def obtain_inventory(user: User, product_id: str):
+    """
+
+    :param user:
+    :param product_id:
+    :return:
+    """
+    try:
+        print("Inside Obtain IInventory")
+        product: Products = await inventory_controller.get_product(product_id=product_id)
+        inventory_entries: list[Inventory] = await inventory_controller.get_product_inventory(product_id=product_id)
+        context = dict(user=user, product=product, inventory_entries=inventory_entries, InventoryActionTypes=InventoryActionTypes)
+        return render_template("admin/inventory/manage/manager.html", **context)
+    except Exception as e:
+        print(str(e))
+
+
+@inventory_route.post('/admin/inventory-update/<string:entry_id>')
+@admin_login
+async def update_inventory(user: User, entry_id: str):
+    """
+
+    :param entry_id:
+    :param user:
+    :return:
+    """
+    pass
+
+
+@inventory_route.post('/admin/inventory-delete/<string:entry_id>')
+@admin_login
+async def delete_inventory(user: User, entry_id: str):
+    """
+
+    :param entry_id:
+    :param user:
+    :return:
+    """
+    pass
+
+
+@inventory_route.post('/admin/inventory-action/<string:product_id>')
+@admin_login
+async def update_action(user: User, product_id: str):
+    """
+
+    :param user:
+    :param product_id:
+    :return:
+    """
+    pass
