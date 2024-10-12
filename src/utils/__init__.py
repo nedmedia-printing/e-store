@@ -1,4 +1,5 @@
 import glob
+import os
 import re
 from os import path, makedirs
 from datetime import datetime, timedelta
@@ -130,7 +131,7 @@ def save_files_to_folder(folder_path: str, file_list: list):
 
 
 def basename_filter(path: str) -> str:
-    filename = path.basename(path)
+    filename = os.path.basename(path)
     print(f"File Name : {filename}")
     return filename
 

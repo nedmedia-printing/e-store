@@ -85,7 +85,7 @@ class Products(BaseModel):
         return total_purchases
 
     @property
-    def display_image_url(self):
+    def display_image_url(self) -> str:
         """
             lookup category images from the upload folder
         :return:

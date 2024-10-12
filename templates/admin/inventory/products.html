@@ -23,16 +23,16 @@
                                   <tr>
                                     <td>
                                       <label class="users-table__checkbox">
-                                        <div class="categories-table-img">
-                                        <a href="{{ url_for('inventory.get_product', product_id=product.product_id) }}">
-                                            <picture>
-                                                    {% if product.display_image %}
-                                                        <img src="{{ product.display_images[-1] }}" alt="category">
-                                                    {% else %}
-                                                        <img src="/static/images/logo_slim.jpg" alt="{{ product.name }}">
-                                                    {% endif %}
-                                            </picture>
-                                        </a>
+                                        <div class="categories-table-img" >
+                                            <a href="{{ url_for('inventory.get_product', product_id=product.product_id) }}">
+                                                <div class="img img-thumbnail">
+                                                        {% if product.display_image_url %}
+                                                            <img src="{{ product.display_image_url }}" alt="category">
+                                                        {% else %}
+                                                            <img src="/static/images/logo_slim.jpg" alt="{{ product.name }}">
+                                                        {% endif %}
+                                                </div>
+                                            </a>
                                         </div>
                                       </label>
                                     </td>

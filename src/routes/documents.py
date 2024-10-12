@@ -15,8 +15,7 @@ documents_logger = init_logger('documents_logger')
 
 @images_route.get('/documents/<string:category_id>/image.png', defaults={'product_id': None})
 @images_route.get('/documents/<string:category_id>/<string:product_id>/image.png')
-@login_required
-async def display_images(user: User, category_id: str, product_id: str | None = None):
+async def display_images(category_id: str, product_id: str | None = None):
     """
         allows employees to download claims documents
     :param product_id:
@@ -26,10 +25,10 @@ async def display_images(user: User, category_id: str, product_id: str | None = 
     """
     file_path = products_upload_folder(category_id=category_id, product_id=product_id)
     files = load_files_in_folder(folder_path=file_path)
-
+    documents_logger.info(f"Looking for products images in {file_path}")
     if not files:
         return {"message": "No documents found for this product."}, 404
-
+    documents_logger.info(f"found in display images files : {files}")
     # Randomly select one file
     selected_file = random.choice(files)
     filename = os.path.basename(selected_file)

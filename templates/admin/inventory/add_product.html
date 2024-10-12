@@ -43,9 +43,9 @@
 
                             {% else %}
                                 <span class="white-block"> Please Define Product Categories</span>
-                                <button class="form-btn primary-default-btn transparent-btn">
+                                <a href="{{ url_for('inventory.get_categories') }}" class="form-btn primary-default-btn transparent-btn">
                                     Add Category
-                                </button>
+                                </a>
 
                             {% endif %}
                         </label>

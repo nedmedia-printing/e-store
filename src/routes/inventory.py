@@ -136,7 +136,7 @@ async def create_product(user: User):
     if display_image:
         product_image_upload_folder_path = products_upload_folder(category_id=new_product.category_id,
                                                                   product_id=new_product.product_id)
-        inventory_logger.info("will upload new product image to {product_image_upload_folder_path}")
+        inventory_logger.info(f"will upload new product image to {product_image_upload_folder_path}")
         save_files_to_folder(folder_path=product_image_upload_folder_path, file_list=display_image)
 
     flash(message="Successfully created new product", category="success")
