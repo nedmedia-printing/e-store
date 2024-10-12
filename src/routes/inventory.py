@@ -69,13 +69,15 @@ async def add_category(user: User):
 @admin_login
 async def category_detail(user: User, category_id: str):
     """
-
     :param user:
     :param category_id:
     :return:
     """
-    products_list = await inventory_controller.get_category_products(category_id=category_id)
-    context = dict(user=user, products_list=products_list)
+    category: Category = await inventory_controller.get_category(category_id=category_id)
+    if not category:
+        return "Category not found", 404
+
+    context = dict(user=user, category=category)
     return render_template('admin/inventory/category_detail.html', **context)
 
 

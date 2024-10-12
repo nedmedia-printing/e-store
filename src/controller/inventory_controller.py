@@ -1,3 +1,5 @@
+from sqlalchemy.orm import joinedload
+
 from src.controller import Controllers, error_handler
 from src.database.models.products import Category, Products, Inventory
 from src.database.sql.products import CategoryORM, ProductsORM, InventoryORM
@@ -38,6 +40,23 @@ class InventoryController(Controllers):
             session.add(ProductsORM(**prepared_dict))
             return product
 
+    async def get_category(self, category_id: str):
+        """
+        :param category_id:
+        :return:
+        """
+        with self.get_session() as session:
+            category_orm = session.query(CategoryORM) \
+                .options(joinedload(CategoryORM.products)) \
+                .filter_by(category_id=category_id) \
+                .first()
+
+            if not category_orm:
+                return None
+
+            # Convert dictionary to Pydantic model
+            return Category(**category_orm.to_dict())
+
     @error_handler
     async def get_product(self, product_id: str) -> Products | None:
         """
@@ -77,4 +96,3 @@ class InventoryController(Controllers):
         with self.get_session() as session:
             products_orm_list: list[ProductsORM] = session.query(ProductsORM).filter_by(category_id=category_id).all()
             return [Products(**product.to_dict()) for product in products_orm_list if isinstance(product, ProductsORM)]
-
