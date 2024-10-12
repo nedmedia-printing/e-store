@@ -29,30 +29,28 @@
                 </div>
                 <div class="col-lg-3">
                     <h2 class="main-title">Organize</h2>
-
                         <div class="col-lg-12">
-                        <label class="form-label-wrapper">
-                            <p class="form-label">Category</p>
-                            {% if categories %}
-                            <select class="form-input" name="category_id" id="category">
+                            <label class="form-label-wrapper">
+                                <p class="form-label">Category</p>
+                                {% if categories %}
+                                <select class="form-input" name="category_id" id="category">
 
-                                {% for category in categories %}
-                                    <option value="{{ category.category_id }}" {% if category.category_id == product.category_id %} selected {% endif %}>{{ category.name| title }}</option>
-                                {% endfor %}
-                            </select>
-                                <a href="{{ url_for("inventory.get_categories") }}" class="form-btn primary-default-btn transparent-btn">
-                                    Manage Categories
-                                </a>
+                                    {% for category in categories %}
+                                        <option value="{{ category.category_id }}" {% if category.category_id == product.category_id %} selected {% endif %}>{{ category.name| title }}</option>
+                                    {% endfor %}
+                                </select>
+                                    <a href="{{ url_for("inventory.get_categories") }}" class="form-btn primary-default-btn transparent-btn">
+                                        Manage Categories
+                                    </a>
 
-                            {% else %}
-                                <span class="white-block"> Please Define Product Categories</span>
-                                <a href="{{ url_for('inventory.get_categories') }}" class="form-btn primary-default-btn transparent-btn">
-                                    Add Category
-                                </a>
+                                {% else %}
+                                    <span class="white-block"> Please Define Product Categories</span>
+                                    <a href="{{ url_for('inventory.get_categories') }}" class="form-btn primary-default-btn transparent-btn">
+                                        Add Category
+                                    </a>
 
-                            {% endif %}
-                        </label>
-
+                                {% endif %}
+                            </label>
                         </div>
                 </div>
                 <div class="col-lg-12">
@@ -70,7 +68,6 @@
                             <input type="number" class="form-input" name="buy_price" id="buy_price" value="{{ product.buy_price }}">
                         </label>
                 </div>
-
                 <button class="form-btn primary-default-btn transparent-btn">
                     Publish Product
                 </button>
