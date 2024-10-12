@@ -203,47 +203,70 @@ async def obtain_inventory(user: User, product_id: str):
     :param product_id:
     :return:
     """
-    try:
-        print("Inside Obtain IInventory")
-        product: Products = await inventory_controller.get_product(product_id=product_id)
-        inventory_entries: list[Inventory] = await inventory_controller.get_product_inventory(product_id=product_id)
-        context = dict(user=user, product=product, inventory_entries=inventory_entries, InventoryActionTypes=InventoryActionTypes)
-        return render_template("admin/inventory/manage/manager.html", **context)
-    except Exception as e:
-        print(str(e))
+    print("Inside Obtain IInventory")
+    product: Products = await inventory_controller.get_product(product_id=product_id)
+    inventory_entries: list[Inventory] = await inventory_controller.get_product_inventory(product_id=product_id)
+    context = dict(user=user, product=product, inventory_entries=inventory_entries,
+                   InventoryActionTypes=InventoryActionTypes)
+    inventory_logger.info(f"We created this context : {context}")
+    return render_template("admin/inventory/manage/manager.html", **context)
 
 
 @inventory_route.post('/admin/inventory-update/<string:entry_id>')
 @admin_login
 async def update_inventory(user: User, entry_id: str):
     """
-
     :param entry_id:
     :param user:
     :return:
     """
-    pass
+    # updated_entry_data = request.form
+    # inventory_entry: Inventory = await inventory_controller.update_inventory_entry(entry_id=entry_id, data=updated_entry_data)
+    # if inventory_entry:
+    #     flash("Inventory entry updated successfully", "success")
+    # else:
+    #     flash("Failed to update inventory entry", "danger")
+    # return redirect(url_for('inventory.obtain_inventory', product_id=inventory_entry.product_id))
 
 
 @inventory_route.post('/admin/inventory-delete/<string:entry_id>')
 @admin_login
 async def delete_inventory(user: User, entry_id: str):
     """
-
     :param entry_id:
     :param user:
     :return:
     """
-    pass
+    inventory_entry, success = await inventory_controller.delete_inventory_entry(entry_id=entry_id)
+    if success:
+        flash("Inventory entry deleted successfully", "success")
+    else:
+        flash("Failed to delete inventory entry", "danger")
+    return redirect(url_for('inventory.obtain_inventory', product_id=inventory_entry.product_id))
 
 
 @inventory_route.post('/admin/inventory-action/<string:product_id>')
 @admin_login
 async def update_action(user: User, product_id: str):
     """
-
     :param user:
     :param product_id:
     :return:
     """
-    pass
+    action_type = request.form.get('action_type')
+    entry = int(request.form.get('entry', 0))
+
+    product: Products = await inventory_controller.get_product(product_id=product_id)
+    inventory_logger.info(f"Product Associated with Entry: {product}")
+    inventory_entry = Inventory(product_id=product_id,
+                                category_id=product.category_id,
+                                entry=entry,
+                                action_type=action_type, blame=user.uid)
+
+    inventory_logger.info(f"Creating New Entry: {inventory_entry}")
+    inventory_entry = await inventory_controller.add_inventory_entry(inventory_entry=inventory_entry)
+    if inventory_entry:
+        flash("New inventory entry added successfully", "success")
+    else:
+        flash("Failed to add new inventory entry", "danger")
+    return redirect(url_for('inventory.obtain_inventory', product_id=inventory_entry.product_id))

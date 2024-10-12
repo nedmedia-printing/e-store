@@ -32,7 +32,9 @@ class InventoryActionTypes(Enum):
 
 
 class Inventory(BaseModel):
+
     entry_id: str = Field(default_factory=create_id)
+    blame: str | None = Field(default_factory=None)
     product_id: str
     category_id: str
     entry: int

@@ -16,7 +16,7 @@
 
     <div class="table table-wrapper">
       <h4 class="main-title">Inventory Actions</h4>
-      <table class="table table-striped users-table">
+      <table class="table users-table">
         <thead>
           <tr>
             <th>Action</th>
@@ -32,11 +32,8 @@
             <td>{{ entry.entry }}</td>
             <td>{{ entry.time_of_entry }}</td>
             <td>
-              <form method="POST" action="{{ url_for('inventory.update_inventory', entry_id=entry.entry_id) }}">
-                <button type="submit" class="btn btn-primary">Edit</button>
-              </form>
               <form method="POST" action="{{ url_for('inventory.delete_inventory', entry_id=entry.entry_id) }}">
-                <button type="submit" class="btn btn-danger">Delete</button>
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
               </form>
             </td>
           </tr>

@@ -108,3 +108,27 @@ class InventoryController(Controllers):
             inventory_orm_list = session.query(InventoryORM).filter_by(product_id=product_id).all()
             return [Inventory(**inventory_orm.to_dict()) for inventory_orm in inventory_orm_list]
 
+    @error_handler
+    async def add_inventory_entry(self, inventory_entry: Inventory) -> Inventory:
+        """
+
+        :param inventory_entry:
+        :return:
+        """
+        with self.get_session() as session:
+            session.add(InventoryORM(**inventory_entry.dict()))
+            return inventory_entry
+
+    async def delete_inventory_entry(self, entry_id: str) -> tuple[Inventory, bool]:
+        """
+
+        :param entry_id:
+        :return:
+        """
+        with self.get_session() as session:
+            inventory_entry_orm = session.query(InventoryORM).filter_by(entry_id=entry_id).first()
+            inventory = Inventory(**inventory_entry_orm.to_dict())
+            if not inventory_entry_orm:
+                return inventory, False
+            session.delete(inventory_entry_orm)
+            return inventory, True

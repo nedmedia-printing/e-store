@@ -81,6 +81,7 @@ class CategoryORM(Base):
 class InventoryORM(Base):
     __tablename__ = "inventory"
     entry_id: str = Column(String(ID_LEN), primary_key=True)
+    blame: str = Column(String(ID_LEN))
     product_id: str = Column(String(ID_LEN), ForeignKey('products.product_id'))
     category_id: str = Column(String(ID_LEN), ForeignKey('category.category_id'))
     entry: int = Column(Integer)
@@ -102,6 +103,7 @@ class InventoryORM(Base):
             "entry_id": self.entry_id,
             "product_id": self.product_id,
             "category_id": self.category_id,
+            "blame": self.blame,
             "entry": self.entry,
             "action_type": self.action_type,
             "time_of_entry": self.time_of_entry.isoformat() if self.time_of_entry else None
