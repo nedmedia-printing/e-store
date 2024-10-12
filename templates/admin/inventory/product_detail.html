@@ -20,7 +20,7 @@
             <p class="mt-1 mb-3">Aug 17, <span id="orderYear"></span>, 5:48 (ET)</p>
           </div>
           <div class="d-flex align-content-center flex-wrap gap-2">
-            <button class="btn btn-outline-warning delete-order">Edit Product</button>
+            <a href="{{ url_for('inventory.edit_product', product_id=product.product_id) }}" class="btn btn-outline-warning delete-order">Edit Product</a>
           </div>
        </div>
       </div>

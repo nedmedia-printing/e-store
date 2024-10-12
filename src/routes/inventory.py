@@ -112,6 +112,43 @@ async def get_product(user: User, product_id: str):
     return render_template('admin/inventory/product_detail.html', **context)
 
 
+@inventory_route.get('/admin/inventory/product-edit/<string:product_id>')
+@admin_login
+async def edit_product(user: User, product_id: str):
+    """
+
+    :param user:
+    :param product_id:
+    :return:
+    """
+    context = dict(user=user)
+    product: Products = await inventory_controller.get_product(product_id=product_id)
+    if not isinstance(product, Products):
+        flash(message="Product Not Found", category="danger")
+        return redirect(url_for('inventory.get_products'))
+
+    context.update(product=product)
+    return render_template('admin/inventory/edit_product.html', **context)
+
+
+@inventory_route.post('/admin/products/edit-product')
+async def do_edit_product(user: User):
+    """
+
+    :param user:
+    :return:
+    """
+    try:
+        product = Products(**request.form)
+        display_image = request.files.getlist('display_image')
+        inventory_logger.info(f"Display Image: {display_image}")
+
+    except ValidationError as e:
+        inventory_logger.error(str(e))
+        flash(message="please enter all required fields", category='danger')
+        return redirect(url_for('inventory.add_product'))
+
+
 @inventory_route.post('/admin/products/create-product')
 @admin_login
 async def create_product(user: User):

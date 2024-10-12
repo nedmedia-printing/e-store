@@ -25,16 +25,16 @@
                                           <picture>
                                               <a href="{{ url_for('inventory.category_detail', category_id=category.category_id) }}">
                                                   {% if category.display_image_url %}
-                                                    <img src="{{ category.display_image_url }}" alt="{{ category.name }}">
+                                                    <img src="{{ category.display_image_url }}" alt="{{ category.name|title }}">
                                                   {% else %}
-                                                    <img src="/static/images/logo_slim.jpg" alt="{{ category.name }}">
+                                                    <img src="/static/images/logo_slim.jpg" alt="{{ category.name|title }}">
                                                   {% endif %}
                                               </a>
                                           </picture>
                                         </div>
                                       </label>
                                     </td>
-                                    <td>{{  category.name | title }}</td>
+                                      <td><a href="{{ url_for('inventory.category_detail', category_id=category.category_id) }}"> {{  category.name | title }}</a></td>
                                     <td>{{  category.description }}</td>
                                     <td>{{ category.product_count }}</td>
                                     <td></td>
