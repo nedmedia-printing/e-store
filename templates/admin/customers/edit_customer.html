@@ -1,0 +1,45 @@
+{% extends "admin/layout/page.html" %}
+
+{% block content %}
+<main class="main" id="skip-target">
+  <div class="container">
+    <h2 class="main-title">Edit Customer</h2>
+    <form class="form" method="POST" action="{{ url_for('customer.save_customer_edits', customer_id=customer.uid) }}">
+      <div class="row">
+        <div class="col-lg-9 col-md-9">
+          <label class="form-label-wrapper">
+            <p class="form-label">Customer Name</p>
+            <input type="text" class="form-input" name="name" id="customer_name" value="{{ customer.name }}" required>
+          </label>
+          <label class="form-label-wrapper">
+            <p class="form-label">Email</p>
+            <input type="email" class="form-input" name="email" id="customer_email" value="{{ customer.email }}" required>
+          </label>
+          <label class="form-label-wrapper">
+            <p class="form-label">City</p>
+            <input type="text" class="form-input" name="city" id="customer_city" value="{{ customer.city }}" required>
+          </label>
+          <label class="form-label-wrapper">
+            <p class="form-label">Notes</p>
+            <textarea class="form-input" rows="4" cols="50" name="notes" id="customer_notes">{{ customer.notes }}</textarea>
+          </label>
+        </div>
+        <div class="col-lg-3">
+          <h2 class="main-title">Actions</h2>
+          <label class="form-label-wrapper">
+            <p class="form-label">Order Count</p>
+            <input type="number" class="form-input" name="order_count" id="order_count" value="{{ customer.order_count }}" readonly>
+          </label>
+          <label class="form-label-wrapper">
+            <p class="form-label">Total Spent</p>
+            <input type="text" class="form-input" name="total_spent" id="total_spent" value="{{ customer.total_spent | currency }}" readonly>
+          </label>
+        </div>
+        <div class="col-lg-12">
+          <button class="form-btn primary-default-btn transparent-btn">Save Changes</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

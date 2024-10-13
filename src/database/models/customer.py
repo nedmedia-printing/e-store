@@ -1,5 +1,5 @@
-from datetime import date, datetime, timedelta
-from pydantic import BaseModel, Field, field_validator, PositiveInt
+from datetime import datetime, timedelta
+from pydantic import BaseModel, Field, field_validator, PositiveInt, EmailStr
 from enum import Enum
 import random
 from faker import Faker
@@ -35,7 +35,6 @@ class PaymentStatus(Enum):
     @classmethod
     def status_list(cls):
         return [status.value for status in cls]
-
 
 
 class Payment(BaseModel):
@@ -157,6 +156,34 @@ class Order(BaseModel):
 
 
 class Customer(BaseModel):
+    """
+     Customer Class
+
+     Attributes:
+         - uid (str): Unique identifier for the customer.
+         - name (str): Name of the customer.
+         - order_count (int): The number of orders placed by the customer.
+         - total_spent (int): The total amount spent by the customer in cents.
+         - city (str): The city where the customer is located.
+         - last_seen (datetime): The date and time when the customer was last seen.
+         - last_order_date (datetime | None): The date and time when the last order was placed by the customer.
+         - notes (str | None): Additional notes about the customer.
+         - orders (list[Order]): List of orders placed by the customer.
+         - user (User): User information associated with the customer.
+
+     Properties:
+         - email (str): Email address of the customer.
+         - average_spent_per_order (float): The average amount spent per order by the customer.
+         - last_order (str): The ID of the last order placed by the customer.
+
+     Methods:
+         - create_fake_customer() -> Customer:
+             Creates a fake customer for testing purposes.
+
+     Example:
+         customer = Customer.create_fake_customer()
+         print(customer)
+     """
     uid: str
     name: str
     order_count: int = Field(default=0)
@@ -207,6 +234,13 @@ class Customer(BaseModel):
             orders=[],
             user=user
         )
+
+
+class CustomerUpdate(BaseModel):
+    name: str | None = Field(default=None)
+    email: EmailStr | None = Field(default=None)
+    city: str| None = Field(default=None)
+    notes: str | None = Field(default=None)
 
 
 if __name__ == "__main__":
