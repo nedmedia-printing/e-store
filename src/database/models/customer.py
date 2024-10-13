@@ -16,6 +16,7 @@ class OrderStatus(Enum):
     PROCESSING = "PROCESSING"
     SHIPPED = "SHIPPED"
     DELIVERED = "DELIVERED"
+    PAID = "PAID"
     CANCELLED = "CANCELLED"
     RETURNED = "RETURNED"
     FAILED = "FAILED"
@@ -26,12 +27,55 @@ class OrderStatus(Enum):
 
 
 class Order(BaseModel):
+    """
+    Order Class
+
+    Attributes:
+        - order_id (str): Unique identifier for the order.
+        - customer_id (str): Identifier for the customer who placed the order.
+        - order_date (datetime): The date and time when the order was placed.
+        - total_amount (int): The total amount of the order in cents.
+        - status (str): The current status of the order.
+        - date_paid (datetime | None): The date and time when the order was paid, if applicable.
+
+    Order Status Progression:
+        - PENDING: The order has been placed but not yet processed.
+        - PROCESSING: The order is being processed.
+        - SHIPPED: The order has been shipped to the customer.
+        - DELIVERED: The order has been delivered to the customer.
+        - PAID: The order has been paid for.
+        - CANCELLED: The order has been cancelled.
+        - RETURNED: The order has been returned by the customer.
+        - FAILED: The order process has failed.
+
+    Methods:
+        - update_status(new_status: OrderStatus) -> None:
+            Updates the status of the order. If the new status is PAID, it also sets the date_paid attribute to the current date and time.
+
+        Example:
+            order = Order(
+                order_id="123",
+                customer_id="456",
+                total_amount=10000
+            )
+            order.update_status(OrderStatus.PROCESSING)
+            print(order.status)  # Output: 'PROCESSING'
+    """
+
     order_id: str = Field(default_factory=create_id)
     customer_id: str
     order_date: datetime = Field(default_factory=south_african_standard_time)
     total_amount: int
     status: str = Field(default=OrderStatus.PENDING.value)
     date_paid: datetime | None = Field(default=None)
+
+    def update_status(self, new_status: OrderStatus) -> None:
+        if new_status in OrderStatus:
+            self.status = new_status.value
+            if new_status == OrderStatus.PAID:
+                self.date_paid = south_african_standard_time()
+        else:
+            raise ValueError(f"Invalid status: {new_status}")
 
 
 class Customer(BaseModel):
