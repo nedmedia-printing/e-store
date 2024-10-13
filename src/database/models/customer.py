@@ -26,6 +26,38 @@ class OrderStatus(Enum):
         return [status.value for status in cls]
 
 
+class PaymentStatus(Enum):
+    PENDING = "PENDING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    REFUNDED = "REFUNDED"
+    CANCELLED = "CANCELLED"
+
+    @classmethod
+    def status_list(cls):
+        return [status.value for status in cls]
+
+
+class Payment(BaseModel):
+    payment_id: str = Field(default_factory=create_id)
+    order_id: str
+    amount: int
+    payment_date: datetime = Field(default_factory=south_african_standard_time)
+    payment_method: str
+    payment_status: str = Field(default=PaymentStatus.PENDING.value)
+
+    @staticmethod
+    def create_fake_payment(order_id: str) -> 'Payment':
+        fake = Faker()
+        return Payment(
+            payment_id=fake.uuid4(),
+            order_id=order_id,
+            amount=random.randint(1000, 50000),
+            payment_date=datetime.now(),
+            payment_method=random.choice(['Credit Card', 'PayPal', 'Bank Transfer']),
+            payment_status="COMPLETED")
+
+
 class Order(BaseModel):
     """
     Order Class
@@ -68,14 +100,33 @@ class Order(BaseModel):
     total_amount: int
     status: str = Field(default=OrderStatus.PENDING.value)
     date_paid: datetime | None = Field(default=None)
+    payments: list[Payment] = []
+
+    @property
+    def order_balance(self) -> int:
+        total_paid = sum(payment.amount for payment in self.payments if payment.payment_status == PaymentStatus.COMPLETED.value)
+        return self.total_amount - total_paid
+
+    @property
+    def is_paid_in_full(self) -> bool:
+        total_paid = sum(
+            payment.amount for payment in self.payments if payment.payment_status == PaymentStatus.COMPLETED.value)
+        return total_paid >= self.total_amount
 
     def update_status(self, new_status: OrderStatus) -> None:
         if new_status in OrderStatus:
             self.status = new_status.value
-            if new_status == OrderStatus.PAID:
-                self.date_paid = south_african_standard_time()
+            if new_status == OrderStatus.PAID and self.is_paid_in_full:
+                self.date_paid = datetime.now()
         else:
             raise ValueError(f"Invalid status: {new_status}")
+
+    def add_payment(self, payment: Payment) -> None:
+        self.payments.append(payment)
+        if payment.payment_status == PaymentStatus.COMPLETED.value:
+            self.update_status(OrderStatus.PAID)
+        if self.is_paid_in_full:
+            self.update_status(new_status=OrderStatus.PAID)
 
 
 class Customer(BaseModel):
