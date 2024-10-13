@@ -3,7 +3,6 @@ from pydantic import BaseModel, Field
 from enum import Enum
 import random
 from faker import Faker
-
 from src.database.models.users import User, CreateUser
 from src.logger import init_logger
 from src.utils import south_african_standard_time, create_id
@@ -55,7 +54,8 @@ class Payment(BaseModel):
             amount=random.randint(1000, 50000),
             payment_date=datetime.now(),
             payment_method=random.choice(['Credit Card', 'PayPal', 'Bank Transfer']),
-            payment_status="COMPLETED")
+            payment_status=PaymentStatus.COMPLETED.value
+        )
 
 
 class Order(BaseModel):
@@ -84,14 +84,14 @@ class Order(BaseModel):
         - update_status(new_status: OrderStatus) -> None:
             Updates the status of the order. If the new status is PAID, it also sets the date_paid attribute to the current date and time.
 
-        Example:
-            order = Order(
-                order_id="123",
-                customer_id="456",
-                total_amount=10000
-            )
-            order.update_status(OrderStatus.PROCESSING)
-            print(order.status)  # Output: 'PROCESSING'
+    Example:
+        order = Order(
+            order_id="123",
+            customer_id="456",
+            total_amount=10000
+        )
+        order.update_status(OrderStatus.PROCESSING)
+        print(order.status)  # Output: 'PROCESSING'
     """
 
     order_id: str = Field(default_factory=create_id)
@@ -104,7 +104,8 @@ class Order(BaseModel):
 
     @property
     def order_balance(self) -> int:
-        total_paid = sum(payment.amount for payment in self.payments if payment.payment_status == PaymentStatus.COMPLETED.value)
+        total_paid = sum(
+            payment.amount for payment in self.payments if payment.payment_status == PaymentStatus.COMPLETED.value)
         return self.total_amount - total_paid
 
     @property
@@ -159,18 +160,15 @@ class Customer(BaseModel):
     def create_fake_customer() -> 'Customer':
         fake = Faker()
         order_count = random.randint(1, 20)
-        total_spent = random.randint(100, 10000)
+        total_spent = random.randint(1000, 10000)
         last_order_date = datetime.now() - timedelta(days=random.randint(1, 365))
         last_seen = last_order_date + timedelta(days=random.randint(1, 30))
-
         uid = create_id()
         email = fake.email()
-        created_user = CreateUser(uid=uid, username=email, password=fake.password(),
-                                  email=email, account_verified=True, is_client=True)
-
+        created_user = CreateUser(uid=uid, username=email, password=fake.password(), email=email, account_verified=True,
+                                  is_client=True)
         user = User(uid=created_user.uid, username=created_user.username, password_hash=created_user.password_hash,
                     email=created_user.email, account_verified=True, is_client=True)
-
         return Customer(
             uid=uid,
             name=fake.name(),
@@ -181,4 +179,26 @@ class Customer(BaseModel):
             last_order_date=last_order_date,
             notes=fake.sentence(),
             orders=[],
-            user=user)
+            user=user
+        )
+
+
+if __name__ == "__main__":
+    # Example usage:
+    order = Order(
+        order_id="123",
+        customer_id="456",
+        total_amount=10000
+    )
+
+    # Add payments to the order
+    payment1 = Payment(order_id=order.order_id, amount=5000, payment_method='Credit Card',
+                       payment_status=PaymentStatus.COMPLETED.value)
+    payment2 = Payment(order_id=order.order_id, amount=5000, payment_method='PayPal',
+                       payment_status=PaymentStatus.COMPLETED.value)
+
+    order.add_payment(payment1)
+    order.add_payment(payment2)
+
+    print(order.is_paid_in_full)  # Output: True
+    print(order.order_balance)  # Output: 0
