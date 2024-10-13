@@ -25,8 +25,8 @@
           <td>{{ customer.last_seen.strftime('%Y-%m-%d %H:%M:%S') }}</td>
           <td>{{ customer.last_order_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
           <td>
-            <a href="{{ url_for('customer.edit_customer', customer_id=customer.uid) }}" class="btn btn-primary">Edit</a>
-            <a href="{{ url_for('customer.delete_customer', customer_id=customer.uid) }}" class="btn btn-danger">Delete</a>
+            <a href="{{ url_for('customer.edit_customer', customer_id=customer.uid) }}" class="btn btn-sm btn-primary">Edit</a>
+            <a href="{{ url_for('customer.delete_customer', customer_id=customer.uid) }}" class="btn btn-sm btn-danger">Delete</a>
           </td>
         </tr>
         {% endfor %}
