@@ -1,5 +1,5 @@
 from datetime import date, datetime, timedelta
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, PositiveInt
 from enum import Enum
 import random
 from faker import Faker
@@ -37,13 +37,39 @@ class PaymentStatus(Enum):
         return [status.value for status in cls]
 
 
+
 class Payment(BaseModel):
+    """
+    Payment Class
+
+    Attributes:
+        - payment_id (str): Unique identifier for the payment.
+        - order_id (str): Identifier for the order associated with this payment.
+        - amount (int): The amount of the payment in cents.
+        - payment_date (datetime): The date and time when the payment was made.
+        - payment_method (str): The method used for the payment (e.g., Credit Card, PayPal, Bank Transfer).
+        - payment_status (str): The current status of the payment (e.g., PENDING, COMPLETED, FAILED, REFUNDED, CANCELLED).
+
+    Methods:
+        - create_fake_payment(order_id: str) -> Payment:
+            Creates a fake payment for testing purposes.
+
+    Example:
+        payment = Payment.create_fake_payment(order_id="123")
+        print(payment)
+    """
     payment_id: str = Field(default_factory=create_id)
     order_id: str
-    amount: int
+    amount: PositiveInt
     payment_date: datetime = Field(default_factory=south_african_standard_time)
     payment_method: str
     payment_status: str = Field(default=PaymentStatus.PENDING.value)
+
+    @field_validator('amount')
+    def check_non_negative(cls, v):
+        if v < 0:
+            raise ValueError('Amount must be non-negative')
+        return v
 
     @staticmethod
     def create_fake_payment(order_id: str) -> 'Payment':
