@@ -54,7 +54,6 @@ def south_african_standard_time() -> datetime:
     return datetime.now(ZoneInfo("Africa/Johannesburg"))
 
 
-
 def is_valid_ulid(value: str):
     ulid_regex = re.compile(r'^[0-9A-HJKMNP-TV-Z]{9,26}$')
     return ulid_regex.match(value)
@@ -90,7 +89,7 @@ def template_folder() -> str:
     return path.join(path.dirname(path.abspath(__file__)), '../../templates')
 
 
-def product_folder_path(category_id: str, product_id: str| None = None) -> str:
+def product_folder_path(category_id: str, product_id: str | None = None) -> str:
     """
 
     :param category_id:
@@ -104,7 +103,6 @@ def product_folder_path(category_id: str, product_id: str| None = None) -> str:
 
 
 def products_upload_folder(category_id: str, product_id: str | None = None) -> str:
-
     folder_path = product_folder_path(category_id=category_id, product_id=product_id)
     # Ensure the directory exists
     if not path.exists(folder_path):
@@ -160,6 +158,18 @@ def format_with_grouping(number):
         formatted_number = formatted_whole_part
 
     return formatted_number
+
+
+def format_currency(value):
+    """
+    Format the given value (in cents) to a standard currency format with thousands separators.
+    :param value: int, amount in cents
+    :return: str, formatted currency string
+    """
+    if value is None:
+        return "N/A"
+    value_in_dollars = value / 100.0
+    return "ZAR {:,.2f}".format(value_in_dollars)
 
 
 def days_left(value):

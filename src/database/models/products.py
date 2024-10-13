@@ -32,7 +32,6 @@ class InventoryActionTypes(Enum):
 
 
 class Inventory(BaseModel):
-
     entry_id: str = Field(default_factory=create_id)
     blame: str | None = Field(default_factory=None)
     product_id: str
@@ -94,6 +93,12 @@ class Products(BaseModel):
         """
         # folder_path = products_upload_folder(category_id=self.category_id, product_id=self.product_id)
         return url_for('image.display_images', category_id=self.category_id, product_id=self.product_id)
+
+    def update(self, **updates):
+        for key, value in updates.items():
+            if key in self.__fields__ and key != 'product_id':
+                setattr(self, key, value)
+        return self
 
 
 class Category(BaseModel):

@@ -69,6 +69,22 @@ class InventoryController(Controllers):
             if isinstance(product_orm, ProductsORM):
                 return Products(**product_orm.to_dict())
 
+    async def update_product(self, product: Products) -> Products | None:
+        """
+            **update_product**
+        :param product:
+        :return:
+        """
+        with self.get_session() as session:
+            product_orm = session.query(ProductsORM).filter_by(product_id=product.product_id).first()
+            if not isinstance(product_orm, ProductsORM):
+                return None
+
+            for key, value in product.dict().items():
+                if key != 'product_id':
+                    setattr(product_orm, key, value)
+            return product
+
     @error_handler
     async def create_inventory_entry(self, inventory: Inventory) -> Inventory:
         with self.get_session() as session:

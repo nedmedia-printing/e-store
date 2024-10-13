@@ -6,11 +6,13 @@
     <h3 class="main-title">Inventory Manager</h3>
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-6 gap-3">
       <div class="white-block">
-          <p><strong>Name:</strong> {{ product.name }}</p>
-          <p><strong>Description:</strong> {{ product.description }}</p>
-          <p><strong>Sell Price:</strong> {{ product.sell_price }}</p>
-          <p><strong>Buy Price:</strong> {{ product.buy_price }}</p>
-          <p><strong>Current Inventory:</strong> {{ product.inventory_count }}</p>
+          <ol>
+              <li><strong>Name:</strong> {{ product.name|title }}</li>
+              <li><strong>Description:</strong> {{ product.description }}</li>
+              <li><strong>Sell Price:</strong> {{ product.sell_price| currency }}</li>
+              <li><strong>Buy Price:</strong> {{ product.buy_price| currency }}</li>
+              <li><strong>Current Inventory:</strong> {{ product.inventory_count }} Items</li>
+          </ol>
       </div>
     </div>
 

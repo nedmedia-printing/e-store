@@ -24,7 +24,7 @@
                         <label class="form-label-wrapper">
                             <p class="form-label">Display Image</p>
                             <img src="{{ product.display_image_url }}"  class="img img-fluid img-thumbnail"/>
-                            <input type="file" class="form-control" name="display_image" id="display_image"   accept=".png" multiple required>
+                            <input type="file" class="form-control" name="display_image" id="display_image"  accept=".png" multiple>
                         </label>
                 </div>
                 <div class="col-lg-3">
@@ -33,7 +33,7 @@
                             <label class="form-label-wrapper">
                                 <p class="form-label">Category</p>
                                 {% if categories %}
-                                <select class="form-input" name="category_id" id="category">
+                                <select class="form-input" name="category_id" id="category_id">
 
                                     {% for category in categories %}
                                         <option value="{{ category.category_id }}" {% if category.category_id == product.category_id %} selected {% endif %}>{{ category.name| title }}</option>
@@ -42,13 +42,11 @@
                                     <a href="{{ url_for("inventory.get_categories") }}" class="form-btn primary-default-btn transparent-btn">
                                         Manage Categories
                                     </a>
-
                                 {% else %}
                                     <span class="white-block"> Please Define Product Categories</span>
                                     <a href="{{ url_for('inventory.get_categories') }}" class="form-btn primary-default-btn transparent-btn">
                                         Add Category
                                     </a>
-
                                 {% endif %}
                             </label>
                         </div>
@@ -69,7 +67,7 @@
                         </label>
                 </div>
                 <button class="form-btn primary-default-btn transparent-btn">
-                    Publish Product
+                    Update Product
                 </button>
 
             </div>

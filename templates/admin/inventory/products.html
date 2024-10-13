@@ -36,9 +36,9 @@
                                       </label>
                                     </td>
                                       <td><a href="{{ url_for('inventory.get_product', product_id=product.product_id) }}">{{ product.name| title }} </a></td>
-                                    <td>{{ product.buy_price }}</td>
-                                    <td>{{ product.sell_price }}</td>
-                                    <td>{{ product.inventory_count }} </td>
+                                    <td>{{ product.buy_price| currency }}</td>
+                                    <td>{{ product.sell_price| currency }}</td>
+                                    <td>{{ product.inventory_count }} Items </td>
                                   </tr>
                         {% endfor %}
                         </tbody>

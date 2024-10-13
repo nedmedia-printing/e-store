@@ -48,8 +48,8 @@
           </div>
           <div class="card-body">
               <ul class="list-group white-block">
-                  <li class="list-group-item">Sell Price : {{ product.sell_price }}</li>
-                  <li class="list-group-item">Buy Price : {{ product.buy_price }}</li>
+                  <li class="list-group-item">Sell Price : {{ product.sell_price| currency }}</li>
+                  <li class="list-group-item">Buy Price : {{ product.buy_price| currency }}</li>
               </ul>
           </div>
         </div>

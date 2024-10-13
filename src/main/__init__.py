@@ -9,7 +9,7 @@ system_cache = Caching()
 send_mail = SendMail()
 encryptor = Encryptor()
 
-from src.utils import template_folder, static_folder, upload_folder
+from src.utils import template_folder, static_folder, upload_folder, format_currency
 from src.controller.inventory_controller import InventoryController
 from src.controller.auth import UserController
 from src.main.bootstrap import bootstrap
@@ -35,6 +35,10 @@ def _add_blue_prints(app: Flask):
     app.register_blueprint(images_route)
 
 
+def _add_filters(app: Flask):
+    app.jinja_env.filters['currency'] = format_currency
+
+
 def create_app(config=config_instance()):
     app = Flask(__name__)
     app.template_folder = template_folder()
@@ -44,6 +48,7 @@ def create_app(config=config_instance()):
 
     with app.app_context():
         _add_blue_prints(app=app)
+        _add_filters(app=app)
 
         bootstrap()
         encryptor.init_app(app=app)

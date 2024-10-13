@@ -123,17 +123,18 @@ async def edit_product(user: User, product_id: str):
     :param product_id:
     :return:
     """
-    context = dict(user=user)
     product: Products = await inventory_controller.get_product(product_id=product_id)
+    categories = await inventory_controller.get_product_categories()
     if not isinstance(product, Products):
         flash(message="Product Not Found", category="danger")
         return redirect(url_for('inventory.get_products'))
 
-    context.update(product=product)
+    context = dict(user=user, product=product, categories=categories)
     return render_template('admin/inventory/edit_product.html', **context)
 
 
 @inventory_route.post('/admin/products/edit-product')
+@admin_login
 async def do_edit_product(user: User):
     """
 
@@ -141,14 +142,26 @@ async def do_edit_product(user: User):
     :return:
     """
     try:
-        product = Products(**request.form)
+        product: Products = Products(**request.form)
         display_image = request.files.getlist('display_image')
         inventory_logger.info(f"Display Image: {display_image}")
+        inventory_logger.info(f"Product Details to Update: {product}")
 
     except ValidationError as e:
         inventory_logger.error(str(e))
         flash(message="please enter all required fields", category='danger')
         return redirect(url_for('inventory.add_product'))
+
+    old_product: Products = await inventory_controller.get_product(product_id=product.product_id)
+    updated_product: Products = old_product.update(**product.dict())
+    inventory_logger.info(f"Updated Details to Update: {updated_product}")
+    updated_product_orm: Products | None = await inventory_controller.update_product(product=updated_product)
+    if updated_product_orm:
+        flash(message="Successfully Updated Product", category="success")
+    else:
+        flash(message="Unable to Update Product please try again later", category="danger")
+
+    return redirect(url_for('inventory.get_product', product_id=product.product_id))
 
 
 @inventory_route.post('/admin/products/create-product')
