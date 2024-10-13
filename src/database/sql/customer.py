@@ -7,16 +7,18 @@ from src.database.sql import Base, engine
 
 class CustomerORM(Base):
     __tablename__ = "customers"
-    uid = Column(String(ID_LEN), primary_key=True)
+    uid = Column(String(ID_LEN),  ForeignKey('users.uid'), primary_key=True)
     order_count = Column(Integer)
+    name: str = Column(String(60))
     total_spent = Column(Integer)  # Stored in cents
     city = Column(String(255))
     last_seen = Column(DateTime)
     last_order_date = Column(DateTime)
     notes = Column(String(255))
 
-    # Relationship to Orders
+    # Relationship to Ordersproducts
     orders = relationship("OrderORM", back_populates="customer")
+    user = relationship("UserORM", back_populates='customer')
 
     @classmethod
     def create_if_not_table(cls):
@@ -37,7 +39,8 @@ class CustomerORM(Base):
             "last_seen": self.last_seen,
             "last_order_date": self.last_order_date,
             "notes": self.notes,
-            "orders": [order.to_dict() for order in self.orders]
+            "orders": [order.to_dict() for order in self.orders],
+            "user": self.user.to_dict() if self.user else None
         }
 
 

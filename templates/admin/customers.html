@@ -1,25 +1,31 @@
-
 {% extends "admin/layout/page.html" %}
 {% block content %}
-    <main class="main" id="skip-target">
-      <div class="container">
-        <h2 class="main-title">Customers</h2>
-          <div>
-
-          </div>
-            <div class="table-wrapper">
-                    <table class="table users-table">
-                        <tr class="title">
-                                <th>Customer</th>
-                                <th>Email</th>
-                                <th>Orders</th>
-                                <th>Total Spent</th>
-                                <th>Last Seen</th>
-                                <th>Last Order</th>
-                        </tr>
-                    </table>
-            </div>
-      </div>
-    </main>
-
+<main class="main" id="skip-target">
+  <div class="container">
+    <h2 class="main-title">Customers</h2>
+    <div></div>
+    <div class="table-wrapper">
+      <table class="table users-table">
+        <tr class="title">
+          <th>Customer</th>
+          <th>Email</th>
+          <th>Orders</th>
+          <th>Total Spent</th>
+          <th>Last Seen</th>
+          <th>Last Order</th>
+        </tr>
+        {% for customer in customers %}
+        <tr>
+          <td>{{ customer.name }}</td>
+          <td>{{ customer.email }}</td>
+          <td>{{ customer.order_count }}</td>
+          <td>{{ customer.total_spent }}</td>
+          <td>{{ customer.last_seen.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          <td>{{ customer.last_order_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</main>
 {% endblock %}
