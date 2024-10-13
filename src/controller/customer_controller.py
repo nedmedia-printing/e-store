@@ -1,32 +1,80 @@
-from sqlalchemy.orm import joinedload
-
 from src.controller import Controllers, error_handler
 from src.database.models.customer import Customer
-from src.database.models.products import Category, Products, Inventory
 from src.database.sql.customer import CustomerORM
-from src.database.sql.products import CategoryORM, ProductsORM, InventoryORM
-
 
 class CustomerController(Controllers):
     def __init__(self):
         super().__init__()
 
-
     @error_handler
     async def add_customer(self, customer: Customer):
         """
-
-        :param customer:
-        :return:
+        Adds a new customer to the database.
+        :param customer: Customer instance
+        :return: None
         """
-        pass
+        with self.get_session() as session:
+            customer_orm = CustomerORM(
+                uid=customer.uid,
+                name=customer.name,
+                order_count=customer.order_count,
+                total_spent=customer.total_spent,
+                city=customer.city,
+                last_seen=customer.last_seen,
+                last_order_date=customer.last_order_date,
+                notes=customer.notes
+            )
+            session.add(customer_orm)
 
+    @error_handler
     async def get_customers(self):
         """
-
-        :return:
+        Retrieves all customers from the database.
+        :return: List of Customer instances
         """
         with self.get_session() as session:
             customers_orm_list = session.query(CustomerORM).all()
+            return [Customer(**customer_orm.to_dict()) for customer_orm in customers_orm_list]
 
-            return [Customer(**customer_orm) for customer_orm in customers_orm_list]
+    @error_handler
+    async def get_customer(self, customer_id: str) -> Customer | None:
+        """
+        Retrieves a customer by ID.
+        :param customer_id: Customer ID
+        :return: Customer instance or None if not found
+        """
+        with self.get_session() as session:
+            customer_orm = session.query(CustomerORM).filter_by(uid=customer_id).first()
+            if not customer_orm:
+                return None
+            return Customer(**customer_orm.to_dict())
+
+    @error_handler
+    async def update_customer(self, customer_id: str, updated_data: dict) -> bool:
+        """
+        Updates an existing customer's details.
+        :param customer_id: Customer ID
+        :param updated_data: Dictionary of updated customer data
+        :return: True if update is successful, False otherwise
+        """
+        with self.get_session() as session:
+            customer_orm = session.query(CustomerORM).filter_by(uid=customer_id).first()
+            if not customer_orm:
+                return False
+            for key, value in updated_data.items():
+                setattr(customer_orm, key, value)
+            return True
+
+    @error_handler
+    async def delete_customer(self, customer_id: str) -> bool:
+        """
+        Deletes a customer by ID.
+        :param customer_id: Customer ID
+        :return: True if deletion is successful, False otherwise
+        """
+        with self.get_session() as session:
+            customer_orm = session.query(CustomerORM).filter_by(uid=customer_id).first()
+            if not customer_orm:
+                return False
+            session.delete(customer_orm)
+            return True

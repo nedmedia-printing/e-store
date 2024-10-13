@@ -24,7 +24,7 @@ async def get_customers(user: User):
 
 @customer_route.get('/admin/edit_customer/<string:customer_id>')
 @admin_login
-async def edit_customer(customer_id):
+async def edit_customer(user: User, customer_id: str):
     customer = await customer_controller.get_customer(customer_id)
     if not customer:
         flash(message="Customer not found", category="danger")
@@ -35,8 +35,8 @@ async def edit_customer(customer_id):
 
 @customer_route.post('/admin/edit_customer/<string:customer_id>')
 @admin_login
-async def save_customer_edits(customer_id):
-    customer = await customer_controller.get_customer(customer_id)
+async def save_customer_edits(user: User, customer_id: str):
+    customer = await customer_controller.get_customer(customer_id=customer_id)
     if not customer:
         flash(message="Customer not found", category="danger")
         return redirect(url_for('customer.get_customers'))
@@ -56,7 +56,7 @@ async def save_customer_edits(customer_id):
 
 @customer_route.route('/admin/delete_customer/<string:customer_id>', methods=['POST'])
 @admin_login
-async def delete_customer(customer_id):
+async def delete_customer(user: User, customer_id: str):
     if request.method == 'POST':
         confirmation = request.form.get('confirmation', 'no')
         if confirmation == 'yes':
