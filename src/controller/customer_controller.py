@@ -1,6 +1,10 @@
 from src.controller import Controllers, error_handler
 from src.database.models.customer import Customer
-from src.database.sql.customer import CustomerORM
+from src.database.sql.customer import CustomerORM, OrderORM
+
+
+class PaymentORM:
+    pass
 
 
 class CustomerController(Controllers):
@@ -31,12 +35,31 @@ class CustomerController(Controllers):
     @error_handler
     async def get_customers(self) -> list[Customer]:
         """
-        Retrieves all customers from the database.
+        Retrieves all customers from the database with joined records.
         :return: List of Customer instances
         """
         with self.get_session() as session:
-            customers_orm_list = session.query(CustomerORM).all()
-            return [Customer(**customer_orm.to_dict()) for customer_orm in customers_orm_list]
+            customers_orm_list = (
+                session.query(CustomerORM)
+                .outerjoin(OrderORM, CustomerORM.uid == OrderORM.customer_id)
+                .outerjoin(PaymentORM, OrderORM.order_id == PaymentORM.order_id)
+                .all()
+            )
+
+            # Transform ORM records into data structures
+            customers = []
+            for customer_orm in customers_orm_list:
+                customer_dict = customer_orm.to_dict()
+                customer_dict['orders'] = [
+                    order_orm.to_dict() for order_orm in customer_orm.orders
+                ]
+                for order in customer_dict['orders']:
+                    order['payments'] = [
+                        payment_orm.to_dict() for payment_orm in order.orders
+                    ]
+                customers.append(Customer(**customer_dict))
+
+            return customers
 
     @error_handler
     async def get_customer(self, customer_id: str) -> Customer | None:

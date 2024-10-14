@@ -1,13 +1,51 @@
-from sqlalchemy import Column, String, inspect, Integer, Boolean, Text, ForeignKey, DateTime
+from sqlalchemy import Column, String, inspect, Integer, Boolean, Text, ForeignKey, DateTime, Sequence
 from sqlalchemy.orm import relationship
 
 from src.database.constants import ID_LEN, NAME_LEN
 from src.database.sql import Base, engine
 
 
+class PaymentORM(Base):
+    __tablename__ = "payment"
+    transaction_id = Column(String(ID_LEN), primary_key=True)
+    receipt_number = Column(Integer, Sequence('invoice_number_seq'), autoincrement=True)
+    order_id = Column(String(ID_LEN), ForeignKey('subscriptions.order_id'))
+    package_id = Column(String(ID_LEN), ForeignKey('sms_packages.package_id'))
+    amount_paid = Column(Integer)
+    date_paid = Column(DateTime)
+    payment_method = Column(String(32))
+    is_successful = Column(Boolean, default=False)
+    month = Column(Integer)
+    comments = Column(String(255))
+
+    @classmethod
+    def create_if_not_table(cls):
+        if not inspect(engine).has_table(cls.__tablename__):
+            cls.__table__.create(bind=engine)
+
+    @classmethod
+    def delete_table(cls):
+        if inspect(engine).has_table(cls.__tablename__):
+            cls.__table__.drop(bind=engine)
+
+    def to_dict(self):
+        return {
+            'transaction_id': self.transaction_id,
+            'order_id': self.order_id,
+            'package_id': self.package_id,
+            'receipt_number': self.receipt_number,
+            'amount_paid': self.amount_paid,
+            'date_paid': self.date_paid,
+            'payment_method': self.payment_method,
+            'is_successful': self.is_successful,
+            'month': self.month,
+            'comments': self.comments
+        }
+
+
 class CustomerORM(Base):
     __tablename__ = "customers"
-    uid = Column(String(ID_LEN),  ForeignKey('users.uid'), primary_key=True)
+    uid = Column(String(ID_LEN), ForeignKey('users.uid'), primary_key=True)
     order_count = Column(Integer)
     name: str = Column(String(60))
     total_spent = Column(Integer)  # Stored in cents

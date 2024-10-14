@@ -2,7 +2,7 @@ from sqlalchemy.orm import joinedload
 
 from src.controller import Controllers, error_handler
 from src.database.models.customer import Order
-from src.database.sql.customer import OrderORM, CustomerORM
+from src.database.sql.customer import OrderORM, CustomerORM, PaymentORM
 
 
 class OrdersController(Controllers):
@@ -11,9 +11,29 @@ class OrdersController(Controllers):
 
     @error_handler
     async def get_orders(self) -> list[Order]:
+        """
+        Retrieves all orders from the database with joined records.
+        :return: List of Order instances
+        """
         with self.get_session() as session:
-            order_orm_list = session.query(OrderORM).all()
-            return [Order(**order_orm) for order_orm in order_orm_list]
+            order_orm_list = (
+                session.query(OrderORM)
+                .outerjoin(CustomerORM, OrderORM.customer_id == CustomerORM.uid)
+                .outerjoin(PaymentORM, OrderORM.order_id == PaymentORM.order_id)
+                .all()
+            )
+
+            # Transform ORM records into data structures
+            orders = []
+            for order_orm in order_orm_list:
+                order_dict = order_orm.to_dict()
+                order_dict['customer'] = order_orm.customer.to_dict()
+                order_dict['payments'] = [
+                    payment_orm.to_dict() for payment_orm in order_orm.payments
+                ]
+                orders.append(Order(**order_dict))
+
+            return orders
 
     @error_handler
     async def get_order(self, order_id: str) -> Order:
