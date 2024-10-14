@@ -121,6 +121,7 @@ class Firewall:
         if header_host.casefold() != request.host.casefold():
             abort(401, 'Bad Host Header')
         for host in self.allowed_hosts:
+            print(host)
             if not request.host.endswith(host):
                 self._logger.error(f"Host not allowed: {request.host}")
                 abort(401, f'Host not allowed: {request.host}')
