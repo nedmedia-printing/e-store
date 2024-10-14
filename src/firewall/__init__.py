@@ -123,7 +123,7 @@ class Firewall:
         for host in self.allowed_hosts:
             print(f"ALLOWED HOST : {host}")
             print(f"REQUEST HOST : {request.host}")
-            if not request.host.endswith(host):
+            if not request.host.startswith(host):
                 self._logger.error(f"Host not allowed: {request.host}")
                 abort(401, f'Host not allowed: {request.host}')
 
