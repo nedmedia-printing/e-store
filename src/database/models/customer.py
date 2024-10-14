@@ -3,6 +3,8 @@ from pydantic import BaseModel, Field, field_validator, PositiveInt, EmailStr
 from enum import Enum
 import random
 from faker import Faker
+
+from src.database.models.products import Products
 from src.database.models.users import User, CreateUser
 from src.logger import init_logger
 from src.utils import south_african_standard_time, create_id
@@ -83,6 +85,16 @@ class Payment(BaseModel):
         )
 
 
+class OrderItem(BaseModel):
+    item_id: str = Field(default_factory=create_id)
+    order_id: str
+    product_id: str
+    quantity: PositiveInt
+    price: PositiveInt
+    order: 'Order'
+    product: Products
+
+
 class Order(BaseModel):
     """
     Order Class
@@ -122,10 +134,18 @@ class Order(BaseModel):
     order_id: str = Field(default_factory=create_id)
     customer_id: str
     order_date: datetime = Field(default_factory=south_african_standard_time)
-    total_amount: int
+    discount_percent: int = Field(default=0)
     status: str = Field(default=OrderStatus.PENDING.value)
     date_paid: datetime | None = Field(default=None)
+    customer: 'Customer'
     payments: list[Payment] = []
+    order_items: list[OrderItem]
+
+    @property
+    def total_amount(self) -> int:
+        total = sum(item.price * item.quantity for item in self.order_items)
+        discount_amount = total * (self.discount_percent / 100)
+        return total - discount_amount
 
     @property
     def order_balance(self) -> int:
@@ -239,7 +259,7 @@ class Customer(BaseModel):
 class CustomerUpdate(BaseModel):
     name: str | None = Field(default=None)
     email: EmailStr | None = Field(default=None)
-    city: str| None = Field(default=None)
+    city: str | None = Field(default=None)
     notes: str | None = Field(default=None)
 
 

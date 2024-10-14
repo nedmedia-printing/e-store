@@ -13,7 +13,7 @@
                     <li><span class="title">Name:</span> {{ customer.name }}</li>
                     <li><span class="title">Email:</span> {{ customer.email }}</li>
                     <li><span class="title">City:</span> {{ customer.city }}</li>
-                    <li><span class="title">Total Spent:</span> ${{ customer.total_spent / 100 }}</li>
+                    <li><span class="title">Total Spent:</span> {{ customer.total_spent | currency }}</li>
                     <li><span class="title">Last Seen:</span> {{ customer.last_seen }}</li>
                     <li><span class="title">Last Order Date:</span> {{ customer.last_order_date }}</li>
                     <li><span class="title">Notes:</span> {{ customer.notes }}</li>

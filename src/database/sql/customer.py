@@ -88,7 +88,7 @@ class OrderORM(Base):
     order_id = Column(String(ID_LEN), primary_key=True)
     customer_id = Column(String(ID_LEN), ForeignKey("customers.uid"))
     order_date = Column(DateTime)
-    total_amount = Column(Integer)  # Stored in cents
+    discount_percent = Column(Integer)  # Stored in cents
     status = Column(String(50))
     date_paid = Column(DateTime)
 
