@@ -9,8 +9,8 @@ class PaymentORM(Base):
     __tablename__ = "payment"
     transaction_id = Column(String(ID_LEN), primary_key=True)
     receipt_number = Column(Integer, Sequence('invoice_number_seq'), autoincrement=True)
-    order_id = Column(String(ID_LEN), ForeignKey('subscriptions.order_id'))
-    package_id = Column(String(ID_LEN), ForeignKey('sms_packages.package_id'))
+    order_id = Column(String(ID_LEN), ForeignKey('orders.order_id'))
+
     amount_paid = Column(Integer)
     date_paid = Column(DateTime)
     payment_method = Column(String(32))
@@ -32,7 +32,6 @@ class PaymentORM(Base):
         return {
             'transaction_id': self.transaction_id,
             'order_id': self.order_id,
-            'package_id': self.package_id,
             'receipt_number': self.receipt_number,
             'amount_paid': self.amount_paid,
             'date_paid': self.date_paid,

@@ -16,17 +16,6 @@ customer_logger = init_logger('customer_route')
 async def get_customers(user: User):
     customers: list[Customer] = await customer_controller.get_customers()
     customer_logger.info(f"Are we getting real customers anyways: {customers}")
-    # if not customers:
-    #     flash(message="Note: This is just fake customer data for testing purposes", category="success")
-    #     customers = [Customer.create_fake_customer() for _ in range(10)]
-    #     for customer in customers:
-    #         if customer.user:
-    #             customer_logger.info(f"Will Attempt to create a New User: {customer.user}")
-    #             new_user: User = await user_controller.post(user=CreateUser(**customer.user.dict()))
-    #             customer_logger.info(f"Did it work: {new_user}")
-    #
-    #         new_customer = await customer_controller.add_customer(customer=customer)
-
     context = {'user': user, 'customers': customers}
     return render_template('admin/customers.html', **context)
 
