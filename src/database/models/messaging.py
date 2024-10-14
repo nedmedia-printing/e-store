@@ -66,6 +66,9 @@ class EmailCompose(BaseModel):
 
 
 class SMSSettings(BaseModel):
+    """
+      SMS Settings
+    """
     company_id: str
     enable_sms_notifications: bool = Field(default=False)
     enable_sms_campaigns: bool = Field(default=False)
