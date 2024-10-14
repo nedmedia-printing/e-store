@@ -3,8 +3,8 @@ import ipaddress
 import re
 
 import requests
-from CloudFlare import CloudFlare
-from CloudFlare.exceptions import CloudFlareAPIError
+from cloudflare import Cloudflare, CloudflareError
+
 from flask import Flask, request, abort, Response
 from requests import ReadTimeout
 from requests.exceptions import ConnectionError
@@ -81,8 +81,8 @@ class Firewall:
         self.allowed_hosts = config_instance().HOST_ADDRESSES.split(",")
         self._max_payload_size: int = 8 * 256
         try:
-            self.cloud_flare = CloudFlare(email=EMAIL, token=TOKEN)
-        except CloudFlareAPIError:
+            self.cloud_flare = Cloudflare(api_email=EMAIL, api_token=TOKEN)
+        except CloudflareError:
             pass
         self.ip_ranges = []
         self.bad_addresses = set()
@@ -114,8 +114,8 @@ class Firewall:
             and both request host and header matches
         """
         header_host = request.headers.get('Host')
-        self._logger.info(f'Host is : {header_host}')
-        self._logger.info(f'allowed hosts : {self.allowed_hosts}')
+        self._logger.info(f'Host is: {header_host}')
+        self._logger.info(f'allowed hosts: {self.allowed_hosts}')
         self._logger.info(f"Request Host: {request.host}")
 
         if header_host.casefold() != request.host.casefold():
@@ -187,7 +187,7 @@ class Firewall:
         """
         ip = request.headers.get('cf-connecting-ip')
         ip = ip.split(',')[0]
-        self._logger.info(f"Client IP Address : {ip}")
+        self._logger.info(f"Client IP Address: {ip}")
         return ip
 
     @staticmethod
@@ -218,7 +218,7 @@ class Firewall:
                     self._logger.error("Firewall failed to connect to Cloudflare - unable to verify CIDRS")
                     return [], []
 
-        except CloudFlareAPIError:
+        except CloudflareError:
             return [], []
 
     @staticmethod
@@ -236,8 +236,6 @@ class Firewall:
         session_cookies = [cookie for cookie in session_cookies if cookie is not None]
         if session_cookies:
             response.headers['Session-Vary'] = 'auth'
-
-        # response.headers['Content-Security-Policy'] = "default-src 'self' https://static.cloudflareinsights.com https://fonts.googleapis.com https://www.googletagmanager.com https://netdna.bootstrapcdn.com https://t.paypal.com https://www.paypal.com https://www.cloudflare.com https://www.google-analytics.com https://fonts.gstatic.com; img-src 'self' https://www.paypalobjects.com;"
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
         return response

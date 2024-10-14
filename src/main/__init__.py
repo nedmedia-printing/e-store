@@ -5,6 +5,7 @@ from src.config import config_instance
 from src.emailer import SendMail
 from src.cache.caching import Caching
 from src.controller.encryptor import Encryptor
+from src.firewall import Firewall
 
 system_cache = Caching()
 send_mail = SendMail()
@@ -22,7 +23,7 @@ user_controller = UserController()
 inventory_controller = InventoryController()
 orders_controller = OrdersController()
 customer_controller = CustomerController()
-
+firewall = Firewall()
 
 def _add_blue_prints(app: Flask):
     """
@@ -57,6 +58,7 @@ def create_app(config=config_instance()):
     app.config.from_object(config)
 
     with app.app_context():
+        firewall.init_app(app=app)
         _add_blue_prints(app=app)
         _add_filters(app=app)
 
