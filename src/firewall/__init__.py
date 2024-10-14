@@ -78,7 +78,7 @@ class Firewall:
     """
 
     def __init__(self):
-        self.allowed_hosts = config_instance().HOST_ADDRESSES.split(",")
+        self.allowed_hosts = config_instance().HOST_ADDRESSES
         self._max_payload_size: int = 8 * 256
         try:
             self.cloud_flare = Cloudflare(api_email=EMAIL, api_token=TOKEN)
