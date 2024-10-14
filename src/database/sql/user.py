@@ -20,6 +20,7 @@ class UserORM(Base):
     is_system_admin: bool = Column(Boolean, default=False)
     is_client: bool = Column(Boolean, default=False)
     customer = relationship("CustomerORM", back_populates="user")
+
     @classmethod
     def create_if_not_table(cls):
         if not inspect(engine).has_table(cls.__tablename__):
@@ -60,4 +61,3 @@ class UserORM(Base):
             'is_system_admin': self.is_system_admin,
             'is_client': self.is_client
         }
-

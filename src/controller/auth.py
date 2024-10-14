@@ -130,16 +130,11 @@ class UserController(Controllers):
                                                                    UserORM.email == user.email)).first()
             if user_data:
                 return None
-
             new_user: UserORM = UserORM(**user.to_dict())
             session.add(new_user)
-            new_user_dict = new_user.to_dict()
 
-            _user_data = User(**new_user_dict) if isinstance(new_user, UserORM) else None
-            self.logger.info(f"Created New User : {_user_data}")
-            self.users[_user_data.uid] = _user_data
-
-            return _user_data
+            self.logger.info(f"Created New User: {user}")
+            return User(**new_user.to_dict())
 
     @error_handler
     async def put(self, user: User) -> dict[str, str] | None:

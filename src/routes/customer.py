@@ -3,9 +3,9 @@ from pydantic import ValidationError
 
 from src.authentication import admin_login
 from src.database.models.customer import Customer, CustomerUpdate
-from src.database.models.users import User
+from src.database.models.users import User, CreateUser
 from src.logger import init_logger
-from src.main import customer_controller
+from src.main import customer_controller, user_controller
 
 customer_route = Blueprint('customer', __name__)
 customer_logger = init_logger('customer_route')
@@ -15,9 +15,17 @@ customer_logger = init_logger('customer_route')
 @admin_login
 async def get_customers(user: User):
     customers: list[Customer] = await customer_controller.get_customers()
+    customer_logger.info(f"Are we getting real customers anyways: {customers}")
     if not customers:
         flash(message="Note: This is just fake customer data for testing purposes", category="success")
         customers = [Customer.create_fake_customer() for _ in range(10)]
+        for customer in customers:
+            if customer.user:
+                customer_logger.info(f"Will Attempt to create a New User: {customer.user}")
+                new_user: User = await user_controller.post(user=CreateUser(**customer.user.dict()))
+                customer_logger.info(f"Did it work: {new_user}")
+            new_customer = await customer_controller.add_customer(customer=customer)
+
     context = {'user': user, 'customers': customers}
     return render_template('admin/customers.html', **context)
 

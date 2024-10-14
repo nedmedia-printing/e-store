@@ -2,19 +2,21 @@ from src.controller import Controllers, error_handler
 from src.database.models.customer import Customer
 from src.database.sql.customer import CustomerORM
 
+
 class CustomerController(Controllers):
     def __init__(self):
         super().__init__()
 
     @error_handler
-    async def add_customer(self, customer: Customer):
+    async def add_customer(self, customer: Customer) -> Customer:
         """
         Adds a new customer to the database.
         :param customer: Customer instance
         :return: None
         """
         with self.get_session() as session:
-            customer_orm = CustomerORM(
+
+            session.add(CustomerORM(
                 uid=customer.uid,
                 name=customer.name,
                 order_count=customer.order_count,
@@ -23,11 +25,11 @@ class CustomerController(Controllers):
                 last_seen=customer.last_seen,
                 last_order_date=customer.last_order_date,
                 notes=customer.notes
-            )
-            session.add(customer_orm)
+            ))
+            return customer
 
     @error_handler
-    async def get_customers(self):
+    async def get_customers(self) -> list[Customer]:
         """
         Retrieves all customers from the database.
         :return: List of Customer instances
