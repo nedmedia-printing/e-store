@@ -31,6 +31,22 @@ async def get_customers(user: User):
     return render_template('admin/customers.html', **context)
 
 
+@customer_route.get('/admin/customer-detail/<string:uid>')
+@admin_login
+async def get_customer(user: User, uid: str):
+    """
+
+    :param user:
+    :param uid:
+    :return:
+    """
+    customer_logger.info(f"INSIDE CUSTOMER: {uid}")
+    customer_detail: Customer = await customer_controller.get_customer(customer_id=uid)
+    customer_logger.info(f"Customer Detail: {customer_detail}")
+    context = {'user': user, 'customer': customer_detail}
+    return render_template('admin/customers/customer_detail.html', **context)
+
+
 @customer_route.get('/admin/edit_customer/<string:customer_id>')
 @admin_login
 async def edit_customer(user: User, customer_id: str):
@@ -38,7 +54,7 @@ async def edit_customer(user: User, customer_id: str):
     if not customer:
         flash(message="Customer not found", category="danger")
         return redirect(url_for('customer.get_customers'))
-    context = {'customer': customer}
+    context = {'user': user, 'customer': customer}
     return render_template('admin/customers/edit_customer.html', **context)
 
 

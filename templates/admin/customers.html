@@ -17,18 +17,18 @@
           <th>Actions</th>
         </tr>
         {% for customer in customers %}
-        <tr>
-          <td>{{ customer.name }}</td>
-          <td>{{ customer.email }}</td>
-          <td>{{ customer.order_count }}</td>
-          <td>{{ customer.total_spent | currency }}</td>
-          <td>{{ customer.last_seen.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-          <td>{{ customer.last_order_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-          <td>
-            <a href="{{ url_for('customer.edit_customer', customer_id=customer.uid) }}" class="btn btn-sm btn-primary">Edit</a>
-            <a href="{{ url_for('customer.delete_customer', customer_id=customer.uid) }}" class="btn btn-sm btn-danger">Delete</a>
-          </td>
-        </tr>
+            <tr>
+                <td><a href="{{ url_for('customer.get_customer', uid=customer.uid) }}"> {{ customer.name }}</a></td>
+              <td>{{ customer.email }}</td>
+              <td>{{ customer.order_count }}</td>
+              <td>{{ customer.total_spent | currency }}</td>
+              <td>{{ customer.last_seen.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+              <td>{{ customer.last_order_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+              <td>
+                <a href="{{ url_for('customer.edit_customer', customer_id=customer.uid) }}" class="btn btn-sm btn-primary">Edit</a>
+                <a href="{{ url_for('customer.delete_customer', customer_id=customer.uid) }}" class="btn btn-sm btn-danger">Delete</a>
+              </td>
+            </tr>
         {% endfor %}
       </table>
     </div>

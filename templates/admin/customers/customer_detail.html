@@ -1,0 +1,58 @@
+{% extends "admin/layout/page.html" %}
+
+{% block content %}
+<main class="main" id="skip-target">
+    <div class="container">
+        <h2 class="main-title">Customer Details</h2>
+        <div class="container mb-3">
+            <div class="card-header">
+                <h3 class="main-title">Customer Information</h3>
+            </div>
+            <div class="white-block">
+                <ul class="list-group">
+                    <li><span class="title">Name:</span> {{ customer.name }}</li>
+                    <li><span class="title">Email:</span> {{ customer.email }}</li>
+                    <li><span class="title">City:</span> {{ customer.city }}</li>
+                    <li><span class="title">Total Spent:</span> ${{ customer.total_spent / 100 }}</li>
+                    <li><span class="title">Last Seen:</span> {{ customer.last_seen }}</li>
+                    <li><span class="title">Last Order Date:</span> {{ customer.last_order_date }}</li>
+                    <li><span class="title">Notes:</span> {{ customer.notes }}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="container">
+            <div class="card-header">
+                <h3 class="main-title">Orders</h3>
+            </div>
+            <div class="main-content">
+                {% if customer.orders %}
+                <table class="table users-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in customer.orders %}
+                        <tr>
+                            <td>{{ order.order_id }}</td>
+                            <td>{{ order.order_date }}</td>
+                            <td>${{ order.total_amount / 100 }}</td>
+                            <td>{{ order.status }}</td>
+                            <td>${{ order.order_balance / 100 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No orders found for this customer.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

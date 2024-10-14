@@ -46,9 +46,11 @@ class CustomerController(Controllers):
         :return: Customer instance or None if not found
         """
         with self.get_session() as session:
+            self.logger.info(f"Inside Get Customer: {customer_id}")
             customer_orm = session.query(CustomerORM).filter_by(uid=customer_id).first()
             if not customer_orm:
                 return None
+            self.logger.info(f"Inside Get Customer")
             return Customer(**customer_orm.to_dict())
 
     @error_handler
