@@ -27,8 +27,3 @@ async def get_admin():
     context = dict()
     return render_template('admin/admin.html', **context)
 
-
-@home_route.get('/admin/orders')
-async def get_orders():
-    context = dict()
-    return render_template('admin/orders.html', **context)

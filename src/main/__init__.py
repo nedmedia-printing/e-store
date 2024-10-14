@@ -1,6 +1,6 @@
 from flask import Flask
 from src.config import config_instance
-from src.controller.customer_controller import CustomerController
+
 
 from src.emailer import SendMail
 from src.cache.caching import Caching
@@ -13,11 +13,15 @@ encryptor = Encryptor()
 from src.utils import template_folder, static_folder, upload_folder, format_currency
 from src.controller.inventory_controller import InventoryController
 from src.controller.auth import UserController
+from src.controller.customer_controller import CustomerController
+from src.controller.orders_controller import OrdersController
+
 from src.main.bootstrap import bootstrap
 
 inventory_controller = InventoryController()
 customer_controller = CustomerController()
 user_controller = UserController()
+orders_controller = OrdersController()
 
 
 def _add_blue_prints(app: Flask):
@@ -31,12 +35,14 @@ def _add_blue_prints(app: Flask):
     from src.routes.auth import auth_route
     from src.routes.documents import images_route
     from src.routes.customer import customer_route
+    from src.routes.orders import order_route
 
     app.register_blueprint(home_route)
     app.register_blueprint(inventory_route)
     app.register_blueprint(auth_route)
     app.register_blueprint(images_route)
     app.register_blueprint(customer_route)
+    app.register_blueprint(order_route)
 
 
 def _add_filters(app: Flask):
@@ -56,7 +62,10 @@ def create_app(config=config_instance()):
 
         bootstrap()
         encryptor.init_app(app=app)
+
+        user_controller.init_app(app=app)
         inventory_controller.init_app(app=app)
         customer_controller.init_app(app=app)
+        orders_controller.init_app(app=app)
 
     return app
