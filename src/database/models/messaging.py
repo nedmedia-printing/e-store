@@ -50,6 +50,7 @@ class SMSInbox(BaseModel):
 
 class EmailCompose(BaseModel):
     """
+    @EmailCompose@
         email compose
     """
     message_id: str = Field(default_factory=create_id)
