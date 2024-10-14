@@ -1,10 +1,10 @@
-from datetime import date, datetime
+from datetime import datetime
 from enum import Enum
 
 from flask import url_for
 from pydantic import BaseModel, Field, field_validator
-from src.utils import create_id, south_african_standard_time, generate_isn13, load_files_in_folder, \
-    products_upload_folder
+
+from src.utils import create_id, south_african_standard_time, generate_isn13
 
 
 class InventoryActionTypes(Enum):
