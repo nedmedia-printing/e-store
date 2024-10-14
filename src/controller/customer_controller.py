@@ -1,10 +1,6 @@
 from src.controller import Controllers, error_handler
 from src.database.models.customer import Customer
-from src.database.sql.customer import CustomerORM, OrderORM
-
-
-class PaymentORM:
-    pass
+from src.database.sql.customer import CustomerORM, OrderORM, PaymentORM
 
 
 class CustomerController(Controllers):
@@ -19,7 +15,6 @@ class CustomerController(Controllers):
         :return: None
         """
         with self.get_session() as session:
-
             session.add(CustomerORM(
                 uid=customer.uid,
                 name=customer.name,
