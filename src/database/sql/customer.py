@@ -33,6 +33,7 @@ class CustomerORM(Base):
     def to_dict(self):
         return {
             "uid": self.uid,
+            "name": self.name,
             "order_count": self.order_count,
             "total_spent": self.total_spent,
             "city": self.city,

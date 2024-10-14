@@ -66,6 +66,9 @@ class User(BaseModel):
 
 
 class CreateUser(BaseModel):
+    """
+
+    """
     uid: str
     username: str | None
     password: str
