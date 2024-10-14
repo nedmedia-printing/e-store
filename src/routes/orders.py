@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 
 from src.authentication import admin_login
+from src.database.models.customer import Order
 from src.database.models.users import User
 from src.logger import init_logger
 from src.main import orders_controller
@@ -17,6 +18,6 @@ async def get_orders(user: User):
     :param user:
     :return:
     """
-    orders = await orders_controller.get_orders()
+    orders: list[Order] = await orders_controller.get_orders()
     context = {'user': user, 'orders': orders}
     return render_template('admin/orders/orders.html', **context)
