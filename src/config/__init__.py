@@ -96,7 +96,8 @@ class PayfastSettings(BaseSettings):
     SANDBOX_MERCHANT_ID: str = Field(default=os.environ.get("PAYFAST_SANDBOX_MERCHANT_ID"))
     SANDBOX_MERCHANT_KEY: str = Field(default=os.environ.get("PAYFAST_SANDBOX_MERCHANT_KEY"))
 
-
+def host_addresses():
+    return []
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env.development", env_file_encoding="utf-8", extra="ignore")
     APP_NAME: str = Field(default='Last Base')
@@ -108,7 +109,7 @@ class Settings(BaseSettings):
     EMAIL_SETTINGS: EmailSettings = EmailSettings()
     DEVELOPMENT_SERVER_NAME: str = Field(default="mothetho")
     LOGGING: Logging = Logging()
-    HOST_ADDRESSES: str = Field(default=['nedmedia.co.za', 'https://nedmedia.co.za'])
+    HOST_ADDRESSES: str = Field(default='nedmedia.co.za,https://nedmedia.co.za')
     PAYFAST: PayfastSettings = PayfastSettings()
     FLUTTERWAVE_SECRET_ID: str = Field(default=os.environ.get("FLUTTERWAVE_SECRET_ID"))
     FLUTTERWAVE_FLW_SECRET_KEY: str = Field(default=os.environ.get("FLUTTERWAVE_SECRET_KEY"))
