@@ -11,17 +11,17 @@ send_mail = SendMail()
 encryptor = Encryptor()
 
 from src.utils import template_folder, static_folder, upload_folder, format_currency
-from src.controller.inventory_controller import InventoryController
 from src.controller.auth import UserController
-from src.controller.customer_controller import CustomerController
+from src.controller.inventory_controller import InventoryController
 from src.controller.orders_controller import OrdersController
+from src.controller.customer_controller import CustomerController
 
 from src.main.bootstrap import bootstrap
 
-inventory_controller = InventoryController()
-customer_controller = CustomerController()
 user_controller = UserController()
+inventory_controller = InventoryController()
 orders_controller = OrdersController()
+customer_controller = CustomerController()
 
 
 def _add_blue_prints(app: Flask):

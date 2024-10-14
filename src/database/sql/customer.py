@@ -1,6 +1,6 @@
-from sqlalchemy import Column, String, inspect, Integer, Boolean, Text, ForeignKey, DateTime, Sequence
+from sqlalchemy import Column, String, inspect, Integer, Boolean, ForeignKey, DateTime, Sequence
 from sqlalchemy.orm import relationship
-from src.database.constants import ID_LEN, NAME_LEN
+from src.database.constants import ID_LEN
 from src.database.sql import Base, engine
 from src.database.sql.products import ProductsORM
 
@@ -145,12 +145,13 @@ class OrderItemsORM(Base):
         if inspect(engine).has_table(cls.__tablename__):
             cls.__table__.drop(bind=engine)
 
-    def to_dict(self):
+    def to_dict(self, include_relationships = False):
         return {
             "item_id": self.item_id,
             "order_id": self.order_id,
             "product_id": self.product_id,
             "quantity": self.quantity,
             "price": self.price,
-            "product": self.product.to_dict() if self.product else None
+            "product": self.product.to_dict() if self.product else None,
+            "order": self.order.to_dict() if self.order and include_relationships else None
         }
