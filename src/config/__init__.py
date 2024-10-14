@@ -108,7 +108,7 @@ class Settings(BaseSettings):
     EMAIL_SETTINGS: EmailSettings = EmailSettings()
     DEVELOPMENT_SERVER_NAME: str = Field(default="mothetho")
     LOGGING: Logging = Logging()
-    HOST_ADDRESSES: str = Field(default=os.environ.get('HOST_ADDRESSES'))
+    HOST_ADDRESSES: str = Field(default=['nedmedia.co.za', 'https://nedmedia.co.za'])
     PAYFAST: PayfastSettings = PayfastSettings()
     FLUTTERWAVE_SECRET_ID: str = Field(default=os.environ.get("FLUTTERWAVE_SECRET_ID"))
     FLUTTERWAVE_FLW_SECRET_KEY: str = Field(default=os.environ.get("FLUTTERWAVE_SECRET_KEY"))
