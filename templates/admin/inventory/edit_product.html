@@ -58,12 +58,12 @@
 
                         <label class="form-label-wrapper">
                             <p class="form-label">Sell Price</p>
-                            <input type="number" class="form-input" name="sell_price" id="sell_price" value="{{ product.sell_price }}">
+                            <input type="number" class="form-input" name="sell_price" id="sell_price" value="{{ product.sell_price| currency }}">
                         </label>
 
                         <label class="form-label-wrapper">
                             <p class="form-label">Buy Price</p>
-                            <input type="number" class="form-input" name="buy_price" id="buy_price" value="{{ product.buy_price }}">
+                            <input type="number" class="form-input" name="buy_price" id="buy_price" value="{{ product.buy_price| currency }}">
                         </label>
                 </div>
                 <button class="form-btn primary-default-btn transparent-btn">

@@ -51,7 +51,7 @@
           <label for="action_type" class="label form-label">Action Type
           <select class="form-control" id="action_type" name="action_type">
             {% for action in InventoryActionTypes.action_list() %}
-            <option value="{{ action }}">{{ action }}</option>
+                <option value="{{ action }}">{{ action| title }}</option>
             {% endfor %}
           </select>
           </label>
