@@ -67,7 +67,7 @@ class CustomerController(Controllers):
         :return: True if update is successful, False otherwise
         """
         with self.get_session() as session:
-            customer_orm = session.query(CustomerORM).filter_by(uid=customer_id).first()
+            customer_orm: CustomerORM = session.query(CustomerORM).filter_by(uid=customer_id).first()
             if not customer_orm:
                 return False
             for key, value in updated_data.items():
