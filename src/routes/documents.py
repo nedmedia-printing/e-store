@@ -2,10 +2,8 @@ import os
 import random
 
 from flask import Blueprint
-from flask import send_from_directory, abort, url_for, redirect, flash
+from flask import send_from_directory
 
-from src.database.models.users import User
-from src.authentication import login_required
 from src.logger import init_logger
 from src.utils import products_upload_folder, load_files_in_folder
 

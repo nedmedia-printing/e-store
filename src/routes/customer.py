@@ -3,9 +3,9 @@ from pydantic import ValidationError
 
 from src.authentication import admin_login
 from src.database.models.customer import Customer, CustomerUpdate
-from src.database.models.users import User, CreateUser
+from src.database.models.users import User
 from src.logger import init_logger
-from src.main import customer_controller, user_controller
+from src.main import customer_controller
 
 customer_route = Blueprint('customer', __name__)
 customer_logger = init_logger('customer_route')

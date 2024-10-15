@@ -1,6 +1,4 @@
-import random
-from pydantic import ValidationError
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template
 
 home_route = Blueprint('home', __name__)
 
