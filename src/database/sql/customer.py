@@ -145,7 +145,7 @@ class OrderItemsORM(Base):
         if inspect(engine).has_table(cls.__tablename__):
             cls.__table__.drop(bind=engine)
 
-    def to_dict(self, include_relationships = False):
+    def to_dict(self, include_relationships=False):
         return {
             "item_id": self.item_id,
             "order_id": self.order_id,

@@ -39,7 +39,7 @@ async def get_customer(user: User, uid: str):
 @customer_route.get('/admin/edit_customer/<string:customer_id>')
 @admin_login
 async def edit_customer(user: User, customer_id: str):
-    customer = await customer_controller.get_customer(customer_id)
+    customer = await customer_controller.get_customer(customer_id=customer_id)
     if not customer:
         flash(message="Customer not found", category="danger")
         return redirect(url_for('customer.get_customers'))
@@ -74,7 +74,7 @@ async def delete_customer(user: User, customer_id: str):
     if request.method == 'POST':
         confirmation = request.form.get('confirmation', 'no')
         if confirmation == 'yes':
-            success = await customer_controller.delete_customer(customer_id)
+            success = await customer_controller.delete_customer(customer_id=customer_id)
             if success:
                 flash(message="Customer deleted successfully", category="success")
             else:

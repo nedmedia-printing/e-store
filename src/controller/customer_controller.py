@@ -40,21 +40,8 @@ class CustomerController(Controllers):
                 .outerjoin(PaymentORM, OrderORM.order_id == PaymentORM.order_id)
                 .all()
             )
-
-            # Transform ORM records into data structures
-            customers = []
-            for customer_orm in customers_orm_list:
-                customer_dict = customer_orm.to_dict()
-                customer_dict['orders'] = [
-                    order_orm.to_dict() for order_orm in customer_orm.orders
-                ]
-                for order in customer_dict['orders']:
-                    order['payments'] = [
-                        payment_orm.to_dict() for payment_orm in order.orders
-                    ]
-                customers.append(Customer(**customer_dict))
-
-            return customers
+            return [Customer(**customer_orm.to_dict(include_relationships=True)) for customer_orm in customers_orm_list
+                    if isinstance(customer_orm, CustomerORM)]
 
     @error_handler
     async def get_customer(self, customer_id: str) -> Customer | None:
@@ -69,7 +56,7 @@ class CustomerController(Controllers):
             if not customer_orm:
                 return None
             self.logger.info(f"Inside Get Customer")
-            return Customer(**customer_orm.to_dict())
+            return Customer(**customer_orm.to_dict(include_relationships=True))
 
     @error_handler
     async def update_customer(self, customer_id: str, updated_data: dict) -> bool:

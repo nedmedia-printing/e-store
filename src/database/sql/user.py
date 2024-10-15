@@ -51,7 +51,7 @@ class UserORM(Base):
     def __bool__(self) -> bool:
         return bool(self.uid) and bool(self.username) and bool(self.email)
 
-    def to_dict(self) -> dict[str, str | bool]:
+    def to_dict(self, include_relationships=False) -> dict[str, str | bool]:
         return {
             'uid': self.uid,
             'username': self.username,
@@ -59,5 +59,6 @@ class UserORM(Base):
             'password_hash': self.password_hash,
             'account_verified': self.account_verified,
             'is_system_admin': self.is_system_admin,
-            'is_client': self.is_client
+            'is_client': self.is_client,
+            'customer': self.customer.to_dict() if self.customer and include_relationships else None
         }

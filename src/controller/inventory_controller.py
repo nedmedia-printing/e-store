@@ -26,7 +26,7 @@ class InventoryController(Controllers):
         """
         with self.get_session() as session:
             categories_list_orm = session.query(CategoryORM).all()
-            return [Category(**cat.to_dict()) for cat in categories_list_orm]
+            return [Category(**cat.to_dict(include_relationships=True)) for cat in categories_list_orm]
 
     @error_handler
     async def add_product(self, product: Products) -> Products | None:

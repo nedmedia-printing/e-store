@@ -30,7 +30,7 @@ class ProductsORM(Base):
         if inspect(engine).has_table(cls.__tablename__):
             cls.__table__.drop(bind=engine)
 
-    def to_dict(self):
+    def to_dict(self, include_relationships=False):
         return {
             "product_id": self.product_id,
             "category_id": self.category_id,
@@ -41,7 +41,7 @@ class ProductsORM(Base):
             "sell_price": self.sell_price,
             "buy_price": self.buy_price,
             "time_of_entry": self.time_of_entry.isoformat() if self.time_of_entry else None,
-            "inventory_entries": [entry.to_dict() for entry in self.inventory_entries]
+            "inventory_entries": [entry.to_dict(include_relationships=True) for entry in self.inventory_entries]
         }
 
 
@@ -95,7 +95,7 @@ class InventoryORM(Base):
         if inspect(engine).has_table(cls.__tablename__):
             cls.__table__.drop(bind=engine)
 
-    def to_dict(self):
+    def to_dict(self, include_relationships=False):
         return {
             "entry_id": self.entry_id,
             "product_id": self.product_id,
