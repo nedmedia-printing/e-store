@@ -75,7 +75,6 @@ class CreateUser(BaseModel):
     password: str
     email: str
     account_verified: bool = Field(default=False)
-
     is_system_admin: bool = Field(default=False)
     is_client: bool = Field(default=False)
 
