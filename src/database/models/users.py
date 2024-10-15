@@ -24,7 +24,7 @@ class User(BaseModel):
     - contact_number (str): The contact number of the user.
     """
     uid: str
-    username: str | None
+    username: str | None = Field(default=None)
     password_hash: str
     email: str
 
@@ -32,7 +32,7 @@ class User(BaseModel):
 
     is_system_admin: bool = Field(default=False)
     is_client: bool = Field(default=False)
-    customer: 'Customer'
+    customer: 'Customer' = Field(default=None)
 
     def __str__(self):
         return f"User(uid={self.uid}, username={self.username}, email={self.email})"
