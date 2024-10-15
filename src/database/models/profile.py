@@ -26,7 +26,6 @@ class Profile(BaseModel):
 
 class ProfileUpdate(BaseModel):
     uid: str
-
     profile_name: str | None
     notes: str | None
 

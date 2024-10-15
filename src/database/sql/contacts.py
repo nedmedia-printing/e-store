@@ -93,7 +93,7 @@ class PostalAddressORM(Base):
 
     def to_dict(self):
         """
-        Convert the object to a dictionary representation.
+            Convert the object to a dictionary representation.
         """
         return {
             "postal_id": self.postal_id,
