@@ -1,17 +1,23 @@
 from flask import Blueprint, render_template
 
+from src.authentication import user_details
+from src.database.models.users import User
+from src.main import inventory_controller
+
 home_route = Blueprint('home', __name__)
 
 
 @home_route.get('/')
-async def get_home():
+@user_details
+async def get_home(user: User):
     # project_list: list[dict[str, str]] = await projects.get_projects()
     #
     # image_filenames: list[str] = ['images/gallery/image_1.jpg', 'images/gallery/image_2.jpg',
     #                               'images/gallery/image_3.jpg', 'images/gallery/image_4.jpg']
     #
     # image_filename: str = random.choice(image_filenames)
-    context = dict()
+    categories = await inventory_controller.get_product_categories()
+    context = dict(user=user, categories=categories)
     return render_template('index.html', **context)
 
 
