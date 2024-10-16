@@ -116,7 +116,7 @@
                                         {% for category in categories %}
                                             <div class="col-6">
                                                 <span class="image fit">
-                                                    <img src="{{ category.display_image_url if category.display_images else '/static/images/default.png' }}" alt="{{ category.name }}" />
+                                                    <img src="{{ category.display_image_url if category.display_image_url else '/static/images/default.png' }}" alt="{{ category.name }}" />
                                                 </span>
                                                 <h3>{{ category.name| title }}</h3>
                                                 <p>{{ category.description }}</p>
