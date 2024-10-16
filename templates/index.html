@@ -1,5 +1,16 @@
 
 {% extends "layout/page.html" %}
+{% block css %}
+    <style>
+        .category-image {
+            width: 150px;  /* Set a fixed width */
+            height: 150px; /* Set a fixed height */
+            object-fit: cover; /* Ensures the image covers the specified dimensions without distortion */
+            border-radius: 8px; /* Optional: adds rounded corners to the images */
+        }
+    </style>
+
+{% endblock %}
 {% block sidebar %}
     {% include "layout/sidebar.html" %}
 {% endblock %}
