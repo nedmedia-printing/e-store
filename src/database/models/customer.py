@@ -213,7 +213,6 @@ class Customer(BaseModel):
     last_order_date: datetime | None = Field(default=None)
     notes: str | None = Field(default=None)
     orders: list[Order] = Field(default_factory=list)
-    user: User
 
     @property
     def email(self):
@@ -251,8 +250,7 @@ class Customer(BaseModel):
             last_seen=last_seen,
             last_order_date=last_order_date,
             notes=fake.sentence(),
-            orders=[],
-            user=user
+            orders=[]
         )
 
 

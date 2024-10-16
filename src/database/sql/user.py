@@ -1,5 +1,4 @@
 from sqlalchemy import Column, String, Boolean, inspect
-from sqlalchemy.orm import relationship
 
 from src.database.constants import ID_LEN, NAME_LEN
 from src.database.sql import Base, engine
@@ -19,7 +18,7 @@ class UserORM(Base):
     account_verified: bool = Column(Boolean, default=False)
     is_system_admin: bool = Column(Boolean, default=False)
     is_client: bool = Column(Boolean, default=False)
-    customer = relationship("CustomerORM", back_populates="user")
+
 
     @classmethod
     def create_if_not_table(cls):
@@ -59,6 +58,5 @@ class UserORM(Base):
             'password_hash': self.password_hash,
             'account_verified': self.account_verified,
             'is_system_admin': self.is_system_admin,
-            'is_client': self.is_client,
-            'customer': self.customer.to_dict() if self.customer and include_relationships else None
+            'is_client': self.is_client
         }

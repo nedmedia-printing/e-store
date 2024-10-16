@@ -56,7 +56,6 @@ class CustomerORM(Base):
 
     # Relationship to Orders products
     orders = relationship("OrderORM", back_populates="customer", uselist=True)
-    user = relationship("UserORM", back_populates='customer', uselist=False)
 
     @classmethod
     def create_if_not_table(cls):
@@ -78,8 +77,8 @@ class CustomerORM(Base):
             "last_seen": self.last_seen,
             "last_order_date": self.last_order_date,
             "notes": self.notes,
-            "orders": [order.to_dict() for order in self.orders] if include_relationships else [],
-            "user": self.user.to_dict() if self.user else None if include_relationships else None
+            "orders": [order.to_dict() for order in self.orders] if include_relationships else []
+
         }
 
 
