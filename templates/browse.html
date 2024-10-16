@@ -38,26 +38,33 @@
 {% block content %}
     <div id="wrapper">
         <section id="two" class="wrapper style3 fade-up">
-            <h2>{{ category.name | title }}</h2>
-            <p>{{ category.description }}</p>
-            <h3>Products in this Category ({{ category.product_count }})</h3>
-            <div class="product-list">
-                {% for product in category.products %}
-                    <div class="product">
-                        <span class="image fit">
-                            <img src="{{ product.display_image_url if product.display_image_url else '/static/images/default_product.png' }}"
-                                 alt="{{ product.name }}"
-                                 class="product-image" />
-                        </span>
-                        <h4>{{ product.name | title }}</h4>
-                        <p>Price: R{{ product.sell_price | floatformat:2 }}</p>
-                        <p>{{ product.description }}</p>
-                        <a href="{{ url_for('products.view_product', product_id=product.product_id) }}" class="button">View Details</a>
-                    </div>
-                {% else %}
-                    <p>No products available in this category.</p>
-                {% endfor %}
+            <h2>Categories </h2>
+<section id="four" class="wrapper style1 fade-up">
+    <div class="inner">
+        <h2>Categories</h2>
+        <p>Explore our wide range of professional print solutions, including Business Cards, Brochures, Flyers, Folded Leaflets, Invitations, and more. Our high-quality products are designed to meet all your business and promotional needs.</p>
+
+        <section>
+            <div class="box alt">
+                <div class="row gtr-uniform">
+                    {% for category in categories %}
+                        <div class="col-6">
+                            <a href="{{ url_for('browse.get_category', seo_slug=category.display_slug) }}">
+                                <span class="image fit">
+                                    <img src="{{ category.display_image_url if category.display_image_url else '/static/images/default.png' }}"
+                                         alt="{{ category.name }}"
+                                         class="category-image" />
+                                </span>
+                                <h3>{{ category.name | title }}</h3>
+                                <p>{{ category.description }}</p>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
+        </section>
+    </div>
+</section>
         </section>
     </div>
 {% endblock %}
