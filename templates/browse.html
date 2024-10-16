@@ -1,0 +1,63 @@
+{% extends "layout/page.html" %}
+{% block css %}
+    <style>
+        .category-image {
+            width: 640px;  /* Set a fixed width */
+            height: 360px; /* Set a fixed height */
+            object-fit: cover; /* Ensures the image covers the specified dimensions without distortion */
+            border-radius: 8px; /* Optional: adds rounded corners to the images */
+        }
+        .product-list {
+            display: grid; /* Use grid layout for products */
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
+            gap: 20px; /* Space between products */
+        }
+        .product {
+            border: 1px solid #ddd; /* Optional border for product items */
+            padding: 10px; /* Padding inside each product */
+            text-align: center; /* Center align text */
+            border-radius: 8px; /* Rounded corners */
+            background-color: #fff; /* White background */
+            transition: box-shadow 0.3s; /* Transition for hover effect */
+        }
+        .product:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect on hover */
+        }
+        .product-image {
+            width: 100%; /* Full width for images */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 8px; /* Rounded corners for images */
+        }
+    </style>
+{% endblock %}
+
+{% block sidebar %}
+    {% include "layout/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+    <div id="wrapper">
+        <section id="two" class="wrapper style3 fade-up">
+            <h2>{{ category.name | title }}</h2>
+            <p>{{ category.description }}</p>
+            <h3>Products in this Category ({{ category.product_count }})</h3>
+            <div class="product-list">
+                {% for product in category.products %}
+                    <div class="product">
+                        <span class="image fit">
+                            <img src="{{ product.display_image_url if product.display_image_url else '/static/images/default_product.png' }}"
+                                 alt="{{ product.name }}"
+                                 class="product-image" />
+                        </span>
+                        <h4>{{ product.name | title }}</h4>
+                        <p>Price: R{{ product.sell_price | floatformat:2 }}</p>
+                        <p>{{ product.description }}</p>
+                        <a href="{{ url_for('products.view_product', product_id=product.product_id) }}" class="button">View Details</a>
+                    </div>
+                {% else %}
+                    <p>No products available in this category.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+{% endblock %}
