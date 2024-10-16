@@ -59,8 +59,7 @@
     </div>
 </section>
 
-
- <section id="four" class="wrapper style1 fade-up">
+<section id="four" class="wrapper style1 fade-up">
     <div class="inner">
         <h2>Categories</h2>
         <p>Explore our wide range of professional print solutions, including Business Cards, Brochures, Flyers, Folded Leaflets, Invitations, and more. Our high-quality products are designed to meet all your business and promotional needs.</p>
@@ -70,13 +69,15 @@
                 <div class="row gtr-uniform">
                     {% for category in categories %}
                         <div class="col-6">
-                            <span class="image fit">
-                                <img src="{{ category.display_image_url if category.display_image_url else '/static/images/default.png' }}"
-                                     alt="{{ category.name }}"
-                                     class="category-image" />
-                            </span>
-                            <h3>{{ category.name | title }}</h3>
-                            <p>{{ category.description }}</p>
+                            <a href="{{ url_for('browse.get_category', seo_slug=category.display_slug) }}">
+                                <span class="image fit">
+                                    <img src="{{ category.display_image_url if category.display_image_url else '/static/images/default.png' }}"
+                                         alt="{{ category.name }}"
+                                         class="category-image" />
+                                </span>
+                                <h3>{{ category.name | title }}</h3>
+                                <p>{{ category.description }}</p>
+                            </a>
                         </div>
                     {% endfor %}
                 </div>
@@ -84,6 +85,7 @@
         </section>
     </div>
 </section>
+
 
 
                     <!-- Three -->

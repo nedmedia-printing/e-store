@@ -128,6 +128,18 @@ class InventoryController(Controllers):
                     isinstance(product, ProductsORM)]
 
     @error_handler
+    async def get_category_by_slug(self, slug: str) -> Category:
+        """
+            first retrieve all categories second compare the slug for each category and return the matching one
+            retrieve the category with its linked products
+        :param slug:
+        :return:
+        """
+        categories = await self.get_product_categories()
+        category = next((cat for cat in categories if cat.display_slug == slug), None)
+        return category
+
+    @error_handler
     async def get_category_products(self, category_id: str) -> list[Products]:
         """
         Retrieves products by category ID along with their inventory entries.

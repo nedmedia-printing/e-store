@@ -1,0 +1,50 @@
+{% extends "layout/page.html" %}
+
+{% block css %}
+    <style>
+        .category-image {
+            width: 640px;  /* Set a fixed width */
+            height: 360px; /* Set a fixed height */
+            object-fit: cover; /* Ensures the image covers the specified dimensions without distortion */
+            border-radius: 8px; /* Optional: adds rounded corners to the images */
+        }
+        .product {
+            margin-bottom: 20px; /* Spacing between products */
+            text-align: center; /* Center align product information */
+        }
+        .product-image {
+            width: 100%; /* Responsive image */
+            max-width: 300px; /* Maximum width for product image */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 8px; /* Optional: adds rounded corners to product images */
+        }
+    </style>
+{% endblock %}
+
+{% block sidebar %}
+    {% include "layout/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+    <div id="wrapper">
+        <section>
+            <h2>{{ category.name | title }}</h2>
+            <p>{{ category.description }}</p>
+            <h3>Products in this Category ({{ category.product_count }})</h3>
+            <div class="product-list">
+                {% for product in category.products %}
+                    <div class="product">
+                        <span class="image fit">
+                            <img src="{{ product.display_image_url if product.display_image_url else '/static/images/default_product.png' }}"
+                                 alt="{{ product.name }}"
+                                 class="product-image" />
+                        </span>
+                        <h4>{{ product.name | title }}</h4>
+                        <p>Price: {{ product.sell_price | currency }}</p>
+                        <p>{{ product.description }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+{% endblock %}

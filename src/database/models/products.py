@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-
+import re
 from flask import url_for
 from pydantic import BaseModel, Field, field_validator
 
@@ -113,6 +113,18 @@ class Category(BaseModel):
     @field_validator('name', mode='before')
     def strip_and_lowercase(cls, v: str) -> str:
         return v.strip().lower() if isinstance(v, str) else v
+
+    @property
+    def display_slug(self) -> str:
+        """Create an SEO-friendly URI for the category."""
+        # Normalize the name
+        slug = self.name.lower()
+        # Replace spaces with hyphens and remove special characters
+        slug = re.sub(r'[^a-z0-9\s]', '', slug).replace(" ", "-")
+        # Remove multiple hyphens
+        slug = re.sub(r'--+', '-', slug)
+        # Strip hyphens from the start and end
+        return slug.strip('-')
 
     @property
     def product_count(self) -> int:
