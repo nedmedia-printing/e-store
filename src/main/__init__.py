@@ -1,7 +1,6 @@
 from flask import Flask
 from src.config import config_instance
 
-
 from src.emailer import SendMail
 from src.cache.caching import Caching
 from src.controller.encryptor import Encryptor
@@ -24,6 +23,7 @@ inventory_controller = InventoryController()
 orders_controller = OrdersController()
 customer_controller = CustomerController()
 firewall = Firewall()
+
 
 def _add_blue_prints(app: Flask):
     """
@@ -55,6 +55,8 @@ def create_app(config=config_instance()):
     app.template_folder = template_folder()
     app.static_folder = static_folder()
     app.config['UPLOAD_FOLDER'] = upload_folder()
+    # same config as in Nginx
+    app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB
     app.config.from_object(config)
 
     with app.app_context():

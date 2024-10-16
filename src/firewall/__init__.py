@@ -79,7 +79,8 @@ class Firewall:
 
     def __init__(self):
         self.allowed_hosts = config_instance().HOST_ADDRESSES.split(",")
-        self._max_payload_size: int = 8 * 256
+        self._max_payload_size: int = 10 * 1024 * 1024  # 10 MB
+
         try:
             self.cloud_flare = Cloudflare(api_email=EMAIL, api_token=TOKEN)
         except CloudflareError:
@@ -144,10 +145,15 @@ class Firewall:
         headers: dict[str, str] = request.headers
         body = request.data
 
+        if request.path.casefold().__contains__('documents'):
+            self._max_payload_size = 50 * 1024 * 1024
+
         if 'Content-Length' in headers and int(headers['Content-Length']) > self._max_payload_size:
             # Request payload is too large,
             self._logger.info("Payload too long")
             abort(401, 'Payload is suspicious -- Content-Length')
+
+        self._max_payload_size = 10 * 1024 * 1024
 
         if body:
             _body = body.decode('utf-8')
