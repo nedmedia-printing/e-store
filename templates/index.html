@@ -105,28 +105,31 @@
                     </section>
 
 
-                    <section id="four" class="wrapper style1 fade-up">
-                        <div class="inner">
-                            <h2>Categories</h2>
-                            <p>Explore our wide range of professional print solutions, including Business Cards, Brochures, Flyers, Folded Leaflets, Invitations, and more. Our high-quality products are designed to meet all your business and promotional needs.</p>
+ <section id="four" class="wrapper style1 fade-up">
+    <div class="inner">
+        <h2>Categories</h2>
+        <p>Explore our wide range of professional print solutions, including Business Cards, Brochures, Flyers, Folded Leaflets, Invitations, and more. Our high-quality products are designed to meet all your business and promotional needs.</p>
 
-                            <section>
-                                <div class="box alt">
-                                    <div class="row gtr-uniform">
-                                        {% for category in categories %}
-                                            <div class="col-6">
-                                                <span class="image fit">
-                                                    <img src="{{ category.display_image_url if category.display_image_url else '/static/images/default.png' }}" alt="{{ category.name }}" />
-                                                </span>
-                                                <h3>{{ category.name| title }}</h3>
-                                                <p>{{ category.description }}</p>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </section>
+        <section>
+            <div class="box alt">
+                <div class="row gtr-uniform">
+                    {% for category in categories %}
+                        <div class="col-6">
+                            <span class="image fit">
+                                <img src="{{ category.display_image_url if category.display_image_url else '/static/images/default.png' }}"
+                                     alt="{{ category.name }}"
+                                     class="category-image" />
+                            </span>
+                            <h3>{{ category.name | title }}</h3>
+                            <p>{{ category.description }}</p>
                         </div>
-                    </section>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </div>
+</section>
+
 
                     <!-- Three -->
                     <section id="three" class="wrapper style1 fade-up">
