@@ -1,3 +1,5 @@
+from sqlalchemy.orm import joinedload
+
 from src.controller import Controllers, error_handler
 from src.database.models.customer import Customer
 from src.database.sql.customer import CustomerORM, OrderORM, PaymentORM
@@ -36,23 +38,31 @@ class CustomerController(Controllers):
         with self.get_session() as session:
             customers_orm_list = (
                 session.query(CustomerORM)
-                .outerjoin(OrderORM, CustomerORM.uid == OrderORM.customer_id)
-                .outerjoin(PaymentORM, OrderORM.order_id == PaymentORM.order_id)
+                .options(
+                    joinedload(CustomerORM.orders)
+                    .joinedload(OrderORM.payments)
+                    .joinedload(OrderORM.order_items)
+                )
                 .all()
             )
-            return [Customer(**customer_orm.to_dict(include_relationships=True)) for customer_orm in customers_orm_list
-                    if isinstance(customer_orm, CustomerORM)]
+
+            return [Customer(**customer_orm.to_dict(include_relationships=True)) for customer_orm in customers_orm_list]
 
     @error_handler
     async def get_customer(self, customer_id: str) -> Customer | None:
         """
-        Retrieves a customer by ID.
+        Retrieves a customer by ID along with their orders.
         :param customer_id: Customer ID
         :return: Customer instance or None if not found
         """
         with self.get_session() as session:
             self.logger.info(f"Inside Get Customer: {customer_id}")
-            customer_orm = session.query(CustomerORM).filter_by(uid=customer_id).first()
+            customer_orm = (
+                session.query(CustomerORM)
+                .options(joinedload(CustomerORM.orders))  # Ensures orders are loaded
+                .filter_by(uid=customer_id)
+                .first()
+            )
             if not customer_orm:
                 return None
             self.logger.info(f"Inside Get Customer")
@@ -77,7 +87,7 @@ class CustomerController(Controllers):
     @error_handler
     async def delete_customer(self, customer_id: str) -> bool:
         """
-        Deletes a customer by ID.
+        Deletes a customer by ID along with all linked order records.
         :param customer_id: Customer ID
         :return: True if deletion is successful, False otherwise
         """
@@ -85,5 +95,17 @@ class CustomerController(Controllers):
             customer_orm = session.query(CustomerORM).filter_by(uid=customer_id).first()
             if not customer_orm:
                 return False
+
+            # Delete all related orders
+            for order in customer_orm.orders:
+                # Delete all related payments for each order
+                for payment in order.payments:
+                    session.delete(payment)
+                # Delete all related order items for each order
+                for item in order.order_items:
+                    session.delete(item)
+                session.delete(order)
+
+            # Finally, delete the customer
             session.delete(customer_orm)
             return True

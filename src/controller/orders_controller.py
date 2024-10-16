@@ -1,3 +1,5 @@
+from sqlalchemy.orm import joinedload
+
 from src.controller import Controllers, error_handler
 from src.database.models.customer import Order, OrderStatus
 from src.database.sql.customer import OrderORM, CustomerORM, PaymentORM
@@ -16,16 +18,32 @@ class OrdersController(Controllers):
         with self.get_session() as session:
             order_orm_list = (
                 session.query(OrderORM)
-                .outerjoin(CustomerORM, OrderORM.customer_id == CustomerORM.uid)
-                .outerjoin(PaymentORM, OrderORM.order_id == PaymentORM.order_id)
+                .options(
+                    joinedload(OrderORM.customer),
+                    joinedload(OrderORM.payments),
+                    joinedload(OrderORM.order_items)
+                )
                 .all()
             )
+
             return [Order(**order_orm.to_dict(include_relationships=True)) for order_orm in order_orm_list]
 
     @error_handler
-    async def get_order(self, order_id: str) -> Order:
+    async def get_order(self, order_id: str) -> Order | None:
         with self.get_session() as session:
-            order_orm = session.query(OrderORM).filter_by(order_id=order_id).first()
+            order_orm = (
+                session.query(OrderORM)
+                .options(
+                    joinedload(OrderORM.customer),
+                    joinedload(OrderORM.payments),
+                    joinedload(OrderORM.order_items)
+                )
+                .filter_by(order_id=order_id)
+                .first()
+            )
+            if not order_orm:
+                return None
+
             return Order(**order_orm.to_dict(include_relationships=True))
 
     async def get_refunds(self) -> list[Order]:

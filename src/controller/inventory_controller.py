@@ -21,11 +21,17 @@ class InventoryController(Controllers):
     @error_handler
     async def get_product_categories(self):
         """
-
-        :return:
+        Retrieves all product categories from the database with linked records.
+        :return: List of Category instances
         """
         with self.get_session() as session:
-            categories_list_orm = session.query(CategoryORM).all()
+            categories_list_orm = (
+                session.query(CategoryORM)
+                .options(
+                    joinedload(CategoryORM.products).joinedload(ProductsORM.inventory_entries)
+                )
+                .all()
+            )
             return [Category(**cat.to_dict(include_relationships=True)) for cat in categories_list_orm]
 
     @error_handler
@@ -40,34 +46,47 @@ class InventoryController(Controllers):
             session.add(ProductsORM(**prepared_dict))
             return product
 
-    async def get_category(self, category_id: str):
+    @error_handler
+    async def get_category(self, category_id: str) -> Category | None:
         """
-        :param category_id:
-        :return:
+        Retrieves a category by ID along with its products and their inventory entries.
+        :param category_id: Category ID
+        :return: Category instance or None if not found
         """
         with self.get_session() as session:
-            category_orm = session.query(CategoryORM) \
-                .options(joinedload(CategoryORM.products)) \
-                .filter_by(category_id=category_id) \
+            category_orm = (
+                session.query(CategoryORM)
+                .options(
+                    joinedload(CategoryORM.products).joinedload(ProductsORM.inventory_entries)
+                )
+                .filter_by(category_id=category_id)
                 .first()
-
+            )
             if not category_orm:
                 return None
 
-            # Convert dictionary to Pydantic model
-            return Category(**category_orm.to_dict())
+            return Category(**category_orm.to_dict(include_relationships=True))
 
     @error_handler
     async def get_product(self, product_id: str) -> Products | None:
         """
-
-        :param product_id:
-        :return:
+        Retrieves a product by ID along with its inventory entries.
+        :param product_id: Product ID
+        :return: Product instance or None if not found
         """
         with self.get_session() as session:
-            product_orm = session.query(ProductsORM).filter_by(product_id=product_id).first()
-            if isinstance(product_orm, ProductsORM):
-                return Products(**product_orm.to_dict())
+            product_orm = (
+                session.query(ProductsORM)
+                .options(
+                    joinedload(ProductsORM.inventory_entries)
+                )
+                .filter_by(product_id=product_id)
+                .first()
+            )
+            if not product_orm:
+                return None
+
+            return Products(**product_orm.to_dict(include_relationships=True))
 
     async def update_product(self, product: Products) -> Products | None:
         """
@@ -94,24 +113,38 @@ class InventoryController(Controllers):
     @error_handler
     async def get_products(self) -> list[Products]:
         """
-        **get_products**
-
-        :return:
+        Retrieves all products from the database with linked inventory entries.
+        :return: List of Product instances
         """
         with self.get_session() as session:
-            products_orm_list: list[ProductsORM] = session.query(ProductsORM).all()
-            return [Products(**product.to_dict()) for product in products_orm_list if isinstance(product, ProductsORM)]
+            products_orm_list: list[ProductsORM] = (
+                session.query(ProductsORM)
+                .options(
+                    joinedload(ProductsORM.inventory_entries)
+                )
+                .all()
+            )
+            return [Products(**product.to_dict(include_relationships=True)) for product in products_orm_list if
+                    isinstance(product, ProductsORM)]
 
     @error_handler
     async def get_category_products(self, category_id: str) -> list[Products]:
         """
-
-        :param category_id:
-        :return:
+        Retrieves products by category ID along with their inventory entries.
+        :param category_id: Category ID
+        :return: List of Product instances
         """
         with self.get_session() as session:
-            products_orm_list: list[ProductsORM] = session.query(ProductsORM).filter_by(category_id=category_id).all()
-            return [Products(**product.to_dict()) for product in products_orm_list if isinstance(product, ProductsORM)]
+            products_orm_list: list[ProductsORM] = (
+                session.query(ProductsORM)
+                .options(
+                    joinedload(ProductsORM.inventory_entries)
+                )
+                .filter_by(category_id=category_id)
+                .all()
+            )
+            return [Products(**product.to_dict(include_relationships=True)) for product in products_orm_list if
+                    isinstance(product, ProductsORM)]
 
     @error_handler
     async def get_product_inventory(self, product_id: str) -> list[Inventory]:
