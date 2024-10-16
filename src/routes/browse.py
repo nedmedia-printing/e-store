@@ -27,7 +27,7 @@ async def get_category(user: User, seo_slug: str):
 
 @browse_route.get('/categories')
 @user_details
-async def browse(user: User, seo_slug: str):
+async def browse(user: User):
     """
     Retrieve the category by slug and render the category products.
 
