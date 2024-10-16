@@ -1,7 +1,23 @@
-{% extends "layout/page.html" %}
 
+{% extends "layout/page.html" %}
+{% block css %}
+    <style>
+        .category-image {
+            width: 640px;  /* Set a fixed width */
+            height: 360px; /* Set a fixed height */
+            object-fit: cover; /* Ensures the image covers the specified dimensions without distortion */
+            border-radius: 8px; /* Optional: adds rounded corners to the images */
+        }
+    </style>
+
+{% endblock %}
+{% block sidebar %}
+    {% include "layout/sidebar.html" %}
+{% endblock %}
 {% block content %}
-<div id="wrapper">
+    <div id="wrapper">
+
+<section id="two" class="wrapper style3 fade-up">
     <h2>Thank You for Your Purchase!</h2>
     <p>Your order has been processed successfully.</p>
     <h3>Your Order Details:</h3>
@@ -13,5 +29,6 @@
     <div class="total">
         Total: {{ cart.total_price | currency }}
     </div>
+</section>
 </div>
 {% endblock %}

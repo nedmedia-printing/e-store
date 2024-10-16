@@ -1,13 +1,23 @@
+
 {% extends "layout/page.html" %}
-
 {% block css %}
-<style>
-    /* Add any necessary styles here */
-</style>
-{% endblock %}
+    <style>
+        .category-image {
+            width: 640px;  /* Set a fixed width */
+            height: 360px; /* Set a fixed height */
+            object-fit: cover; /* Ensures the image covers the specified dimensions without distortion */
+            border-radius: 8px; /* Optional: adds rounded corners to the images */
+        }
+    </style>
 
+{% endblock %}
+{% block sidebar %}
+    {% include "layout/sidebar.html" %}
+{% endblock %}
 {% block content %}
-<div id="wrapper">
+    <div id="wrapper">
+
+<section id="two" class="wrapper style3 fade-up">
     <h2>Checkout</h2>
     {% if cart.items %}
         <form action="{{ url_for('cart.process_checkout') }}" method="post">
@@ -37,5 +47,6 @@
     {% else %}
         <p>Your cart is empty! Please add items to your cart before checking out.</p>
     {% endif %}
-</div>
+</section>
+    </div>
 {% endblock %}
