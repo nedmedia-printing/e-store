@@ -40,7 +40,8 @@ class CustomerController(Controllers):
                 session.query(CustomerORM)
                 .options(
                     joinedload(CustomerORM.orders)
-                    .joinedload(OrderORM.payments)
+                    .joinedload(OrderORM.payments),
+                    joinedload(CustomerORM.orders)
                     .joinedload(OrderORM.order_items)
                 )
                 .all()
@@ -59,13 +60,18 @@ class CustomerController(Controllers):
             self.logger.info(f"Inside Get Customer: {customer_id}")
             customer_orm = (
                 session.query(CustomerORM)
-                .options(joinedload(CustomerORM.orders))  # Ensures orders are loaded
+                .options(
+                    joinedload(CustomerORM.orders)
+                    .joinedload(OrderORM.payments),
+                    joinedload(CustomerORM.orders)
+                    .joinedload(OrderORM.order_items)
+                )  # Ensures orders are loaded
                 .filter_by(uid=customer_id)
                 .first()
             )
             if not customer_orm:
                 return None
-            self.logger.info(f"Inside Get Customer")
+            self.logger.info(f"Customer Found: {customer_orm}")
             return Customer(**customer_orm.to_dict(include_relationships=True))
 
     @error_handler
