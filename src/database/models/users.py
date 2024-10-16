@@ -1,6 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel, Field, Extra
-
+from src.database.models import CustomerType
 
 class UserType(str, Enum):
     ADMIN = 'admin'
@@ -32,7 +32,7 @@ class User(BaseModel):
 
     is_system_admin: bool = Field(default=False)
     is_client: bool = Field(default=False)
-    customer: 'Customer' = Field(default=None)
+    customer: CustomerType = Field(default=None)
 
     def __str__(self):
         return f"User(uid={self.uid}, username={self.username}, email={self.email})"
