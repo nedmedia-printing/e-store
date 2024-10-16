@@ -15,38 +15,38 @@
     {% include "layout/sidebar.html" %}
 {% endblock %}
 {% block content %}
-    <div id="wrapper">
+<div id="wrapper">
 
-<section id="two" class="wrapper style3 fade-up">
-    <h2>Checkout</h2>
-    {% if cart.items %}
-        <form action="{{ url_for('cart.process_checkout') }}" method="post">
-            <div>
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div>
-                <label for="address">Address:</label>
-                <input type="text" id="address" name="address" required>
-            </div>
-            <div>
-                <label for="payment">Payment Information:</label>
-                <input type="text" id="payment" name="payment" required>
-            </div>
-            <h3>Your Cart:</h3>
-            <ul>
-                {% for item in cart.items %}
-                    <li>{{ item.name }} (Quantity: {{ item.quantity }}): {{ item.total_price | currency }}</li>
-                {% endfor %}
-            </ul>
-            <div class="total">
-                Total: {{ cart.total_price | currency }}
-            </div>
-            <button type="submit">Complete Purchase</button>
-        </form>
-    {% else %}
-        <p>Your cart is empty! Please add items to your cart before checking out.</p>
-    {% endif %}
-</section>
-    </div>
+    <section id="two" class="wrapper style3 fade-up">
+        <h2>Checkout</h2>
+        {% if cart.items %}
+            <form action="{{ url_for('cart.process_checkout') }}" method="post">
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div>
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" name="address" required>
+                </div>
+                <div>
+                    <label for="payment">Payment Information:</label>
+                    <input type="text" id="payment" name="payment" required>
+                </div>
+                <h3>Your Cart:</h3>
+                <ul>
+                    {% for item in cart.items %}
+                        <li>{{ item.name }} (Quantity: {{ item.quantity }}): {{ item.total_price | currency }}</li>
+                    {% endfor %}
+                </ul>
+                <div class="total">
+                    Total: {{ cart.total_price | currency }}
+                </div>
+                <button type="submit">Complete Purchase</button>
+            </form>
+        {% else %}
+            <p>Your cart is empty! Please add items to your cart before checking out.</p>
+        {% endif %}
+    </section>
+</div>
 {% endblock %}
