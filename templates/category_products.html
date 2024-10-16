@@ -11,12 +11,34 @@
         .product {
             margin-bottom: 20px; /* Spacing between products */
             text-align: center; /* Center align product information */
+            border: 1px solid #ddd; /* Optional border for product items */
+            padding: 10px; /* Padding inside each product */
+            border-radius: 8px; /* Rounded corners */
+            background-color: #fff; /* White background */
+            transition: box-shadow 0.3s; /* Transition for hover effect */
+        }
+        .product:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect on hover */
         }
         .product-image {
-            width: 100%; /* Responsive image */
+            width: 100%; /* Full width for images */
             max-width: 300px; /* Maximum width for product image */
             height: auto; /* Maintain aspect ratio */
             border-radius: 8px; /* Optional: adds rounded corners to product images */
+        }
+        .button {
+            display: inline-block; /* Allows for margin and padding */
+            padding: 10px 15px; /* Button padding */
+            margin-top: 10px; /* Space above buttons */
+            color: white; /* Text color */
+            background-color: #007bff; /* Button color */
+            border: none; /* No border */
+            border-radius: 5px; /* Rounded corners */
+            text-decoration: none; /* No underline on links */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+        .button:hover {
+            background-color: #0056b3; /* Darker shade on hover */
         }
     </style>
 {% endblock %}
@@ -30,21 +52,27 @@
         <section id="two" class="wrapper style3 fade-up">
             <h2>{{ category.name | title }}</h2>
             <p>{{ category.description }}</p>
-            <h3>Products in this Category ({{ category.product_count }})</h3>
-            <div class="product-list">
-                {% for product in category.products %}
-                    <div class="product">
-                        <span class="image fit">
-                            <img src="{{ product.display_image_url if product.display_image_url else '/static/images/default_product.png' }}"
-                                 alt="{{ product.name }}"
-                                 class="product-image" />
-                        </span>
-                        <h4>{{ product.name | title }}</h4>
-                        <p>Price: {{ product.sell_price | currency }}</p>
-                        <p>{{ product.description }}</p>
-                    </div>
-                {% endfor %}
-            </div>
+            <h3>Product Count: ({{ category.product_count }})</h3>
+            <section class="inner">
+                <div class="product-list">
+                    {% for product in category.products %}
+                        <div class="product">
+                            <span class="image fit">
+                                <img src="{{ product.display_image_url if product.display_image_url else '/static/images/default_product.png' }}"
+                                     alt="{{ product.name }}"
+                                     class="product-image" />
+                            </span>
+                            <h4>{{ product.name | title }}</h4>
+                            <p>Price: {{ product.sell_price | currency }}</p>
+                            <p>{{ product.description }}</p>
+                            <a href="{{ url_for('cart.add_to_cart', product_id=product.product_id) }}" class="button">Add to Cart</a>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="checkout-section" style="text-align: center; margin-top: 30px;">
+                    <a href="{{ url_for('cart.checkout') }}" class="button">Checkout</a>
+                </div>
+            </section>
         </section>
     </div>
 {% endblock %}
