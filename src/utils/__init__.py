@@ -130,13 +130,13 @@ def save_files_to_folder(folder_path: str, file_list: list):
 
 def basename_filter(path: str) -> str:
     filename = os.path.basename(path)
-    print(f"File Name : {filename}")
+    print(f"File Name: {filename}")
     return filename
 
 
 def load_files_in_folder(folder_path: str):
-    # Define the patterns for pictures and PDFs
-    picture_files = glob.glob(path.join(folder_path, "*.png"))
+    # Define the patterns for pictures
+    picture_files = glob.glob(path.join(folder_path, "*.png")) + glob.glob(path.join(folder_path, "*.jpg"))
     return picture_files
 
 
