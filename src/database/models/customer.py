@@ -94,6 +94,21 @@ class OrderItem(BaseModel):
     order: 'Order'
     product: Products
 
+    @property
+    def item_summary(self) -> dict[str, str | int]:
+        """
+
+        :return:
+        """
+        return dict(name=self.product.name,
+                    description=self.product.description,
+                    display_image=self.product.display_image_url, quantity=self.quantity,
+                    price=self.price)
+
+    @property
+    def total_price(self):
+        return self.quantity * self.price
+
 
 class Order(BaseModel):
     """
@@ -143,7 +158,7 @@ class Order(BaseModel):
 
     @property
     def total_amount(self) -> int:
-        total = sum(item.price * item.quantity for item in self.order_items)
+        total = sum(item.total_price for item in self.order_items)
         discount_amount = total * (self.discount_percent / 100)
         return total - discount_amount
 
@@ -158,6 +173,26 @@ class Order(BaseModel):
         total_paid = sum(
             payment.amount for payment in self.payments if payment.payment_status == PaymentStatus.COMPLETED.value)
         return total_paid >= self.total_amount
+
+    @property
+    def order_summary(self):
+        """
+        Summarizes order details for easy customer checkouts.
+        :return: dict containing order summary.
+        """
+        return {
+            "order_id": self.order_id,
+            "customer_id": self.customer_id,
+            "order_date": self.order_date.isoformat(),
+            "total_amount": self.total_amount,
+            "status": self.status,
+            "date_paid": self.date_paid.isoformat() if self.date_paid else None,
+            "order_balance": self.order_balance,
+            "is_paid_in_full": self.is_paid_in_full,
+            "customer": self.customer.to_dict() if self.customer else None,
+            "payments": [payment.to_dict() for payment in self.payments],
+            "order_items": [item.item_summary for item in self.order_items]  # Updated to use item_summary
+        }
 
     def update_status(self, new_status: OrderStatus) -> None:
         if new_status in OrderStatus:
