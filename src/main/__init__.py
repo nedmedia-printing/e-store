@@ -37,6 +37,7 @@ def _add_blue_prints(app: Flask):
     from src.routes.documents import images_route
     from src.routes.customer import customer_route
     from src.routes.orders import order_route
+    from src.routes.browse import browse_route
 
     app.register_blueprint(home_route)
     app.register_blueprint(inventory_route)
@@ -44,6 +45,7 @@ def _add_blue_prints(app: Flask):
     app.register_blueprint(images_route)
     app.register_blueprint(customer_route)
     app.register_blueprint(order_route)
+    app.register_blueprint(browse_route)
 
 
 def _add_filters(app: Flask):
