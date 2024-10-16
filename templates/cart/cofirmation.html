@@ -1,0 +1,17 @@
+{% extends "layout/page.html" %}
+
+{% block content %}
+<div id="wrapper">
+    <h2>Thank You for Your Purchase!</h2>
+    <p>Your order has been processed successfully.</p>
+    <h3>Your Order Details:</h3>
+    <ul>
+        {% for item in cart.items %}
+            <li>{{ item.name }} (Quantity: {{ item.quantity }}): {{ item.total_price | currency }}</li>
+        {% endfor %}
+    </ul>
+    <div class="total">
+        Total: {{ cart.total_price | currency }}
+    </div>
+</div>
+{% endblock %}
