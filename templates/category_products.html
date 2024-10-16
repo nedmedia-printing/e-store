@@ -14,7 +14,6 @@
             border: 1px solid #ddd; /* Optional border for product items */
             padding: 10px; /* Padding inside each product */
             border-radius: 8px; /* Rounded corners */
-            background-color: #fff; /* White background */
             transition: box-shadow 0.3s; /* Transition for hover effect */
         }
         .product:hover {
@@ -54,7 +53,7 @@
             <p>{{ category.description }}</p>
             <h3>Product Count: ({{ category.product_count }})</h3>
             <section class="inner">
-                <div class="product-list">
+
                     {% for product in category.products %}
                         <div class="product">
                             <span class="image fit">
@@ -68,7 +67,7 @@
                             <a href="{{ url_for('cart.add_to_cart', product_id=product.product_id) }}" class="button">Add to Cart</a>
                         </div>
                     {% endfor %}
-                </div>
+
                 <div class="checkout-section" style="text-align: center; margin-top: 30px;">
                     <a href="{{ url_for('cart.checkout') }}" class="button">Checkout</a>
                 </div>
