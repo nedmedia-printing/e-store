@@ -40,4 +40,3 @@ async def browse(user: User):
 
     context = dict(categories=categories, user=user)
     return render_template('browse.html', **context)
-

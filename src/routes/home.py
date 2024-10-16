@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 
-from src.authentication import user_details
+from src.authentication import user_details, admin_login
 from src.database.models.users import User
 from src.main import inventory_controller
 
@@ -27,7 +27,8 @@ async def login():
 
 
 @home_route.get('/admin')
-async def get_admin():
-    context = dict()
+@admin_login
+async def get_admin(user: User):
+    context = dict(user=user)
     return render_template('admin/admin.html', **context)
 
