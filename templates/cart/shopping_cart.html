@@ -2,48 +2,14 @@
 
 {% block css %}
 <style>
-    .cart-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-    .cart-items {
-        width: 70%;
-    }
-    .checkout-section {
-        width: 25%;
-        border: 1px solid #ccc;
-        padding: 20px;
-        border-radius: 8px;
-
-    }
     .category-image {
         width: 100px;
         height: 100px;
         object-fit: cover;
         border-radius: 8px;
     }
-    .cart-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        padding: 10px;
-        border-bottom: 1px solid #ccc;
-    }
-    .cart-item-details {
-        display: flex;
-        align-items: center;
-    }
-    .cart-item-details img {
-        margin-right: 20px;
-    }
-    .cart-item-actions {
-        display: flex;
-        align-items: center;
-    }
-    .cart-item-actions form {
-        margin-left: 10px;
+    .quantity-input {
+        width: 50px;
     }
 </style>
 {% endblock %}
@@ -59,24 +25,39 @@
         {% if cart.items %}
         <div class="cart-container">
             <div class="cart-items">
-                {% for item in cart.items %}
-                <div class="cart-item">
-                    <div class="cart-item-details">
-                        <img src="{{ item.product.display_image_url if item.product.display_image_url else '/static/images/default_product.png' }}" class="category-image" alt="{{ item.name }}">
-                        <span>{{ item.name|title }}</span> (Quantity: {{ item.quantity }})
-                    </div>
-                    <div class="cart-item-actions">
-                        <span>Price: {{ item.line_price | currency }}</span>
-                        <form action="{{ url_for('cart.update_quantity', product_id=item.product_id) }}" method="post" style="display: inline;">
-                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
-                            <button type="submit">Update</button>
-                        </form>
-                        <form action="{{ url_for('cart.remove_from_cart', product_id=item.product_id) }}" method="post" style="display: inline;">
-                            <button type="submit">Remove</button>
-                        </form>
-                    </div>
-                </div>
-                {% endfor %}
+                <table class="users-table table">
+                    <thead>
+                        <tr class="title">
+                            <th>Product Image</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Item Price</th>
+                            <th>Line Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart.items %}
+                        <tr class="cart-item">
+                            <td><img src="{{ item.product.display_image_url if item.product.display_image_url else '/static/images/default_product.png' }}" class="category-image" alt="{{ item.name }}"></td>
+                            <td>{{ item.name|title }}</td>
+                            <td>
+                                <form action="{{ url_for('cart.update_quantity', product_id=item.product_id) }}" method="post">
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="quantity-input">
+                                    <button type="submit">Update</button>
+                                </form>
+                            </td>
+                            <td>{{ item.item_price | currency }}</td>
+                            <td>{{ item.line_price | currency }}</td>
+                            <td>
+                                <form action="{{ url_for('cart.remove_from_cart', product_id=item.product_id) }}" method="post" style="display: inline;">
+                                    <button type="submit">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
             <div class="checkout-section">
                 <h3>Order Summary</h3>
