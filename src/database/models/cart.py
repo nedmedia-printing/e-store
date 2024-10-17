@@ -23,14 +23,15 @@ class Cart(BaseModel):
         """Calculate total price for all items in the cart."""
         return sum(item.line_price for item in self.items)
 
-    def add_item(self, product_id: str, quantity: int = 1):
+    def add_item(self, product: Products, quantity: int = 1):
         """Add an item to the cart."""
         for item in self.items:
-            if item.product_id == product_id:
+            if item.product_id == product.product_id:
                 item.quantity += quantity
                 return
         # If item is not found, add a new item
-        new_item = CartItem(product_id=product_id, cart_id=self.cart_id, quantity=quantity)
+        new_item = CartItem(product=product, cart=self, product_id=product.product_id, cart_id=self.cart_id,
+                            quantity=quantity)
         self.items.append(new_item)
         return new_item
 
@@ -64,8 +65,8 @@ class CartItem(BaseModel):
     cart_id: str
     product_id: str
     quantity: PositiveInt = Field(default=1)  # Default quantity is 1
-    cart: Cart
-    product: Products
+    cart: Cart | None = Field(default=None)
+    product: Products | None = Field(default=None)
 
     @property
     def item_price(self) -> int:

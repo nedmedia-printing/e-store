@@ -29,6 +29,7 @@ class CartController(Controllers):
             )
             if not cart_orm:
                 return None
+            self.logger.info(f"Cart ORM: {cart_orm.to_dict()}")
             return Cart(**cart_orm.to_dict(include_relationships=True))
 
     @error_handler

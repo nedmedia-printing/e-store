@@ -28,7 +28,7 @@
                         <span>{{ item.name }}</span> (Quantity: {{ item.quantity }})
                     </div>
                     <div>
-                        <span>Price: {{ item.total_price | currency }}</span>
+                        <span>Price: {{ item.line_price | currency }}</span>
                         <form action="{{ url_for('cart.remove_from_cart', product_id=item.product_id) }}" method="post">
                             <button type="submit">Remove</button>
                         </form>

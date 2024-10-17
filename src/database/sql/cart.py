@@ -12,7 +12,7 @@ class CartItemORM(Base):
     product_id: str = Column(String(ID_LEN), ForeignKey("products.product_id"))
     quantity: int = Column(Integer)
     cart = relationship("CartORM", back_populates='items', uselist=False)
-    product = relationship("ProductsORM", backref='cart_items', uselist=True)
+    product = relationship("ProductsORM", backref='cart_items', uselist=False)
 
     @classmethod
     def create_if_not_table(cls):
@@ -64,6 +64,7 @@ class CartORM(Base):
 
         :return:
         """
+
         return {
             "uid": self.uid,
             "cart_id": self.cart_id,
