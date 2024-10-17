@@ -38,23 +38,23 @@
                     </thead>
                     <tbody>
                         {% for item in cart.items %}
-                        <tr class="cart-item">
-                            <td><img src="{{ item.product.display_image_url if item.product.display_image_url else '/static/images/default_product.png' }}" class="category-image" alt="{{ item.name }}"></td>
-                            <td>{{ item.name|title }}</td>
-                            <td>
-                                <form action="{{ url_for('cart.update_quantity', product_id=item.product_id) }}" method="post">
-                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="quantity-input">
-                                    <button type="submit">Update</button>
-                                </form>
-                            </td>
-                            <td>{{ item.item_price | currency }}</td>
-                            <td>{{ item.line_price | currency }}</td>
-                            <td>
-                                <form action="{{ url_for('cart.remove_from_cart', product_id=item.product_id) }}" method="post" style="display: inline;">
-                                    <button type="submit">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
+                            <tr class="cart-item">
+                                <td><img src="{{ item.product.display_image_url if item.product.display_image_url else '/static/images/default_product.png' }}" class="category-image" alt="{{ item.name }}"></td>
+                                <td>{{ item.name|title }}</td>
+                                <td>
+                                    <form action="{{ url_for('cart.update_quantity', product_id=item.product_id) }}" method="post">
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-input">
+                                        <button type="submit">Update</button>
+                                    </form>
+                                </td>
+                                <td>{{ item.item_price | currency }}</td>
+                                <td>{{ item.line_price | currency }}</td>
+                                <td>
+                                    <form action="{{ url_for('cart.remove_from_cart', product_id=item.product_id) }}" method="post" style="display: inline;">
+                                        <button type="submit">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -64,6 +64,11 @@
                 <p>Total Items: {{ cart.total_items }}</p>
                 <p>Total Price: {{ cart.total_price | currency }}</p>
                 <a href="{{ url_for('cart.checkout') }}" class="button">Proceed to Checkout</a>
+                <span>
+                    Note that content art and etc can be included as part of the order in the admin section
+                    so once you are done placing this order you will get a chance to include your
+                    Business and or Personal details.
+                </span>
             </div>
         </div>
         {% else %}
