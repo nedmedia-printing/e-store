@@ -1,8 +1,6 @@
 from datetime import datetime
-
 from sqlalchemy import Column, String, inspect, Integer, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-
 from src.database.constants import ID_LEN
 from src.database.sql import Base, engine
 
