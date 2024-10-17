@@ -73,14 +73,11 @@ async def update_quantity(user: User, product_id: str):
     pass
 
 
-@cart_route.route('/remove_from_cart/<string:product_id>', methods=['POST'])
-async def remove_from_cart(product_id):
+@cart_route.route('/remove_from_cart/<string:item_id>', methods=['POST'])
+@login_required
+async def remove_from_cart(user: User, item_id: str):
     """Remove a product from the shopping cart."""
-    cart_data = session.get('cart', {})
-    cart = Cart(**cart_data)
-    cart.remove_item(product_id)
-
-    session['cart'] = cart.dict()
+    cart = await cart_controller.remove_cart_item(item_id=item_id)
     return redirect(url_for('cart.view_cart'))  # Redirect to the cart page
 
 

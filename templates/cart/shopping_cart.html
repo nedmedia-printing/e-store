@@ -50,7 +50,7 @@
                                 <td>{{ item.item_price | currency }}</td>
                                 <td>{{ item.line_price | currency }}</td>
                                 <td>
-                                    <form action="{{ url_for('cart.remove_from_cart', product_id=item.product_id) }}" method="post" style="display: inline;">
+                                    <form action="{{ url_for('cart.remove_from_cart', item_id=item.item_id) }}" method="post" style="display: inline;">
                                         <button type="submit">Remove</button>
                                     </form>
                                 </td>

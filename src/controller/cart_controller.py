@@ -95,3 +95,20 @@ class CartController(Controllers):
 
             # Return the created cart
             return cart
+
+    @error_handler
+    async def remove_cart_item(self, item_id: str):
+        """
+        Removes an item from the cart by product ID.
+        :param item_id:
+        :return: None
+        """
+        with self.get_session() as session:
+            # Find the cart item
+            cart_item = session.query(CartItemORM).filter_by(item_id=item_id).first()
+            if not cart_item:
+                raise ValueError("Cart item not found")
+
+            # Remove the item
+            session.delete(cart_item)
+            session.commit()
