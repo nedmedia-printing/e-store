@@ -15,6 +15,7 @@ from src.controller.auth import UserController
 from src.controller.inventory_controller import InventoryController
 from src.controller.orders_controller import OrdersController
 from src.controller.customer_controller import CustomerController
+from src.controller.cart_controller import CartController
 
 from src.main.bootstrap import bootstrap
 
@@ -22,6 +23,7 @@ user_controller = UserController()
 inventory_controller = InventoryController()
 orders_controller = OrdersController()
 customer_controller = CustomerController()
+cart_controller = CartController()
 firewall = Firewall()
 
 
@@ -75,5 +77,6 @@ def create_app(config=config_instance()):
         inventory_controller.init_app(app=app)
         customer_controller.init_app(app=app)
         orders_controller.init_app(app=app)
+        cart_controller.init_app(app=app)
 
     return app

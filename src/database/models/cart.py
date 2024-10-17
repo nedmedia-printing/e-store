@@ -32,6 +32,7 @@ class Cart(BaseModel):
         # If item is not found, add a new item
         new_item = CartItem(product_id=product_id, cart_id=self.cart_id, quantity=quantity)
         self.items.append(new_item)
+        return new_item
 
     def remove_item(self, product_id: str):
         """Remove an item from the cart."""
