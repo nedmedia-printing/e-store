@@ -24,8 +24,8 @@
             {% for item in cart.items %}
                 <div class="cart-item">
                     <div>
-                        <img src="{{ item.image_url if item.image_url else '/static/images/default_product.png' }}" class="product-image" alt="{{ item.name }}">
-                        <span>{{ item.name }}</span> (Quantity: {{ item.quantity }})
+                        <img src="{{ item.product.display_image_url  if item.product.display_image_url else '/static/images/default_product.png' }}" class="product-image" alt="{{ item.name }}">
+                        <span>{{ item.name| title }}</span> (Quantity: {{ item.quantity }})
                     </div>
                     <div>
                         <span>Price: {{ item.line_price | currency }}</span>
