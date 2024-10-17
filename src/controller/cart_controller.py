@@ -111,4 +111,5 @@ class CartController(Controllers):
 
             # Remove the item
             session.delete(cart_item)
-            session.commit()
+            return True
+
