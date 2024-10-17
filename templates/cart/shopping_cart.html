@@ -64,11 +64,11 @@
                 <p>Total Items: {{ cart.total_items }}</p>
                 <p>Total Price: {{ cart.total_price | currency }}</p>
                 <a href="{{ url_for('cart.checkout') }}" class="button">Proceed to Checkout</a>
-                <span>
+                <div class="card-body">
                     Note that content art and etc can be included as part of the order in the admin section
                     so once you are done placing this order you will get a chance to include your
                     Business and or Personal details.
-                </span>
+                </div>
             </div>
         </div>
         {% else %}
