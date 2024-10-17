@@ -9,6 +9,7 @@ cart_route = Blueprint('cart', __name__)
 @cart_route.route('/cart', methods=['GET'])
 def view_cart():
     """Render the shopping cart page."""
+    
     cart_data = session.get('cart', {})
     cart = Cart(**cart_data)
     return render_template('cart/shopping_cart.html', cart=cart)

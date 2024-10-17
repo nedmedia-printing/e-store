@@ -1,19 +1,16 @@
-from pydantic import BaseModel, Field
+from datetime import datetime
+from pydantic import BaseModel, Field, PositiveInt
 
-
-class CartItem(BaseModel):
-    product_id: str
-    name: str
-    price: float
-    quantity: int = Field(default=1)  # Default quantity is 1
-
-    @property
-    def total_price(self) -> float:
-        """Calculate total price for this cart item."""
-        return self.price * self.quantity
+from src.database.models.products import Products
+from src.utils import south_african_standard_time, create_id
 
 
 class Cart(BaseModel):
+    uid: str
+    cart_id: str = Field(default_factory=create_id)
+    created_at: datetime = Field(default_factory=south_african_standard_time)
+    converted_to_order: bool = Field(default=False)
+    converted_at: datetime | None = Field(default=None)
     items: list[CartItem] = Field(default_factory=list)
 
     @property
@@ -43,3 +40,17 @@ class Cart(BaseModel):
     def clear_cart(self):
         """Clear all items from the cart."""
         self.items.clear()
+
+
+class CartItem(BaseModel):
+    item_id: str = Field(default_factory=create_id)
+    cart_id: str
+    product_id: str
+    quantity: PositiveInt = Field(default=1)  # Default quantity is 1
+    cart: Cart
+    product: Products
+
+    @property
+    def total_price(self) -> float:
+        """Calculate total price for this cart item."""
+        return self.price * self.quantity
