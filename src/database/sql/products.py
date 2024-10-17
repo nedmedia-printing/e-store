@@ -42,7 +42,8 @@ class ProductsORM(Base):
             "buy_price": self.buy_price,
             "time_of_entry": self.time_of_entry.isoformat() if self.time_of_entry else None,
             "inventory_entries": [entry.to_dict(include_relationships=True) for entry in self.inventory_entries]
-            if self.inventory_entries and include_relationships else []
+            if self.inventory_entries and include_relationships else [],
+            "cart_items": [item.to_dict() for item in self.cart_items] if include_relationships and self.cart_items else []
         }
 
 

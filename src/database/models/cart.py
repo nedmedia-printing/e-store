@@ -11,7 +11,7 @@ class Cart(BaseModel):
     created_at: datetime = Field(default_factory=south_african_standard_time)
     converted_to_order: bool = Field(default=False)
     converted_at: datetime | None = Field(default=None)
-    items: list[CartItem] = Field(default_factory=list)
+    items: list['CartItem'] = Field(default_factory=list)
 
     @property
     def total_items(self) -> int:
@@ -51,6 +51,27 @@ class CartItem(BaseModel):
     product: Products
 
     @property
-    def total_price(self) -> float:
+    def item_price(self) -> int:
+        return self.product.sell_price
+
+    @property
+    def line_price(self) -> int:
         """Calculate total price for this cart item."""
-        return self.price * self.quantity
+        return self.item_price * self.quantity
+
+    @property
+    def name(self) -> str:
+        """
+
+        :return:
+        """
+        return self.product.name
+
+    @property
+    def description(self):
+        """description for product items"""
+        return self.product.description
+
+    @property
+    def inventory_count(self) -> int:
+        return self.product.inventory_count
