@@ -61,6 +61,18 @@ async def add_to_cart(user: User, product_id: str):
     return redirect(url_for('cart.view_cart'))  # Redirect to the cart page
 
 
+@cart_route.route('/update-cart/<string:product_id>', methods=['POST'])
+@login_required
+async def update_quantity(user: User, product_id: str):
+    """
+
+    :param user:
+    :param product_id:
+    :return:
+    """
+    pass
+
+
 @cart_route.route('/remove_from_cart/<string:product_id>', methods=['POST'])
 async def remove_from_cart(product_id):
     """Remove a product from the shopping cart."""
