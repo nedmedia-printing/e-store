@@ -11,24 +11,20 @@
 			<script rel="preload" src="/static/assets/js/breakpoints.min.js" as="script"></script>
 			<script rel="preload" src="/static/assets/js/util.js" as="script"></script>
 			<script rel="preload" src="/static/assets/js/main.js" as="script"></script>
-
 		<link rel="preload" href="/static/assets/css/main.css"  as="style"/>
         <link rel="stylesheet" href="/static/assets/css/main.css" />
 		<noscript><link rel="preload" href="/static/assets/css/noscript.css" as="style"/></noscript>
-
         {% block css %}
         {% endblock %}
-
-
     {% block preload_products %}
         {#  Use Jinja templates to preload all needed product images  #}
         {% for category in categories %}
             {% for product in category.products %}
-                <link rel="preload" href="{{ url_for('static', filename=product.image_url) }}" as="image">
+                <link rel="preload" href="{{ product.display_image_url }}" as="image">
             {% endfor %}
+                <link rel="preload" href="{{ category.display_image_url }}" as="image">
         {% endfor %}
     {% endblock %}
-
     </head>
 	<body class="is-preload">
     {% block sidebar %}

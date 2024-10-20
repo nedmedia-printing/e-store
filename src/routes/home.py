@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 
 from src.authentication import user_details, admin_login
+from src.database.models.products import Category
 from src.database.models.users import User
 from src.main import inventory_controller
 
@@ -16,7 +17,7 @@ async def get_home(user: User):
     #                               'images/gallery/image_3.jpg', 'images/gallery/image_4.jpg']
     #
     # image_filename: str = random.choice(image_filenames)
-    categories = await inventory_controller.get_product_categories()
+    categories: Category = await inventory_controller.get_product_categories()
     context = dict(user=user, categories=categories)
     return render_template('index.html', **context)
 
