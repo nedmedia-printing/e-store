@@ -100,8 +100,8 @@ class InventoryController(Controllers):
             prepared_dict = product.dict(exclude={'display_images', 'image_name'})
             self.logger.info(f"Prepared Dict: {prepared_dict}")
             session.add(ProductsORM(**prepared_dict))
-            await self.preload_inventory()  # Update categories after adding a new product
-            return product
+        await self.preload_inventory()  # Update categories after adding a new product
+        return product
 
     @error_handler
     async def update_product(self, product: Products) -> Products | None:
@@ -113,15 +113,16 @@ class InventoryController(Controllers):
             for key, value in product.dict().items():
                 if key != 'product_id':
                     setattr(product_orm, key, value)
-            await self.preload_inventory()  # Update categories after updating a product
-            return product
+        await self.preload_inventory()  # Update categories after updating a product
+        return product
 
     @error_handler
     async def create_inventory_entry(self, inventory: Inventory) -> Inventory:
         with self.get_session() as session:
             session.add(InventoryORM(**inventory.dict()))
-            await self.preload_inventory()  # Update categories after creating a new inventory entry
-            return inventory
+
+        await self.preload_inventory()  # Update categories after creating a new inventory entry
+        return inventory
 
     @error_handler
     async def get_category_by_slug(self, slug: str) -> Category | None:
@@ -134,3 +135,32 @@ class InventoryController(Controllers):
             if category.display_slug == slug:
                 return category
         return
+
+    @error_handler
+    async def delete_inventory_entry(self, entry_id: str) -> bool:
+        """
+        Deletes an inventory entry by its ID.
+        :param entry_id: The ID of the inventory entry to delete.
+        :return: bool indicating whether the deletion was successful.
+        """
+        with self.get_session() as session:
+            inventory_entry_orm = session.query(InventoryORM).filter_by(entry_id=entry_id).first()
+            if inventory_entry_orm:
+                session.delete(inventory_entry_orm)
+                return True
+
+        await self.preload_inventory()  # Update preloaded inventory after deletion
+        return False
+
+    @error_handler
+    async def add_inventory_entry(self, inventory_entry: Inventory) -> Inventory:
+        """
+        Adds a new inventory entry.
+        :param inventory_entry: The inventory entry to add.
+        :return: The added inventory entry.
+        """
+        with self.get_session() as session:
+            session.add(InventoryORM(**inventory_entry.dict()))
+
+        await self.preload_inventory()  # Update preloaded inventory after adding a new entry
+        return inventory_entry
