@@ -1,9 +1,8 @@
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel
 
 from src.database.models.cart import Cart
 from src.database.models.customer import Order, Payment
 from src.database.models.users import User
-from src.utils import create_id
 
 
 class Profile(BaseModel):

@@ -3,23 +3,21 @@ from sqlalchemy.orm import relationship
 
 from src.database.constants import ID_LEN, NAME_LEN
 from src.database.sql import Base, engine
-from src.database.sql.cart import CartORM
-from src.database.sql.customer import OrderORM, PaymentORM
-from src.database.sql.user import UserORM
 
 
 class ProfileORM(Base):
-    uid: str = Column(String(ID_LEN), primary_key=True)
-    profile_name: str | None = Column(String(NAME_LEN))
-    first_name: str | None = Column(String(NAME_LEN))
-    surname: str | None = Column(String(NAME_LEN))
-    cell: str | None = Column(String(16))
-    email: str | None = Column(String(255))
-    notes: str | None = Column(String(255))
-    user: UserORM | None = relationship("UserORM", backref='profile')
-    historical_orders: list[OrderORM] = relationship("OrderORM", backref='profile')
-    payment_history: list[PaymentORM] = relationship('PaymentORM', backref='profile')
-    cart: CartORM | None = relationship('CartORM', backref='profile')
+    __tablename__ = "profile"
+    uid = Column(String(ID_LEN), primary_key=True)
+    profile_name = Column(String(NAME_LEN))
+    first_name = Column(String(NAME_LEN))
+    surname = Column(String(NAME_LEN))
+    cell = Column(String(16))
+    email = Column(String(255))
+    notes = Column(String(255))
+    user = relationship("UserORM", backref='profile')
+    historical_orders = relationship("OrderORM", backref='profile')
+    payment_history = relationship('PaymentORM', backref='profile')
+    cart = relationship('CartORM', backref='profile')
 
     @classmethod
     def create_if_not_table(cls):
@@ -54,4 +52,3 @@ class ProfileORM(Base):
             data['cart'] = self.cart.to_dict(include_relationships=True) if self.cart else None
 
         return data
-

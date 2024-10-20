@@ -1,18 +1,19 @@
-from sqlalchemy import Column, String, inspect, Integer, Boolean, ForeignKey, DateTime, Sequence
+from sqlalchemy import Column, String, inspect, Integer, Boolean, ForeignKey, DateTime, Sequence, Text
 from sqlalchemy.orm import relationship
+
 from src.database.constants import ID_LEN
 from src.database.sql import Base, engine
-from src.database.sql.products import ProductsORM
 
 
 class AttachmentORM(Base):
+    __tablename__ = "attachment"
     attachment_id: str = Column(String(ID_LEN), primary_key=True)
     order_id: str = Column(String(ID_LEN), ForeignKey('orders.order_id'))
 
-    file_name: str
-    file_type: str
-    file_url: str
-    notes: str
+    file_name: str = Column(String(255))
+    file_type: str = Column(String(6))
+    file_url: str = Column(String(255))
+    notes: str = Column(Text)
 
     @classmethod
     def create_if_not_table(cls):
