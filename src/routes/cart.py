@@ -1,12 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, abort, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from pydantic import ValidationError
 
 from src.authentication import login_required
+from src.database.models.cart import Cart, CartItem  # Adjust the import as necessary
 from src.database.models.products import Products  # Adjust the import as necessary
 from src.database.models.users import User
 from src.logger import init_logger
 from src.main import inventory_controller, cart_controller
-from src.database.models.cart import Cart, CartItem  # Adjust the import as necessary
 
 cart_route = Blueprint('cart', __name__)
 cart_logger = init_logger('Cart Items')
@@ -15,7 +15,8 @@ cart_logger = init_logger('Cart Items')
 @cart_route.route('/cart', methods=['GET'])
 @login_required
 async def view_cart(user: User):
-    """Render the shopping cart page."""
+    """Render the shopping cart page.
+    """
     cart: Cart = await cart_controller.get_outstanding_customer_cart(uid=user.uid)
     context = dict(user=user, cart=cart)
     cart_logger.info(f'Cart Retrieved: {cart}')
@@ -50,6 +51,8 @@ async def add_to_cart(user: User, product_id: str):
         cart_item: CartItem = cart.add_item(product=product, quantity=quantity)
     except ValidationError as e:
         cart_logger.info(str(e))
+        flash(message="Unable to add item to cart, please try again later", category="danger")
+        return redirect(url_for('cart.view_cart'))
 
     cart_item_added = await cart_controller.add_cart_item(cart_item=cart_item)
     cart_logger.info(f"Created New Cart Item: {cart_item}")
@@ -77,7 +80,12 @@ async def update_quantity(user: User, product_id: str):
 @login_required
 async def remove_from_cart(user: User, item_id: str):
     """Remove a product from the shopping cart."""
-    cart = await cart_controller.remove_cart_item(item_id=item_id)
+    cart_removed = await cart_controller.remove_cart_item(item_id=item_id)
+    if cart_removed:
+        flash(message="you have successfully cleared your cart", category="success")
+    else:
+        flash(message="Unable to removed cart items, please try again later", category="danger")
+    # context = dict(user=user, cart=cart)
     return redirect(url_for('cart.view_cart'))  # Redirect to the cart page
 
 

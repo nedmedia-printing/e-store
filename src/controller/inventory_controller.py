@@ -178,6 +178,7 @@ class InventoryController(Controllers):
         """
         with self.get_session() as session:
             session.add(InventoryORM(**inventory_entry.dict()))
+            self.logger.info(f"created new inventory entry: {inventory_entry}")
             return inventory_entry
 
     async def delete_inventory_entry(self, entry_id: str) -> tuple[Inventory, bool]:
