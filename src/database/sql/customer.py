@@ -5,6 +5,36 @@ from src.database.sql import Base, engine
 from src.database.sql.products import ProductsORM
 
 
+class AttachmentORM(Base):
+    attachment_id: str = Column(String(ID_LEN), primary_key=True)
+    order_id: str = Column(String(ID_LEN), ForeignKey('orders.order_id'))
+
+    file_name: str
+    file_type: str
+    file_url: str
+    notes: str
+
+    @classmethod
+    def create_if_not_table(cls):
+        if not inspect(engine).has_table(cls.__tablename__):
+            cls.__table__.create(bind=engine)
+
+    @classmethod
+    def delete_table(cls):
+        if inspect(engine).has_table(cls.__tablename__):
+            cls.__table__.drop(bind=engine)
+
+    def to_dict(self, include_relationships=False):
+        return {
+            'attachment_id': self.attachment_id,
+            'order_id': self.order_id,
+            'file_name': self.file_name,
+            'file_type': self.file_type,
+            'file_url': self.file_url,
+            'notes': self.notes
+        }
+
+
 class PaymentORM(Base):
     __tablename__ = "payment"
     transaction_id = Column(String(ID_LEN), primary_key=True)
@@ -95,6 +125,7 @@ class OrderORM(Base):
     customer = relationship("CustomerORM", back_populates="orders", uselist=False)
     payments = relationship("PaymentORM", back_populates="order", uselist=True)
     order_items = relationship("OrderItemsORM", back_populates="order", uselist=True)
+    attachments = relationship("AttachmentORM", backref="order", uselist=True)
 
     @classmethod
     def create_if_not_table(cls):
@@ -116,7 +147,8 @@ class OrderORM(Base):
             "date_paid": self.date_paid,
             "customer": self.customer.to_dict() if self.customer and include_relationships else None,
             "payments": [payment.to_dict() for payment in self.payments] if include_relationships else [],
-            "items": [item.to_dict() for item in self.order_items] if self.order_items else []
+            "items": [item.to_dict() for item in self.order_items] if self.order_items else [],
+            "attachments": [attach.to_dict() for attach in self.attachments] if self.attachments else []
         }
 
 

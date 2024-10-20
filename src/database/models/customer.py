@@ -85,6 +85,20 @@ class Payment(BaseModel):
         )
 
 
+class Attachment(BaseModel):
+    """
+    **Attachment**
+    Represents a file or artwork associated with an order.
+    """
+    attachment_id: str = Field(default_factory=create_id)
+    order_id: str
+
+    file_name: str
+    file_type: str
+    file_url: str
+    notes: str
+
+
 class OrderItem(BaseModel):
     item_id: str = Field(default_factory=create_id)
     order_id: str
@@ -155,6 +169,7 @@ class Order(BaseModel):
     customer: 'Customer'
     payments: list[Payment] = []
     order_items: list[OrderItem]
+    attachments: list[Attachment]
 
     @property
     def total_amount(self) -> int:
@@ -192,6 +207,7 @@ class Order(BaseModel):
             "customer": self.customer.to_dict() if self.customer else None,
             "payments": [payment.to_dict() for payment in self.payments],
             "order_items": [item.item_summary for item in self.order_items]  # Updated to use item_summary
+
         }
 
     def update_status(self, new_status: OrderStatus) -> None:
