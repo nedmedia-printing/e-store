@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, Extra
 
 from src.database.models.cart import Cart
 from src.database.models.customer import Order, Payment
+from src.utils import create_id
 
 
 class Attachment(BaseModel):
@@ -9,10 +10,12 @@ class Attachment(BaseModel):
     **Attachment**
     Represents a file or artwork associated with an order.
     """
+    attachment_id: str = Field(default_factory=create_id)
+    order_id: str
+
     file_name: str
     file_type: str
     file_url: str
-    order_id: str
 
 
 class Profile(BaseModel):
