@@ -17,7 +17,7 @@ async def get_home(user: User):
     #                               'images/gallery/image_3.jpg', 'images/gallery/image_4.jpg']
     #
     # image_filename: str = random.choice(image_filenames)
-    categories: Category = await inventory_controller.get_product_categories()
+    categories: Category = await inventory_controller.get_preloaded_categories()
     context = dict(user=user, categories=categories)
     return render_template('index.html', **context)
 
