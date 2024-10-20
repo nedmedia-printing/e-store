@@ -37,7 +37,7 @@ async def browse(user: User):
     :return: Rendered template with the category products
     """
     # Fetch the category details and products
-    categories = await inventory_controller.get_product_categories()
+    categories = await inventory_controller.get_preloaded_categories()
 
     context = dict(categories=categories, user=user)
     return render_template('browse.html', **context)
