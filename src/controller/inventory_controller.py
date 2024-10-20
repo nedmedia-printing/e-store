@@ -78,3 +78,15 @@ class InventoryController(Controllers):
             session.add(InventoryORM(**inventory.dict()))
             await self.preload_inventory()  # Update categories after creating a new inventory entry
             return inventory
+
+    @error_handler
+    async def get_category_by_slug(self, slug: str) -> Category | None:
+        """
+        Retrieves a category by its slug from the preloaded categories.
+        :param slug: The slug of the category to retrieve.
+        :return: Category instance or None if not found.
+        """
+        for category in self.__categories:
+            if category.display_slug == slug:
+                return category
+        return

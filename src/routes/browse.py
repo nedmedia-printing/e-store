@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, abort
 from src.authentication import user_details
+from src.database.models.products import Category
 from src.database.models.users import User
 from src.main import inventory_controller
 
@@ -17,7 +18,7 @@ async def get_category(user: User, seo_slug: str):
     :return: Rendered template with the category products
     """
     # Fetch the category details and products
-    category = await inventory_controller.get_category_by_slug(seo_slug)  # Assuming this method exists
+    category: Category = await inventory_controller.get_category_by_slug(seo_slug)  # Assuming this method exists
     if not category:
         abort(404, description="Category not found")
 

@@ -25,7 +25,7 @@ async def get_categories(user: User):
     :param user:
     :return:
     """
-    categories: list[Category] = await inventory_controller.get_product_categories()
+    categories: list[Category] = await inventory_controller.get_preloaded_categories()
     for category in categories:
         inventory_logger.info(f"image URL {category.display_image_url}")
 
