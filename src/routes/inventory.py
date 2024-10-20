@@ -221,7 +221,7 @@ async def obtain_inventory(user: User, product_id: str):
     inventory_entries: list[Inventory] = await inventory_controller.get_product_inventory(product_id=product_id)
     context = dict(user=user, product=product, inventory_entries=inventory_entries,
                    InventoryActionTypes=InventoryActionTypes)
-    inventory_logger.info(f"We created this context : {context}")
+    inventory_logger.info(f"We created this context: {context}")
     return render_template("admin/inventory/manage/manager.html", **context)
 
 

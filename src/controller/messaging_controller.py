@@ -67,8 +67,7 @@ class EmailService(Controllers):
                 # Saving Sent Message to the Database
                 await self.store_sent_email_to_database(email_)
             else:
-                self.logger.error(f"Email not sent : {str(email)}")
-
+                self.logger.error(f"Email not sent: {str(email)}")
 
         except requests.exceptions.ConnectTimeout:
             self.logger.error("Resend Connection TimeOut")

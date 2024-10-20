@@ -9,6 +9,7 @@ from src.database.sql.products import CategoryORM, ProductsORM, InventoryORM
 class InventoryController(Controllers):
     def __init__(self):
         super().__init__()
+        self.__products_dict = {}
         self.__categories = []
         self.__categories_dict = {}
 
@@ -20,6 +21,8 @@ class InventoryController(Controllers):
     async def preload_inventory(self):
         self.__categories = await self.get_product_categories()
         self.__categories_dict = {category.category_id: category for category in self.__categories}
+        self.__products_dict = {product.product_id: product for category in self.__categories for product in
+                                category.products}
 
     @error_handler
     async def get_preloaded_categories(self) -> list[Category]:
@@ -45,17 +48,47 @@ class InventoryController(Controllers):
         return self.__categories_dict.get(category_id)
 
     @error_handler
-    async def get_product_categories(self):
+    async def get_product_categories(self) -> list[Category]:
         """ Retrieves all product categories from the database with linked records. """
-        with self.get_session() as session:
-            categories_list_orm = (
-                session.query(CategoryORM)
-                .options(
-                    joinedload(CategoryORM.products).joinedload(ProductsORM.inventory_entries)
-                )
-                .all()
-            )
-            return [Category(**cat.to_dict(include_relationships=True)) for cat in categories_list_orm]
+        return self.__categories
+        # with self.get_session() as session:
+        #     categories_list_orm = (
+        #         session.query(CategoryORM)
+        #         .options(
+        #             joinedload(CategoryORM.products).joinedload(ProductsORM.inventory_entries)
+        #         )
+        #         .all()
+        #     )
+        #     return [Category(**cat.to_dict(include_relationships=True)) for cat in categories_list_orm]
+
+    @error_handler
+    async def get_products(self) -> list[Products]:
+        """
+        Retrieves all products from the preloaded categories.
+        :return: List of Product instances.
+        """
+        return list(self.__products_dict.values())
+
+    @error_handler
+    async def get_product(self, product_id: str) -> Products | None:
+        """
+        Retrieves a product by its ID from the preloaded products.
+        :param product_id: The ID of the product to retrieve.
+        :return: Product instance or None if not found.
+        """
+        return self.__products_dict.get(product_id)
+
+    @error_handler
+    async def get_product_inventory(self, product_id: str) -> list[Inventory] | None:
+        """
+        Retrieves the inventory entries for a product by its ID from the preloaded products.
+        :param product_id: The ID of the product whose inventory entries are to be retrieved.
+        :return: List of Inventory instances or None if not found.
+        """
+        product = self.__products_dict.get(product_id)
+        if product:
+            return product.inventory_entries
+        return None
 
     @error_handler
     async def add_product(self, product: Products) -> Products | None:
