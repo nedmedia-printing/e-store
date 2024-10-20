@@ -50,16 +50,15 @@ class InventoryController(Controllers):
     @error_handler
     async def get_product_categories(self) -> list[Category]:
         """ Retrieves all product categories from the database with linked records. """
-        return self.__categories
-        # with self.get_session() as session:
-        #     categories_list_orm = (
-        #         session.query(CategoryORM)
-        #         .options(
-        #             joinedload(CategoryORM.products).joinedload(ProductsORM.inventory_entries)
-        #         )
-        #         .all()
-        #     )
-        #     return [Category(**cat.to_dict(include_relationships=True)) for cat in categories_list_orm]
+        with self.get_session() as session:
+            categories_list_orm = (
+                session.query(CategoryORM)
+                .options(
+                    joinedload(CategoryORM.products).joinedload(ProductsORM.inventory_entries)
+                )
+                .all()
+            )
+            return [Category(**cat.to_dict(include_relationships=True)) for cat in categories_list_orm]
 
     @error_handler
     async def get_products(self) -> list[Products]:
