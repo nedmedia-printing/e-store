@@ -2,9 +2,7 @@ from sqlalchemy.orm import joinedload
 
 from src.controller import Controllers, error_handler
 from src.database.models.cart import Cart, CartItem
-from src.database.models.customer import Customer
 from src.database.sql.cart import CartORM, CartItemORM
-from src.database.sql.customer import CustomerORM, OrderORM, PaymentORM
 
 
 class CartController(Controllers):

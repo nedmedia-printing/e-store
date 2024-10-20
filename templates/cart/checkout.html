@@ -40,13 +40,15 @@
                 <h3>Your Cart:</h3>
                 <ul>
                     {% for item in cart.items %}
-                        <li>{{ item.name }} (Quantity: {{ item.quantity }}): {{ item.item_price | currency }}</li>
+                        <li>{{ item.name| title }} (Quantity: {{ item.quantity }}), (Item Price: {{ item.item_price | currency }}), (Sub Total : {{ item.line_price| currency }})</li>
                     {% endfor %}
                 </ul>
                 <div class="total">
                     Total: {{ cart.total_price | currency }}
                 </div>
+            <div>
                 <button type="submit">Place Order</button>
+            </div>
             </form>
         {% else %}
             <p>Your cart is empty! Please add items to your cart before checking out.</p>

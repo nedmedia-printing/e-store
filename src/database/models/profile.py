@@ -1,5 +1,19 @@
 from pydantic import BaseModel, Field, Extra
 
+from src.database.models.cart import Cart
+from src.database.models.customer import Order, Payment
+
+
+class Attachment(BaseModel):
+    """
+    **Attachment**
+    Represents a file or artwork associated with an order.
+    """
+    file_name: str
+    file_type: str
+    file_url: str
+    order_id: str
+
 
 class Profile(BaseModel):
     """
@@ -14,20 +28,11 @@ class Profile(BaseModel):
     cell: str | None
     email: str | None
     notes: str | None
-
+    historical_orders: list[Order]
+    payment_history: list[Payment]
+    cart: Cart | None
+    attachments: list[Attachment] | None
     # class Config:
     #     extra = Extra.ignore
 
-    def __eq__(self, other):
-        if not isinstance(other, Profile):
-            return False
-        return self.main_game_id == other.main_game_id
 
-
-class ProfileUpdate(BaseModel):
-    uid: str
-    profile_name: str | None
-    notes: str | None
-
-    class Config:
-        extra = Extra.ignore
