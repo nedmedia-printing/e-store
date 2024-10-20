@@ -94,6 +94,17 @@ async def remove_from_cart(user: User, item_id: str):
 async def checkout(user: User):
     """Render the checkout page."""
 
-    cart = await cart_controller.get_outstanding_customer_cart(uid=user.uid)
+    cart: Cart = await cart_controller.get_outstanding_customer_cart(uid=user.uid)
     context = dict(user=user, cart=cart)
     return render_template('cart/checkout.html', **context)
+
+
+@cart_route.route('/process-checkout', methods=['POST'])
+@login_required
+async def process_checkout(user: User):
+    """
+
+    :param user:
+    :return:
+    """
+    pass

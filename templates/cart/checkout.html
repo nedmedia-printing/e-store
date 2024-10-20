@@ -30,19 +30,23 @@
                     <input type="text" id="address" name="address" required>
                 </div>
                 <div>
-                    <label for="payment">Payment Information:</label>
-                    <input type="text" id="payment" name="payment" required>
+                    <label for="payment">Additional Information:</label>
+                    <span>
+                        Use this space to provide more information about what you need done, for example in the case of a banner
+                        provide additional details like what you need to be printed in that banner
+                    </span>
+                    <textarea type="text" id="payment" name="payment" required></textarea>
                 </div>
                 <h3>Your Cart:</h3>
                 <ul>
                     {% for item in cart.items %}
-                        <li>{{ item.name }} (Quantity: {{ item.quantity }}): {{ item.total_price | currency }}</li>
+                        <li>{{ item.name }} (Quantity: {{ item.quantity }}): {{ item.item_price | currency }}</li>
                     {% endfor %}
                 </ul>
                 <div class="total">
                     Total: {{ cart.total_price | currency }}
                 </div>
-                <button type="submit">Complete Purchase</button>
+                <button type="submit">Place Order</button>
             </form>
         {% else %}
             <p>Your cart is empty! Please add items to your cart before checking out.</p>
