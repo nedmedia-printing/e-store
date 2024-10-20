@@ -10,6 +10,7 @@ class InventoryController(Controllers):
     def __init__(self):
         super().__init__()
         self.__categories = []
+        self.__categories_dict = {}
 
     def init_app(self, app: Flask):
         asyncio.run(self.preload_inventory())
@@ -18,6 +19,7 @@ class InventoryController(Controllers):
     @error_handler
     async def preload_inventory(self):
         self.__categories = await self.get_product_categories()
+        self.__categories_dict = {category.category_id: category for category in self.__categories}
 
     @error_handler
     async def get_preloaded_categories(self) -> list[Category]:
@@ -32,6 +34,15 @@ class InventoryController(Controllers):
             session.add(CategoryORM(**category.dict(exclude={'display_images'})))
         await self.preload_inventory()  # Update categories after adding a new one
         return category
+
+    @error_handler
+    async def get_category(self, category_id: str) -> Category | None:
+        """
+        Retrieves a category by ID from the preloaded categories.
+        :param category_id: The ID of the category to retrieve.
+        :return: Category instance or None if not found.
+        """
+        return self.__categories_dict.get(category_id)
 
     @error_handler
     async def get_product_categories(self):
