@@ -1,16 +1,13 @@
 from sqlalchemy import Column, String, Boolean, inspect
+from sqlalchemy.orm import relationship
 
 from src.database.constants import ID_LEN, NAME_LEN
 from src.database.sql import Base, engine
 
 
 class UserORM(Base):
-    """
-    User Model
-        User ORM
-    """
-    __tablename__ = 'users'
-    uid: str = Column(String(ID_LEN), primary_key=True, unique=True, index=True)
+    __tablename__ = "users"
+    uid = Column(String(ID_LEN), primary_key=True)
 
     username: str = Column(String(NAME_LEN))
     password_hash: str = Column(String(255))
@@ -18,7 +15,7 @@ class UserORM(Base):
     account_verified: bool = Column(Boolean, default=False)
     is_system_admin: bool = Column(Boolean, default=False)
     is_client: bool = Column(Boolean, default=False)
-
+    profile = relationship("ProfileORM", back_populates='user', uselist=False)
 
     @classmethod
     def create_if_not_table(cls):
@@ -58,5 +55,6 @@ class UserORM(Base):
             'password_hash': self.password_hash,
             'account_verified': self.account_verified,
             'is_system_admin': self.is_system_admin,
-            'is_client': self.is_client
+            'is_client': self.is_client,
+            "profile": self.profile.to_dict() if self.profile and include_relationships else None
         }

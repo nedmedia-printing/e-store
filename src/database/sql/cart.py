@@ -42,7 +42,8 @@ class CartItemORM(Base):
 
 class CartORM(Base):
     __tablename__ = "cart"
-    uid: str = Column(String(ID_LEN))
+    uid = Column(String(ID_LEN), ForeignKey('users.uid'))
+
     cart_id: str = Column(String(ID_LEN), primary_key=True)
     created_at: datetime = Column(DateTime)
     converted_to_order: bool = Column(Boolean)
@@ -71,5 +72,5 @@ class CartORM(Base):
             "created_at": self.created_at,
             "converted_to_order": self.converted_to_order,
             "converted_at": self.converted_at,
-            "items": [item.to_dict() for item in self.items] if self.items and include_relationships else []
+            "items": [item.to_dict() for item in self.items] if self.items and include_relationships else [],
         }

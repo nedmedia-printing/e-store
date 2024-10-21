@@ -16,10 +16,12 @@ from src.controller.inventory_controller import InventoryController
 from src.controller.orders_controller import OrdersController
 from src.controller.customer_controller import CustomerController
 from src.controller.cart_controller import CartController
+from src.controller.profile_controller import ProfileController
 
 from src.main.bootstrap import bootstrap
 
 user_controller = UserController()
+profile_controller = ProfileController()
 inventory_controller = InventoryController()
 orders_controller = OrdersController()
 customer_controller = CustomerController()
@@ -41,8 +43,10 @@ def _add_blue_prints(app: Flask):
     from src.routes.orders import order_route
     from src.routes.browse import browse_route
     from src.routes.cart import cart_route
+    from src.routes.profile import profile_route
 
     app.register_blueprint(home_route)
+    app.register_blueprint(profile_route)
     app.register_blueprint(inventory_route)
     app.register_blueprint(auth_route)
     app.register_blueprint(images_route)
@@ -74,6 +78,7 @@ def create_app(config=config_instance()):
         encryptor.init_app(app=app)
 
         user_controller.init_app(app=app)
+        profile_controller.init_app(app=app)
         inventory_controller.init_app(app=app)
         customer_controller.init_app(app=app)
         orders_controller.init_app(app=app)

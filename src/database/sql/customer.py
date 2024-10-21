@@ -109,7 +109,6 @@ class CustomerORM(Base):
             "last_order_date": self.last_order_date,
             "notes": self.notes,
             "orders": [order.to_dict() for order in self.orders] if include_relationships else []
-
         }
 
 

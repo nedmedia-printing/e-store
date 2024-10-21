@@ -1,10 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "layout/page.html" %}
 
-</body>
-</html>
+{% block css %}
+<style>
+    .category-image {
+        width: 640px;
+        height: 360px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .profile-info, .orders, .payments, .cart {
+        margin-bottom: 20px;
+    }
+
+    .profile-info h3, .orders h3, .payments h3, .cart h3 {
+        margin-bottom: 10px;
+    }
+
+    .profile-info table, .orders table, .payments table, .cart table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .profile-info table th, .orders table th, .payments table th, .cart table th,
+    .profile-info table td, .orders table td, .payments table td, .cart table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block sidebar %}
+    {% include "layout/sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<div id="wrapper">
+    <section id="two" class="wrapper style3 fade-up">
+        <div class="profile-info">
+            <h3>Profile Information</h3>
+            <form action="{{ url_for('profile.update_profile') }}" method="post">
+                <table>
+                    <tr><th>UID</th><td>{{ profile.uid }}</td></tr>
+                    <tr><th>Profile Name</th><td><input type="text" name="profile_name" value="{{ profile.profile_name }}"></td></tr>
+                    <tr><th>First Name</th><td><input type="text" name="first_name" value="{{ profile.first_name }}"></td></tr>
+                    <tr><th>Surname</th><td><input type="text" name="surname" value="{{ profile.surname }}"></td></tr>
+                    <tr><th>Cell</th><td><input type="text" name="cell" value="{{ profile.cell }}"></td></tr>
+                    <tr><th>Email</th><td><input type="email" name="email" value="{{ profile.email }}"></td></tr>
+                    <tr><th>Notes</th><td><textarea name="notes">{{ profile.notes }}</textarea></td></tr>
+                </table>
+                <button type="submit">Update Profile</button>
+            </form>
+        </div>
+
+        <div class="orders">
+            <h3>Historical Orders</h3>
+            {% for order in profile.historical_orders %}
+                <table>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Total Amount</th>
+                    </tr>
+                    <tr>
+                        <td>{{ order.order_id }}</td>
+                        <td>{{ order.date }}</td>
+                        <td>{{ order.total_amount }}</td>
+                    </tr>
+                </table>
+            {% endfor %}
+        </div>
+
+        <div class="payments">
+            <h3>Payment History</h3>
+            {% for payment in profile.payment_history %}
+                <table>
+                    <tr>
+                        <th>Payment ID</th>
+                        <th>Amount</th>
+                        <th>Payment Date</th>
+                    </tr>
+                    <tr>
+                        <td>{{ payment.payment_id }}</td>
+                        <td>{{ payment.amount }}</td>
+                        <td>{{ payment.payment_date }}</td>
+                    </tr>
+                </table>
+            {% endfor %}
+        </div>
+
+        <div class="cart">
+            <h3>Current Cart</h3>
+            {% if profile.cart %}
+                <table>
+                    <tr>
+                        <th>Cart ID</th>
+                        <td>{{ profile.cart.cart_id }}</td>
+                    </tr>
+                    {% for item in profile.cart.items %}
+                        <tr>
+                            <th>Item ID</th>
+                            <td>{{ item.item_id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Product ID</th>
+                            <td>{{ item.product_id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Quantity</th>
+                            <td>{{ item.quantity }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p>No items in the cart.</p>
+            {% endif %}
+        </div>
+
+        <div class="delete-profile">
+            <h3>Delete Profile</h3>
+            <form action="{{ url_for('profile.delete_profile') }}" method="post">
+                <button type="submit">Delete Profile</button>
+            </form>
+        </div>
+    </section>
+</div>
+{% endblock %}

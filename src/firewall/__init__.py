@@ -4,7 +4,7 @@ import re
 
 import requests
 from cloudflare import Cloudflare, CloudflareError
-
+from flask_limiter import Limiter
 from flask import Flask, request, abort, Response
 from requests import ReadTimeout
 from requests.exceptions import ConnectionError
@@ -20,6 +20,8 @@ DEFAULT_IPV4 = ['173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31
 
 # Define dictionary of malicious patterns
 malicious_patterns = {
+
+    "malformed_request": "[^\x00-\x7F]",
     "buffer_overflow": "^\?unix:A{1000,}",  # pattern for buffer overflow attack
     "SQL_injection": "'?([\w\s]+)'?\s*OR\s*'?([\w\s]+)'?\s*=\s*'?([\w\s]+)'?",  # pattern for SQL injection attack
     "SQL_injection_Commands": "\b(ALTER|CREATE|DELETE|DROP|EXEC(UTE){0,1}|INSERT( +INTO){0,1}|MERGE|REPLACE|SELECT|UPDATE)\b",
@@ -62,8 +64,20 @@ def contains_malicious_patterns(_input: str) -> bool:
     :param _input:
     :return:
     """
-    attack_pattern = r"\b(select|update|delete|drop|create|alter|insert|into|from|where|union|having|or|and|exec|script|javascript|xss|sql|cmd|buffer|format|include|shell|rfi|lfi|phish)\b"
+    attack_pattern = r"\b(select|update|delete|drop|create|alter|insert|into|from|where|union|having|or|and|exec|script|javascript|xss|sql|cmd|buffer|format|include|shell|rfi|lfi|phish)\b|[^\x00-\x7F]"
     return re.search(attack_pattern, _input, re.IGNORECASE) is not None
+
+
+def get_remote_address():
+    """
+    Retrieves the real IP address of the client making the request.
+    """
+    if 'cf-connecting-ip' in request.headers:
+        # If using Cloudflare, get the connecting IP from Cloudflare headers
+        return request.headers['cf-connecting-ip']
+    else:
+        # Fallback to remote address if not behind Cloudflare
+        return request.remote_addr
 
 
 EMAIL: str = config_instance().CLOUDFLARE_SETTINGS.EMAIL
@@ -93,7 +107,7 @@ class Firewall:
     def init_app(self, app: Flask):
         # Setting Up Incoming Request Security Checks
         if not is_development():
-            # if this is not a development server secure the server with our firewall
+            # if this is not a development server, secure the server with our firewall
             app.before_request(self.is_host_valid)
             app.before_request(self.is_edge_ip_allowed)
             app.before_request(self.check_if_request_malicious)
@@ -101,29 +115,44 @@ class Firewall:
 
             # Setting up Security headers for outgoing requests
             app.after_request(self.add_security_headers)
-            #
-        # obtain the latest cloudflare edge servers
+
+            # Initialize Rate Limiting
+            limiter = Limiter(app, key_func=get_remote_address)
+            limiter.limit("100 per minute")(self.check_if_request_malicious)
+
+        # Obtain the latest Cloudflare edge servers
         ipv4, ipv6 = self.get_ip_ranges()
-        # updating the ip ranges
+        # updating the IP ranges
         self.ip_ranges.extend(ipv4)
         self.ip_ranges.extend(ipv6)
 
     def is_host_valid(self):
         """
         **is_host_valid**
-            will return true if host is one of the allowed hosts addresses
-            and both request host and header matches
+            Returns true if the host is one of the allowed host addresses,
+            and both the request host and header host match.
         """
         header_host = request.headers.get('Host')
-        self._logger.info(f'Host is: {header_host}')
-        self._logger.info(f'allowed hosts: {self.allowed_hosts}')
-        self._logger.info(f"Request Host: {request.host}")
+        request_host = request.host
 
-        if header_host.casefold() != request.host.casefold():
-            abort(401, 'Bad Host Header')
-        if request.host.casefold() not in self.allowed_hosts:
-            self._logger.error(f"Host not allowed: {request.host}")
-            abort(401, f'Host not allowed: {request.host}')
+        self._logger.info(f'Header Host: {header_host}')
+        self._logger.info(f'Allowed Hosts: {self.allowed_hosts}')
+        self._logger.info(f'Request Host: {request_host}')
+
+        # Check if both request host and header host are None or empty
+        if not request_host and not header_host:
+            self._logger.error('Both request host and header host are missing')
+            abort(401, 'Bad Request')
+
+        # Check if either header host is missing or does not match request host
+        if not header_host or header_host.casefold() != request_host.casefold():
+            self._logger.error('Header host does not match request host')
+            abort(401, 'Bad Request')
+
+        # Check if request host is not in the list of allowed hosts
+        if request_host.casefold() not in self.allowed_hosts:
+            self._logger.error(f'Host not allowed: {request_host}')
+            abort(401, 'Bad Request')
 
     def is_edge_ip_allowed(self):
         """
@@ -133,36 +162,34 @@ class Firewall:
         edge_ip = self.get_edge_server_ip(headers=request.headers)
         if not any(ipaddress.ip_address(edge_ip) in ipaddress.ip_network(ip_range) for ip_range in self.ip_ranges):
             self._logger.info(f"IP Address not allowed: {edge_ip}")
-            abort(401, 'IP Address not allowed')
+            abort(401, 'Bad Request')
 
     def check_if_request_malicious(self):
         """
         **check_if_request_malicious**
-            Analyses request headers , body and path if there
-            are any malicious patterns an error will be thrown
+            Analyses request headers, body, and path for malicious patterns.
+            Throws an error if any patterns are found.
         """
-        # Check request for malicious patterns
-        headers: dict[str, str] = request.headers
+        headers = request.headers
         body = request.data
 
-        # if request.path.casefold().__contains__('documents'):
-        #     self._max_payload_size = 50 * 1024 * 1024
-
         if 'Content-Length' in headers and int(headers['Content-Length']) > self._max_payload_size:
-            # Request payload is too large,
             self._logger.info("Payload too long")
             abort(401, 'Payload is suspicious -- Content-Length')
 
-        # self._max_payload_size = 10 * 1024 * 1024
-
         if body:
-            _body = body.decode('utf-8')
+            try:
+                _body = body.decode('utf-8')
+            except UnicodeDecodeError:
+                self._logger.info("Payload contains suspicious characters")
+                abort(401, 'Payload contains suspicious characters')
+
             if contains_malicious_patterns(_input=_body):
                 self._logger.info("Payload regex failure")
                 abort(401, 'Payload is suspicious -- Body Content Bad')
 
         path = str(request.path)
-        if any((pattern.match(path) for pattern in self.compiled_bad_patterns)):
+        if any(pattern.match(path) for pattern in self.compiled_bad_patterns):
             self._logger.info("Attack patterns regex failure on path")
             abort(401, 'Request path is malformed - Path Parameter is Malicious')
 
