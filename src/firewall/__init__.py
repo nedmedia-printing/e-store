@@ -117,7 +117,7 @@ class Firewall:
             app.after_request(self.add_security_headers)
 
             # Initialize Rate Limiting
-            limiter = Limiter(app, key_func=get_remote_address)
+            limiter = Limiter(key_func=get_remote_address, app=app)
             limiter.limit("100 per minute")(self.check_if_request_malicious)
 
         # Obtain the latest Cloudflare edge servers
