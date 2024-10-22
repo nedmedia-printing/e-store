@@ -140,12 +140,12 @@ class Firewall:
         self._logger.info(f'Request Host: {request_host}')
 
         # Check if both request host and header host are None or empty
-        if not request_host and not header_host:
+        if not request_host or not header_host:
             self._logger.error('Both request host and header host are missing')
             abort(401, 'Bad Request')
 
         # Check if either header host is missing or does not match request host
-        if not header_host or header_host.casefold() != request_host.casefold():
+        if header_host.casefold() != request_host.casefold():
             self._logger.error('Header host does not match request host')
             abort(401, 'Bad Request')
 
