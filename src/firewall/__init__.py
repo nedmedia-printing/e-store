@@ -129,29 +129,19 @@ class Firewall:
     def is_host_valid(self):
         """
         **is_host_valid**
-            Returns true if the host is one of the allowed host addresses,
-            and both the request host and header host match.
+            Validates that the request host and header host match, and that the host is in the allowed list.
         """
-        header_host = request.headers.get('Host')
-        request_host = request.host
+        header_host = request.headers.get('Host', '').strip()
+        request_host = request.host.strip()
 
         self._logger.info(f'Header Host: {header_host}')
         self._logger.info(f'Allowed Hosts: {self.allowed_hosts}')
         self._logger.info(f'Request Host: {request_host}')
 
-        # Check if both request host and header host are None or empty
-        if not request_host or not header_host:
-            self._logger.error('Both request host and header host are missing')
-            abort(401, 'Bad Request')
-
-        # Check if either header host is missing or does not match request host
-        if header_host.casefold() != request_host.casefold():
-            self._logger.error('Header host does not match request host')
-            abort(401, 'Bad Request')
-
-        # Check if request host is not in the list of allowed hosts
-        if request_host.casefold() not in self.allowed_hosts:
-            self._logger.error(f'Host not allowed: {request_host}')
+        # Validate both hosts and check if request host is allowed
+        if not header_host or not request_host or header_host.casefold() != request_host.casefold() or \
+                request_host.casefold() not in map(str.casefold, self.allowed_hosts):
+            self._logger.error('Invalid host: either missing, mismatched, or not allowed')
             abort(401, 'Bad Request')
 
     def is_edge_ip_allowed(self):
