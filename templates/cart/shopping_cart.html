@@ -11,6 +11,38 @@
     .quantity-input {
         width: 50px;
     }
+/* Darken the text inside form inputs */
+.cart-item input[type="number"] {
+    color: #333; /* Dark gray text color */
+    background-color: #fff; /* White background for better contrast */
+    font-size: 0.6em; /* Slightly smaller font size for a compact look */
+    width: 60px; /* Adjust width to fit in the table */
+    height: 30px;
+    padding: 4px; /* Reduce padding for a more compact input */
+    border: 1px solid #ccc; /* Light border for a clean appearance */
+    border-radius: 4px; /* Optional: rounded corners for aesthetics */
+}
+
+/* Style the buttons within the forms to be smaller */
+.cart-item button {
+    font-size: 0.45em; /* Smaller font size */
+    padding: 2px 6px; /* Reduce padding for a smaller button */
+    margin-top: 2px; /* Smaller margin for spacing */
+    background-color: #0056b3; /* Dark blue background color */
+    color: #fff; /* White text color for buttons */
+    border: none; /* Remove default border */
+    border-radius: 3px; /* Slightly rounded corners */
+    cursor: pointer; /* Show pointer cursor on hover */
+}
+
+/* Button hover effect */
+.cart-item button:hover {
+    background-color: #004494; /* Slightly darker shade on hover */
+}
+
+/* Style the buttons within the forms */
+
+
 </style>
 {% endblock %}
 
@@ -43,8 +75,10 @@
                                 <td>{{ item.name|title }}</td>
                                 <td>
                                     <form action="{{ url_for('cart.update_quantity', product_id=item.product_id) }}" method="post">
-                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-input">
-                                        <button type="submit">Update</button>
+                                        {{ item.quantity }}
+                                        <input class="form-control" type="number" name="quantity" value="{{ item.quantity }}" min="1" >
+                                        <button type="submit">ADD</button>
+{#                                        <button type="submit">Minus</button>#}
                                     </form>
                                 </td>
                                 <td>{{ item.item_price | currency }}</td>

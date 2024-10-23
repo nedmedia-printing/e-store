@@ -74,8 +74,47 @@ async def update_quantity(user: User, product_id: str):
     :param product_id:
     :return:
     """
-    pass
+    quantity = request.form.get('quantity')
+    if not quantity.isdecimal():
+        flash(message="Error Processing Request", category="danger")
+        return redirect(url_for('cart.view_cart'))  # Redirect to the cart page
+    quantity = int(quantity)
 
+    cart_logger.info(f"Cart Quantity: {quantity}")
+
+    product: Products = await inventory_controller.get_product(product_id=product_id)
+    cart_logger.info(f"Product: {product} {await inventory_controller.get_product_inventory(product_id=product_id)}")
+    if not product:
+        flash(message="There was a Problem with this product please try again later", category="danger")
+        return redirect(url_for('cart.view_cart'))  # Redirect to the cart page
+
+    if product.inventory_count <= quantity:
+        cart_logger.info(f"product.inventory_entries: {product.inventory_entries}")
+        cart_logger.info(f"Not Enough Products in Inventory")
+        flash(message="Unfortunately we cannot satisfy this order you may consider contacting us", category="danger")
+        return redirect(url_for('cart.view_cart'))  # Redirect to the cart page
+
+    cart: Cart = await cart_controller.get_outstanding_customer_cart(uid=user.uid)
+    cart_logger.info(f"Created Customer Cart: {cart}")
+
+    if not cart:
+        cart_logger.info(f"Could not locate Customer Cart: {user.uid}")
+
+    try:
+        cart_item: CartItem = cart.add_item(product=product, quantity=quantity)
+    except ValidationError as e:
+        cart_logger.info(str(e))
+        flash(message="Unable to add item to cart, please try again later", category="danger")
+        return redirect(url_for('cart.view_cart'))
+
+    cart_item_added = await cart_controller.add_cart_item(cart_item=cart_item)
+    cart_logger.info(f"Created New Cart Item: {cart_item}")
+    if cart_item_added:
+        flash(message="Cart Item Created", category="success")
+    else:
+        flash(message="Unable to add cart item", category="danger")
+
+    return redirect(url_for('cart.view_cart'))  # Redirect to the cart page
 
 @cart_route.route('/remove_from_cart/<string:item_id>', methods=['POST'])
 @login_required
