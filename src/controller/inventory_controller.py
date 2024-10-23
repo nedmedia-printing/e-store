@@ -9,8 +9,8 @@ from src.database.sql.products import CategoryORM, ProductsORM, InventoryORM
 class InventoryController(Controllers):
     def __init__(self):
         super().__init__()
-        self.__products_dict = {}
-        self.__categories = []
+        self.__products_dict: dict[str, Products] = {}
+        self.__categories: list[Category] = []
         self.__categories_dict = {}
 
     def init_app(self, app: Flask):
@@ -49,15 +49,18 @@ class InventoryController(Controllers):
 
     @error_handler
     async def get_product_categories(self) -> list[Category]:
-        """ Retrieves all product categories from the database with linked records. """
+        """Retrieves all product categories from the database with linked records."""
         with self.get_session() as session:
+            # Query the CategoryORM and eagerly load related products and inventory entries
             categories_list_orm = (
                 session.query(CategoryORM)
                 .options(
-                    joinedload(CategoryORM.products).joinedload(ProductsORM.inventory_entries)
+                    joinedload(CategoryORM.products).joinedload(ProductsORM.inventory_entries),
+                    joinedload(CategoryORM.inventory_entries)
                 )
                 .all()
             )
+            # Convert ORM objects to Pydantic models using the to_dict method
             return [Category(**cat.to_dict(include_relationships=True)) for cat in categories_list_orm]
 
     @error_handler

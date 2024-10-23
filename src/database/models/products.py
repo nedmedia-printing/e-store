@@ -62,6 +62,7 @@ class Products(BaseModel):
     @property
     def inventory_count(self) -> int:
         total_count = 0
+
         for entry in self.inventory_entries:
             if entry.action_type in InventoryActionTypes.adding_actions():
                 total_count += entry.entry

@@ -41,8 +41,7 @@ class ProductsORM(Base):
             "sell_price": self.sell_price,
             "buy_price": self.buy_price,
             "time_of_entry": self.time_of_entry.isoformat() if self.time_of_entry else None,
-            "inventory_entries": [entry.to_dict(include_relationships=True) for entry in self.inventory_entries]
-            if self.inventory_entries and include_relationships else [],
+            "inventory_entries": [entry.to_dict() for entry in self.inventory_entries] if self.inventory_entries and include_relationships else [],
             "cart_items": [item.to_dict() for item in self.cart_items] if include_relationships and self.cart_items else []
         }
 
@@ -72,8 +71,10 @@ class CategoryORM(Base):
             "name": self.name,
             "description": self.description,
             "is_visible": self.is_visible,
-            "products": [product.to_dict() for product in self.products] if self.products and include_relationships else [],
-            "inventory_entries": [entry.to_dict() for entry in self.inventory_entries] if self.inventory_entries and include_relationships else []
+            "products": [product.to_dict(include_relationships=include_relationships) for product in self.products]
+            if self.products and include_relationships else [],
+            "inventory_entries": [entry.to_dict() for entry in self.inventory_entries]
+            if self.inventory_entries and include_relationships else []
         }
 
 

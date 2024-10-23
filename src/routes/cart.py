@@ -31,12 +31,13 @@ async def add_to_cart(user: User, product_id: str):
     cart_logger.info(f"Cart Quantity: {quantity}")
 
     product: Products = await inventory_controller.get_product(product_id=product_id)
-    cart_logger.info(f"Product: {product}")
+    cart_logger.info(f"Product: {product} {await inventory_controller.get_product_inventory(product_id=product_id)}")
     if not product:
         flash(message="There was a Problem with this product please try again later", category="danger")
         return redirect(url_for('cart.view_cart'))  # Redirect to the cart page
 
     if product.inventory_count <= 0:
+        cart_logger.info(f"product.inventory_entries: {product.inventory_entries}")
         cart_logger.info(f"Product Not in Inventory")
         flash(message="Unfortunately we are out of stock", category="danger")
         return redirect(url_for('cart.view_cart'))  # Redirect to the cart page
