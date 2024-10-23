@@ -70,7 +70,7 @@ def create_app(config=config_instance()):
     app.config.from_object(config)
 
     with app.app_context():
-        firewall.init_app(app=app)
+        # firewall.init_app(app=app)
         _add_blue_prints(app=app)
         _add_filters(app=app)
 
