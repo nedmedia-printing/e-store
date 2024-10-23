@@ -19,6 +19,4 @@ class Profile(BaseModel):
     email: str | None
     notes: str | None
     user: User | None
-    historical_orders: list[Order]
-    payment_history: list[Payment]
     cart: Cart | None

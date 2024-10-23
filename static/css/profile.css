@@ -1,0 +1,36 @@
+/* General styling */
+#wrapper {
+    padding: 20px;
+}
+
+.profile-info, .orders, .payments, .cart, .delete-profile {
+    margin-bottom: 30px;
+}
+
+/* Form styling */
+.profile-form .form-group {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.profile-form input, .profile-form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Order, Payment, Cart item styling */
+.order-item, .payment-item, .cart-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Labels styling */
+.order-label, .payment-label, .cart-label {
+    font-weight: bold;
+}

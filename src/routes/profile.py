@@ -14,6 +14,7 @@ profile_logger = init_logger('profile_route')
 @login_required
 async def get_profile(user: User):
     """ :param user: :return: """
+
     profile: Profile = await profile_controller.get_profile(uid=user.uid)
     context = dict(user=user, profile=profile)
     return render_template('profile/profile.html', **context)
