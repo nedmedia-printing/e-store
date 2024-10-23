@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 
-from src.database.models.cart import Cart
-from src.database.models.customer import Order, Payment
 from src.database.models.users import User
 
 
@@ -19,4 +17,4 @@ class Profile(BaseModel):
     email: str | None
     notes: str | None
     user: User | None
-    cart: Cart | None
+
